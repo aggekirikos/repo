@@ -1,0 +1,37 @@
+plugins {
+    // Apply the application plugin to add support for building a CLI application in Java.
+    id 'application'
+    id 'com.github.spotbugs' version '4.7.1'
+}
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+}
+
+dependencies {
+    // Use JUnit test framework.
+    testImplementation 'junit:junit:4.13'
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'fOrk.Main'
+}
+
+test {
+    useJUnit()
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "fOrk.Main"
+    }
+}
+
+spotbugs {
+    ignoreFailures = true
+    effort = 'max'
+    showProgress = true
+    reportLevel = 'high'
+}
