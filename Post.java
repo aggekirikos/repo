@@ -1,12 +1,16 @@
 import java.util.Scanner;
 public class Post {
-	private int PostId = 0;
-	private int PostStatus = 0;//When PostStatus is 0 the post is deleted. When PostStatus is 1 the post exists
-	private String Content,Title,RecipeTime,Reviews,RecipeCategory,DifficultyLevel,RecipeCost;
+	public int PostId = 0;
+	public int PostStatus = 0;//When PostStatus is 0 the post is deleted. When PostStatus is 1 the post exists
+	public int RecipeTime;
+	public String Content,Title,RecipeCategory,DifficultyLevel;
+	public double RecipeCost,Reviews;
 	Comment [] comments = new Comment[100];//array of the comments with capacity of 100 comments
 	User user = new User();
-	//private String Creator = user.getUsername();
-	String [] likes = new String[100];
+	public String Creator = user.getUsername();
+	int [] stars = new int[5];
+	int evaluators = 0;
+	int sum = 0;
 	public Post(){
 		PostId = PostId + 1;
 		PostStatus = 1;
@@ -16,19 +20,24 @@ public class Post {
 		System.out.println("Create a content for your post");
 		Content = input.next();
 		System.out.println("Report the cost of the recipe in your post");
-		RecipeCost= input.next();
+		RecipeCost= input.nextDouble();
 		System.out.println("Report the time required for the recipe in your post");
-		RecipeTime = input.next();
+		RecipeTime = input.nextInt();
 		System.out.println("Report the difficulty level of the recipe in your post");
 		DifficultyLevel = input.next();
 		System.out.println("Report the Category in which the recipe of your post belongs");
 		RecipeCategory = input.next();
-		System.out.println("Do you like the post?Press 1 to give it a star or 0 to ignore it");
+		System.out.println("Do you like the post?Rate it with 0 to 5 stars");
 		int rate = input.nextInt();
-		if (rate == 1){
-			likes [PostId] = likes [PostId] + 1;
-		}else{
-			likes [PostId] = 0;
+		if (rate != 0){
+			stars[rate -1] = stars[rate - 1] + 1;
+			evaluators = evaluators + 1;
+			for (int i = 0; i<5; i++) {
+				sum = sum + (i+1) * stars[i];
+			}
+			Reviews = sum/evaluators;
+			}else{
+				System.out.println("This post has no ratings");
 		}
 	}
 	public String getTitle() {
@@ -43,16 +52,16 @@ public class Post {
 	public String setContent(String Content) {
 		this.Content = Content;
 	}
-	public 	String getRecipeCost() {
+	public double getRecipeCost() {
 		return RecipeCost;
 	}
-	public String setRecipeCost(String RecipeCost) {
+	public double setRecipeCost(double RecipeCost) {
 		this.RecipeCost = RecipeCost;
 	}
-	public String getRecipeTime() {
+	public int getRecipeTime() {
 		return RecipeTime;
 	}
-	public String setRecipeTime(String RecipeTime) {
+	public int setRecipeTime(int RecipeTime) {
 		this.RecipeTime = RecipeTime;
 	}
 	public String getDifficultyLevel(){
@@ -67,17 +76,20 @@ public class Post {
 	public String setRecipeCategory(String RecipeCategory) {
 		this.RecipeCategory = RecipeCategory;
 	}
-	public static void editPost() {
-		if (creator == user.getUsername) {
+	public double getReviews() {
+		return Reviews;
+	}
+	public void editPost() {
+		if (Creator == user.getUsername) {
 			Scanner input =  new Scanner(System.in);
 			System.out.println("Change the Title of your post");
 			Title = input.next();
 			System.out.println("Change the content of your post");
 			Content = input.next();
 			System.out.println("Change the cost of the recipe in your post");
-			RecipeCost = input.next();
+			RecipeCost = input.nextDouble();
 			System.out.println("Change the time of the recipe in your post");
-			RecipeTime = input.next();
+			RecipeTime = input.nextInt();
 			System.out.println("Change the Category of the recipe in your post");
 			RecipeCategory = input.next();
 			System.out.println("Change the Difficulty Level of the recipe in your post");
@@ -86,41 +98,24 @@ public class Post {
 			System.out.println("You cannot edit this post");
 		}
 	}
-	public static void deletePost() {
-		if (creator = user.getUsername) {
-		Poststatus = null;
+	public void deletePost() {
+		if (Creator = user.getUsername) {
+		Poststatus = 0;
 		Title = null;
 		Content = null;
-		RecipeCost = null;
-		RecipeTime = null;
+		RecipeCost = 0.0;
+		RecipeTime = 0;
 		RecipeCategory = null;
 		DifficultyLevel = null;
-		likes[PostId] = 0;
+		Reviews = 0;
 		comments[PostId] = null;
 		}else{
 					System.out.println("You cannot delete this post");
 		}
 	}
-	public static void getPost() {
-		/*String [][] posts = new String[100][6];
-		int i;
-		for (i = 0; i<PostId; i++){
-			posts[i][0] = Title;
-			posts[i][1] = Content;
-			posts[i][2] = RecipeCost;
-			posts[i][3] = RecipeTime;
-			posts[i][4] = RecipeCategory;
-			posts[i][5] = DifficultyLevel;
-		}
-		for (i = 0; i<PostId; i++){
-			int j;
-			for(j = 0; j<6; j++){
-				System.out.println(posts[i][j]);
-			}
-			System.out.println(comments[i]);
-			System.out.println("This post has"+likes[i]+"likes");
-		}
-	}*/
+	public static String getPost() {
+		return "Title of the post:" + getTitle + "/nContent of the post:" + getContent + "/nThe time required for thiw recipe is" + getRecipeTime + "/nThe cost for this recipe is:" + getRecipeCost + "euros" + "/The difficulty Level of thiw recipe is:" + getDifficultyLevel + "/nThe category of this recipe is:" + getRecipeCategory + "/nThis post has " + Reviews + "stars" + "/nThis post has " + comments[PostId] + "comments";
+	}
 }
 
 
