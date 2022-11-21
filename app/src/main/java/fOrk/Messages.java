@@ -3,6 +3,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Scanner;
 public class Messages2 {
 	int userid;
 	int receiverid;
@@ -16,7 +17,6 @@ public class Messages2 {
 		}
 	}
 
-	int userid2;
 	public void getMessagesby_userid(int userid2) {
 		Statement s = dbcon.createStatement();
 		ResultSet rs = s.executeQuery("SELECT Message FROM Messages,Users WHERE (Messages.receiver_userid=userid2 AND Messages.user_id=userid) OR (Messages.receiver_userid=userid AND Messages.user_id=userid2)");
@@ -40,7 +40,42 @@ public class Messages2 {
 			e.printStackTrace();
 		}
 	}
+
+	public void typeMessage(int userid, int receiver) {
+		System.out.println("Do you want to send message?");
+		Scanner s = new Scanner(System.in);
+		String answer;
+		answer = s.next();
+		if (answer = "yes") {
+			System.out.println("Type message");
+			Scanner s = new Scanner(System.in);
+			String message;
+			message = s.next();
+			sendMessagestoDB(userid, receiver, message);
+		} else if (answer =!"no") {
+			System.out.println("Wrong! You should answer 'yes' or 'no'");
+		}
+	}
+
+	public void openChatbox(userid) {
+		System.out.println("Do you want to open a chat box");
+		Scanner s = new Scanner(System.in);
+		String answer;
+		answer = s.next();
+		if (answer = "yes") {
+			System.out.println("Type the user you want to chat");
+			String answer2;
+			Scanner s2 = new Scanner(System.in);
+			answer2 = s2.next();
+			receiverid = getuserid(answer2);
+			getMessagesby_userid(int receiverid);
+			typeMessage(userid, receiverid);
+		} else if (answer =! no) {
+			System.out.println("Wrong! Answer should be 'yes' or 'no'");
+		}
+	}
 }
+
 
 
 
