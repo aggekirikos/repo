@@ -1,7 +1,7 @@
 plugins {
-    // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
     id 'com.github.spotbugs' version '4.7.1'
+    id 'checkstyle'
 }
 
 repositories {
@@ -34,4 +34,8 @@ spotbugs {
     effort = 'max'
     showProgress = true
     reportLevel = 'high'
+}
+
+checkstyle {
+    toolVersion = '8.29'
 }
