@@ -1,0 +1,64 @@
+plugins {
+    id 'application'
+    id 'com.github.spotbugs' version '4.7.3'
+    id 'checkstyle'
+}
+
+group = 'com.dmst.fOrk'
+version = '1.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+application {
+    mainClass = 'fOrk.Main'
+}
+
+//Set Main class for the jar file
+jar {
+    manifest {
+        attributes 'Main-Class': 'fOrk.Main'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}
+
+test {
+    useJUnit()
+}
+
+/* Configure spotbugs to maximize the analysis effort level
+and set the priority threshold for reporting bugs to low
+so that all bugs are reported */
+spotbugs {
+    effort = 'max'
+    reportLevel = 'low'
+}
+
+// Configure SpotbugsMain to create both xml and html reports
+spotbugsMain {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+// Configure SpotbugsTest to create both xml and html reports
+spotbugsTest {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+checkstyle {
+    toolVersion = '8.29'
+}
