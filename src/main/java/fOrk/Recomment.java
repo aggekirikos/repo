@@ -1,3 +1,5 @@
+package fOrk;
+
 import java.util.Scanner;
 public class Recomment /*extends Comment*/ {
     private static int recommentId;

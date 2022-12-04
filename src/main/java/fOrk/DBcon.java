@@ -1,3 +1,4 @@
+package fOrk;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,14 +10,14 @@ public class DBcon {
 	public static Connection openConnection() {
 		/* Initialize Connection type object */
 		Connection dbcon = null;
-		
+
 		/* Try block for trying to find the Driver to make the DB connection*/
 		try {
 			Class.forName("org.sqlite.JDBC");
 		} catch (ClassNotFoundException e) {
 			System.out.println("SQLite error: " + e.getMessage());
 		}
-		
+
 		/* Makes the actual connection */
 		try {
 			dbcon = DriverManager.getConnection("jdbc:sqlite:fOrk.db");
@@ -40,7 +41,7 @@ public class DBcon {
 					+ "Name VARCHAR(20) NOT NULL,"
 					+ "Bio VARCHAR(50));");
 			System.out.println("TABLE User CREATED");
-			
+
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Post "
 					+ "(PostID VARCHAR(20) NOT NULL PRIMARY KEY,"
 					+ "PostStatus INT,"
@@ -61,7 +62,7 @@ public class DBcon {
 					+ "CONSTRAINT PK_Hashtags PRIMARY KEY (PostID,Hashtag)"
 					+ "CONSTRAINT FK_Hashtags_Post FOREIGN KEY(PostID) REFERENCES Post);");
 			System.out.println("TABLE Hashtags CREATED");
-			
+
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Comment "
 					+ "(CommentID VARCHAR(20) NOT NULL PRIMARY KEY,"
 					+ "Content VARCHAR(30) NOT NULL,"
@@ -103,7 +104,7 @@ public class DBcon {
 				dbcon.close(); // close the connection to the database to end database session
 
 		} catch (SQLException e) {
-			System.out.println("Could not close coonection with the database: " + e.getMessage());
+			System.out.println("Could not close connection with the database: " + e.getMessage());
 		}
 	}
 
@@ -117,7 +118,7 @@ public class DBcon {
 			stmt.executeUpdate("DROP TABLE Cookmates;");
 			stmt.executeUpdate("DROP TABLE Messages;");
 			stmt.executeUpdate("DROP TABLE Comment;");
-			stmt.executeUpdate("DROP TABLE Hashtags");
+			stmt.executeUpdate("DROP TABLE Hashtags;");
 			stmt.executeUpdate("DROP TABLE Post;");
 			stmt.executeUpdate("DROP TABLE [User];");
 			System.out.println("SUCCESFULLY DELETED TABLES");
