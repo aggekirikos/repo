@@ -4,24 +4,24 @@ import java.util.Scanner;
 
 
 public class DBcon {
-	
+
 	/*Connection type object to make the connection*/
 	public static Connection dbcon;
 	/*Statement type object that contains the statement we will send to the server.*/
 	public static Statement stmt;
-	
-	
+
+
 	public static void Opencon() {
 	/*Connection type object to make the connection*/
 	Connection dbcon = null;
-	
+
 	/* Try block for trying to find the Driver to make the DB connection*/
 	try {
 		Class.forName("org.sqlite.JDBC");
 	} catch (ClassNotFoundException e1) {
-		
+
 	}
-	
+
 	try {
 		/*Makes the actual connection */
 		dbcon = DriverManager.getConnection("jdbc:sqlite:csc205.db");
@@ -37,10 +37,10 @@ public class DBcon {
 	} catch (Exception e) {
 		System.out.println(e);
 		}
-	
+
 	}
-	
-	
+
+
 	public static void createTable(Connection dbcon) throws SQLException {
 		/*Statement type object that contains the statement we will send to the server.*/
 		Statement stmt = null;
@@ -54,7 +54,7 @@ public class DBcon {
 						+"Name VARCHAR(20) NOT NULL,"
 						+"Bio VARCHAR(50));");
 		System.out.println("TABLE User CREATED");
-		
+
 		stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Post "
 				+ "(PostID VARCHAR(20) NOT NULL PRIMARY KEY,"
 				+"PostStatus INT,"
@@ -67,8 +67,15 @@ public class DBcon {
 				+"Reviews INT,"
 				+"Creator VARCHAR(10) NOT NULL,"
 				+"CONSTRAINT FK_Post_User FOREIGN KEY(Creator) REFERENCES [User](ID));");
-         System.out.println("TABLE User Post");
-         
+         System.out.println("TABLE Post CREATED");
+
+         stmt.executeUpdate("Create TABLE IF NOT EXISTS hastags "
+         		+ "(hastag VARCHAR(30) NOT NULL,"
+         		+"PostID VARCHAR(20) NOT NULL,"
+         		+"CONSTRAINT PK_hastags PRIMARY KEY (PostID,hastag)"
+         		+"CONSTRAINT FK_hastags_Post FOREIGN KEY(PostID) REFERENCES Post);");
+         System.out.println("TABLE hastags CREATED");
+
          stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Comment "
 					+ "(CommentID VARCHAR(20) NOT NULL PRIMARY KEY,"
 					+"Content VARCHAR(30) NOT NULL,"
@@ -79,7 +86,7 @@ public class DBcon {
 					+"CONSTRAINT FK_Comment_Comment FOREIGN KEY(Receiver) REFERENCES Comment(CommentID),"
 					+"CONSTRAINT FK_Comment_Post FOREIGN KEY(ToPost) REFERENCES Post(PostID));");
 	System.out.println("TABLE Comment CREATED");
-	
+
 	stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Messages "
 			+ "(MessageID VARCHAR(20) NOT NULL PRIMARY KEY,"
 			+"Content VARCHAR(500) NOT NULL,"
@@ -90,7 +97,7 @@ public class DBcon {
 			+"CONSTRAINT FK_Messages_User_1 FOREIGN KEY(Sender) REFERENCES [User](ID),"
 			+"CONSTRAINT FK_Messages_User_2 FOREIGN KEY(Receiver) REFERENCES [User](ID));");
      System.out.println("TABLE Messages CREATED");
-     
+
      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Cookmates "
 				+ "(UserID VARCHAR(10) NOT NULL,"
 				+"CookmateID VARCHAR(10) NOT NULL,"
@@ -98,20 +105,20 @@ public class DBcon {
 				+"CONSTRAINT FK_Cookmates_User_2 FOREIGN KEY(CookmateID) REFERENCES [User](ID),"
 				+"CONSTRAINT PK_Cookmates PRIMARY KEY(UserID, CookmateID));");
      System.out.println("TABLE Cookmates CREATED");
-	
+
 	}
-	
+
 	public static void close() throws SQLException {
-		
+
 		try {
-			
+
 			/* if connection is still open*/
 			if (dbcon != null)
 				dbcon.close(); // close the connection to the database to end database session
-			
+
 		} catch (SQLException e) {}
 }
-	
+
 	public static void deleteTables() throws SQLException {
 		/* Try block for making the DB connection and excecuting the given statement.*/
 		try {
