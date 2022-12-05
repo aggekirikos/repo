@@ -68,11 +68,18 @@ public class DBcon {
 					+ "Content VARCHAR(30) NOT NULL,"
 					+ "Sender VARCHAR(10) NOT NULL,"
 					+ "ToPost VARCHAR(20) NOT NULL,"
-					+ "Receiver VARCHAR(20),"
-					+ "CONSTRAINT FK_Comment_User_1 FOREIGN KEY(Sender) REFERENCES [User](ID),"
-					+ "CONSTRAINT FK_Comment_Comment FOREIGN KEY(Receiver) REFERENCES Comment(CommentID),"
+					//+ "Receiver VARCHAR(20),"
+					+ "CONSTRAINT FK_Comment_User FOREIGN KEY(Sender) REFERENCES [User](ID),"
+					//+ "CONSTRAINT FK_Comment_Comment FOREIGN KEY(Receiver) REFERENCES Comment(CommentID),"
 					+ "CONSTRAINT FK_Comment_Post FOREIGN KEY(ToPost) REFERENCES Post(PostID));");
 			System.out.println("TABLE Comment CREATED");
+
+			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Recomment "
+					+ "RecommentID VARCHAR(20) NOT NULL PRIMARY KEY, "
+					+ "Receiver VARCHAR(20) NOT NULL, "
+					+ "CONSTRAINT FK_Recomment_Comment_1 FOREIGN KEY(RecommentID) REFERENCES Comment(CommentID), "
+					+ "CONSTRAINT FK_Recomment_Comment_2 FOREIGN KEY(Receiver) REFERENCES Comment(CommentID)");
+			System.out.println("TABLE Recomment CREATED");
 
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Messages "
 					+ "(MessageID VARCHAR(20) NOT NULL PRIMARY KEY,"
@@ -97,7 +104,7 @@ public class DBcon {
 		}
 	}
 
-	public static void close(Connection dbcon) {
+	public static void closeConnection(Connection dbcon) {
 		try {
 			/* if connection is still open */
 			if (dbcon != null)
@@ -105,6 +112,17 @@ public class DBcon {
 
 		} catch (SQLException e) {
 			System.out.println("Could not close connection with the database: " + e.getMessage());
+		}
+	}
+
+	public static void closeStatement(Statement stmt) {
+		try {
+			/* if statement is still open */
+			if (stmt != null) {
+				stmt.close(); // close the statement
+			}
+		} catch (SQLException e) {
+			System.out.println("Could not close the SQL statement: " + e.getMessage());
 		}
 	}
 

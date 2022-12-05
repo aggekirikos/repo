@@ -36,7 +36,7 @@ public class Post {
 		System.out.println("Add some hastags in your post");
 		System.out.println("Type null if you do not have other hastags to add");
 		int i = 0;
-		hastag = input.next();
+		hastags = input.next();
 		while(i < 5 && hastag != null) {
 			hastags[i+1] = hastag;
 			i++;
