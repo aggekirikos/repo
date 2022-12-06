@@ -23,7 +23,7 @@ public class Comment {
         PreparedStatement pst = null;
         try {
             connection = DBcon.openConnection();
-            pst = connection.prepareStatement(select);
+            pst = connection.prepareStatement("SELECT * FROM Comment WHERE CommentID=?");
             pst.setString(1, String.valueOf(id));
             ResultSet resultSet = pst.executeQuery();
             while (resultSet.next()) {
@@ -36,21 +36,20 @@ public class Comment {
             DBcon.closeStatement(pst);
             DBcon.closeConnection(connection);
         }
-
     }
-    public Comment( String content , String from, String to){
-        commentId++;
+    public Comment(int id, String content , String from, String to) {
+        commentId = id;
         commentContent = content;
-        /*this.from = from;
-         * this.to = to*/
+        this.from = from;
+        this.to = to;//Refers to specific post
     }
-    public void editComment(){
+    /*public void editComment(){
         System.out.println("PLease enter the new comment that will replace the current one");
         Scanner input = new Scanner(System.in);
 
         String a = input.nextLine();
         commentContent = a;
-    }
+    }*/
     public String getCommentContent(){
         return commentContent;
     }

@@ -37,10 +37,10 @@ public class Post {
 		System.out.println("Type null if you do not have other hastags to add");
 		int i = 0;
 		hastags = input.next();
-		while(i < 5 && hastag != null) {
-			hastags[i+1] = hastag;
+		while(i < 5 && hastags != null) {
+			hastags[i+1] = hastags;
 			i++;
-			hastag = input.next();
+			hastags = input.next();
 		}
 	}
 	public void createComment(String from) {
@@ -147,7 +147,7 @@ public class Post {
 		return "Title of the post:" + getTitle() + "/nContent of the post:" + getContent() + "/nThe time required for " +
 				"this recipe is" + getRecipeTime() + "/nThe cost for this recipe is:" + getRecipeCost() + "euros" + "/The" +
 				" difficulty Level of this recipe is:" + getDifficultyLevel() + "/nThe category of this recipe is:"
-				+ getRecipeCategory() + "/nThis post has " + Reviews + "stars" + "/nThis post has " /*+ comments[PostId] + "comments*/;
+				+ getRecipeCategory() + "/nThis post has " + Reviews + "stars" + "/nThis post's comments are" + comments ;
 	}
 }
 
