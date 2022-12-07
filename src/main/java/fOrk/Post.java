@@ -34,7 +34,7 @@ public class Post {
 		System.out.println("Add some hastags in your post");
 		System.out.println("Type null if you do not have other hastags to add");
 		int i = 0;
-		hastag = input.next();
+		String hastag = input.next();
 		while(i < 5 && hastag != null) {
 			hastags[i+1] = hastag;
 			i++;
@@ -53,17 +53,15 @@ public class Post {
 	}
 	public void makeReview() {
 		System.out.println("Do you like the post?Rate it with 0 to 5 stars");
+		do {
 		int rate = input.nextInt();
-		if (rate != 0) {
-			stars[rate -1] = stars[rate - 1] + 1;
-			evaluators = evaluators + 1;
-			for (int i = 0; i<5; i++) {
-				sum = sum + (i+1) * stars[i];
-			}
-			Reviews = sum/evaluators;
-		} else {
-			System.out.println("This post has no ratings");
+		} while (rate < 0 || rate > 6)
+		stars[rate] = stars[rate] + 1;
+		evaluators = evaluators + 1;
+		for (int i = 0; i<5; i++) {
+			sum = sum + (i+1) * stars[i];
 		}
+		Reviews = sum/evaluators;
 	}
 	public int getPostId() {
 		return PostId;
@@ -107,7 +105,7 @@ public class Post {
 	public double getReviews() {
 		return Reviews;
 	}
-	public void editPost() {
+	/*public void editPost() {
 		Scanner input =  new Scanner(System.in);
 		if (Creator == User.getID()) {
 			System.out.println("Change the Title of your post");
@@ -136,16 +134,16 @@ public class Post {
 		RecipeCategory = null;
 		DifficultyLevel = null;
 		Reviews = 0;
-		//comments[PostId] = null;
+		comments[PostId] = null;
 		}else{
 					System.out.println("You cannot delete this post");
 		}
-	}
-	public /*static*/ String getPost(int PostId) {
+	}*/
+	public String getPost() {
 		return "Title of the post:" + getTitle() + "/nContent of the post:" + getContent() + "/nThe time required for " +
 				"this recipe is" + getRecipeTime() + "/nThe cost for this recipe is:" + getRecipeCost() + "euros" + "/The" +
 				" difficulty Level of this recipe is:" + getDifficultyLevel() + "/nThe category of this recipe is:"
-				+ getRecipeCategory() + "/nThis post has " + Reviews + "stars" + "/nThis post has " /*+ comments[PostId] + "comments*/;
+				+ getRecipeCategory() + "/nThis post has " + Reviews + "stars" + "/nThis post's comments are" + comments;
 	}
 }
 

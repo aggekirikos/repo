@@ -76,6 +76,16 @@ public class DBcon {
          		+"CONSTRAINT FK_hastags_Post FOREIGN KEY(PostID) REFERENCES Post);");
          System.out.println("TABLE hastags CREATED");
 
+         stmt.executeUpdate("Create TABLE IF NOT EXISTS stars "
+         		+ "(star1 INT,"
+         		+"star2 INT,"
+         		+"star3 INT,"
+         		+"star4 INT,"
+         		+"star5 INT,"
+         		+"PostID VARCHAR(30) NOT NULL PRIMARY KEY,"
+         		+"CONSTRAINT FK_stars_Post FOREIGN KEY(PostID) REFERENCES Post);");
+         System.out.println("TABLE stars CREATED");
+
          stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Comment "
 					+ "(CommentID VARCHAR(20) NOT NULL PRIMARY KEY,"
 					+"Content VARCHAR(30) NOT NULL,"
