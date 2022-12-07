@@ -1,4 +1,4 @@
-package fOrk;
+package f0rk;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,75 +6,143 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Scanner;
-public class Messages2 {
-	int userid;
-	int receiverid;
-	String message;
+public class Messages3 {
 
-	public void getMessages(int userid) {
-		Statement s = dbcon.createStatement();
-		ResultSet rs = s.executeQuery("SELECT ID,firstname,lastname FROM Users,Messages WHERE receiver_userid=userid OR user_id=userid");
-		while(rs.next()) {
-			System.out.println(rs.getString("firstname, lastname"));
-		}
-	}//Εμφανίζει τα ατομα με τα οποία έχουμε συνομιλήσει
+	private int userid;
+	int maxid= 0;
 
-	public void getMessagesby_userid(int userid2) {
-		Statement s = dbcon.createStatement();
-		ResultSet rs = s.executeQuery("SELECT Message FROM Messages,Users WHERE " +
-				"(Messages.receiver_userid=userid2 AND Messages.user_id=userid) OR (Messages.receiver_userid=userid AND " +
-				"Messages.user_id=userid2)");
-		while (rs.next()) {
-			System.out.println(rs.getString("Messages"));
-		}
-	}//όλη η συνομιλία με ενα συγκεκριμενο ατομο
-
-	public void sendMessagestoDB(user, receiver, message) {
-		Statement s = dbcon.createStatement();
-		ResultSet rs = s.executeQuery("INSERT INTO Messages(user,receiver,message) VALUES(userid,receiverid,message)");
-	}//στέλνει το μηνυμα στη βαση
-
-	public void dbc() {
-		String url = "jdbc:sqlserver://sqlserver.dmst.aueb.gr;databaseName=DB74";
-		String user = "G574";
-		String password= "5f3045";
+	public void getChatbox(int userid) {
+		Connection conenction = null;
+		PreparedStatement stmt = null;
+		PreparedStatement stmt2 = null;
 		try {
-			Connection connection = DriverManager.getConnection(url, user, password);
+			connection = DBcon.openConnection();
+			stmt = connection.preparedStatement("SELECT Messages.Sender, Messages.Receiver FROM Messages WHERE Messages.Sender = userid OR Messages.Receiver = userid GROUP BY Sender, Receiver");
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				int sendersid = rs.getInt("Sender");
+				int receiversid = rs.getInt("Receiver");
+				if (sendersid == userid) {
+					stmt2 = connection.preparedStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Receiver = User.ID GROUP BY User.Username ");
+					ResultSet rs2 = stmt2.executeQuery();
+					while(rs2.next()) {
+						String receiversUN = rs2.getString("Username");
+						System.out.println(receiversUN);
+				    }
+				} else {
+					stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Sender = User.ID GROUP BY User.Username ");
+					ResultSet rs2 = stmt2.executeQuery();
+					while(rs2.next()) {
+						String sendersUN = rs2.getString("Username");
+						System.out.println(sendersUN);
+					}
+				}
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+		} finally {
+			DBcon.closeStatement(stmt);
+			DBcon.closeConnection(connection);
 		}
 	}
 
-	public void typeMessage(int userid, int receiver) {
-		System.out.println("Do you want to send message?");
+	public void getMessagesby_userid(int receiversID) {
+		Connection connection = null;
+        PreparedStatement stmt = null;
+        try {
+			connection = DBcon.openConnection();
+			stmt = connection.PreparedStatement("SELECT User.Username, Message.Content, Message.MDateTime FROM User, Messages INNER JOIN Messages ON Messages.Sender = User.ID WHERE (Sender = receiversID AND Receiver = userid) OR (Sender = userid AND Receiver = receicersID) ORDER BY MessageID DESC");
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				String MessageContent = rs.getString("Content");
+				String sendersUN = rs.getString("Username");
+				System.out.println(sendersUN + ":" + MessageContent);
+			}
+		} catch (SQLExcheption e) {
+		} finally {
+			DBcon.closeStatement(stmt);
+			DBcon.closeConnection(connection);
+		}
+	}
+
+
+	public void sendMessagestoDB(int user, int receiverid, String content) {
+		Connection connection = null;
+        PreparedStatement stmt = null;
+        maxid++;
+        try {
+			connection = DBcon.openConnection();
+			stmt = connection.PreparedStatement("INSERT INTO Messages(MessageID,Content,MTime, MDate, Sender, Receiver) VALUES(maxid,content,java.time.LocalTime.now(), java.time.LocalDate.now(), user, receiverid)");
+		    ResultSet rs = stmt.exequteQuery();
+		} catch (SQLException e) {
+		} finally {
+			DBcon.closeStatement(stmt);
+			DBcon.closeConnection(connection);
+		}
+	}
+
+	public Messages3(int userid, int receiversID, String content) {
+		this.content = content;
+		this.userid = userid;
+		this.receiversID = receiversID;
+		sendMessagestoDB(this.userid, this.receiversID, this.content);
+	}
+
+
+
+	public static void openConversation(String username) {
+		System.out.println("Do you want to open a conversation?");
 		Scanner s = new Scanner(System.in);
 		String answer;
-		answer = s.next();
-		if (answer = "yes") {
-			System.out.println("Type message");
-			Scanner s = new Scanner(System.in);
-			String message;
-			message = s.next();
-			sendMessagestoDB(userid, receiver, message);
-		} else if (answer =!"no") {
-			System.out.println("Wrong! You should answer 'yes' or 'no'");
-		}
-	}//ο χρήστης γράφει το μηνυμα και καλώ την μέθοδο που το στέλνει στη βάση
+		do {
+			answer = s.next();
+			if (answer == "yes") {
+				System.out.println("Type the user you want to chat");
+				String answer2;
+				Scanner s2 = new Scanner(System.in);
+				answer2 = s2.next();
+				receiver = answer2;
+				getMessagesby_userid(receiver);
+				receiverid = getIDfromUsername(receiver);
+				typeMessage(username, receiverid);
+			} else if (answer != "no") {
+				System.out.println("Wrong! Answer should be 'yes' or 'no'");
+			}
+		} while (answer != "yes" && answer != "no");
 
-	public void openChatbox(userid) {
-		System.out.println("Do you want to open a chat box");
-		String answer;
-		answer = s.next();
-		if (answer = "yes") {
-			System.out.println("Type the user you want to chat");
-			String answer2;
-			Scanner s2 = new Scanner(System.in);
-			answer2 = s2.next();
-			receiverid = getuserid(answer2);
-			getMessagesby_userid(int receiverid);
-			typeMessage(userid, receiverid);
-		} else if (answer =! no) {
-			System.out.println("Wrong! Answer should be 'yes' or 'no'");
+	}
+
+	public static void typeMessage(int Userid, int receiversid) {
+		System.out.println("Do you want to type a message?");
+		Scanner s3 = new Scanner(System.in);
+		String answer3;
+		do {
+			if (answer3 == "yes") {
+				System.out.println("Type message");
+				Scanner s4 = new Scanner(System.in);
+				String MessageContent;
+				MessageContent = s4.next();
+				Message message = new Message(Userid, receiversid, MessageContent);
+			} else if (answer3 != "no") {
+				System.out.println("Wrong! Answer should be 'yes' or 'no'.");
+			}
+		} while (answer3 != "yes" && answer3 != "no");
+	}
+
+	public int getIDfromUsername(String username) {
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			connection = DBcon.openConnection();
+			stmt = connection.preparedStatement("SELECT ID FROM USERS WHERE Username = username");
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				int rtrn = rs.getInt("ID");
+			}
+			return rtrn;
+		} catch (SQLException e) {
+		} finally {
+			DBcon.closeStatement(stmt);
+			DBcon.closeConnection(connection);
 		}
 	}
 }
