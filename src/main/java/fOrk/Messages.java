@@ -1,3 +1,5 @@
+package fOrk;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,20 +17,22 @@ public class Messages2 {
 		while(rs.next()) {
 			System.out.println(rs.getString("firstname, lastname"));
 		}
-	}
+	}//Εμφανίζει τα ατομα με τα οποία έχουμε συνομιλήσει
 
 	public void getMessagesby_userid(int userid2) {
 		Statement s = dbcon.createStatement();
-		ResultSet rs = s.executeQuery("SELECT Message FROM Messages,Users WHERE (Messages.receiver_userid=userid2 AND Messages.user_id=userid) OR (Messages.receiver_userid=userid AND Messages.user_id=userid2)");
+		ResultSet rs = s.executeQuery("SELECT Message FROM Messages,Users WHERE " +
+				"(Messages.receiver_userid=userid2 AND Messages.user_id=userid) OR (Messages.receiver_userid=userid AND " +
+				"Messages.user_id=userid2)");
 		while (rs.next()) {
 			System.out.println(rs.getString("Messages"));
 		}
-	}
+	}//όλη η συνομιλία με ενα συγκεκριμενο ατομο
 
 	public void sendMessagestoDB(user, receiver, message) {
 		Statement s = dbcon.createStatement();
 		ResultSet rs = s.executeQuery("INSERT INTO Messages(user,receiver,message) VALUES(userid,receiverid,message)");
-	}
+	}//στέλνει το μηνυμα στη βαση
 
 	public void dbc() {
 		String url = "jdbc:sqlserver://sqlserver.dmst.aueb.gr;databaseName=DB74";
@@ -55,11 +59,10 @@ public class Messages2 {
 		} else if (answer =!"no") {
 			System.out.println("Wrong! You should answer 'yes' or 'no'");
 		}
-	}
+	}//ο χρήστης γράφει το μηνυμα και καλώ την μέθοδο που το στέλνει στη βάση
 
 	public void openChatbox(userid) {
 		System.out.println("Do you want to open a chat box");
-		Scanner s = new Scanner(System.in);
 		String answer;
 		answer = s.next();
 		if (answer = "yes") {
@@ -75,8 +78,4 @@ public class Messages2 {
 		}
 	}
 }
-
-
-
-
 

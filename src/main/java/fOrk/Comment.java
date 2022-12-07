@@ -1,25 +1,55 @@
+package fOrk;
+
+
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Scanner;
+
 public class Comment {
 
     //Comment comment
-    protected static int commentId;
+    protected int commentId;
     protected String commentContent;
-    protected Recomment[] recomments;
+   // protected Recomment[] recomments;
     protected String from;
     protected String to;
-    public Comment( String content , String from, String to){
-        commentId++;
-        commentContent = content;
-        /*this.from = from;
-         * this.to = to*/
+
+    public Comment(int id) {
+        this.commentId = id;
+        String select = "SELECT * FROM Comment WHERE CommentID=?";
+        Connection connection = null;
+        PreparedStatement pst = null;
+        try {
+            connection = DBcon.openConnection();
+            pst = connection.prepareStatement("SELECT * FROM Comment WHERE CommentID=?");
+            pst.setString(1, String.valueOf(id));
+            ResultSet resultSet = pst.executeQuery();
+            while (resultSet.next()) {
+                this.commentContent = resultSet.getString("Content");
+                this.to = resultSet.getString("ToPost");
+                this.from = resultSet.getString("Sender");
+            }
+        } catch (SQLException e) {
+        }  finally {
+            DBcon.closeStatement(pst);
+            DBcon.closeConnection(connection);
+        }
     }
-    public void editComment(){
+    public Comment(int id, String content , String from, String to) {
+        commentId = id;
+        commentContent = content;
+        this.from = from;
+        this.to = to;//Refers to specific post
+    }
+    /*public void editComment(){
         System.out.println("PLease enter the new comment that will replace the current one");
         Scanner input = new Scanner(System.in);
 
         String a = input.nextLine();
         commentContent = a;
-    }
+    }*/
     public String getCommentContent(){
         return commentContent;
     }
