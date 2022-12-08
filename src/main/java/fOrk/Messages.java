@@ -1,29 +1,41 @@
-package f0rk;
+package fOrk;
 
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.Scanner;
-public class Messages3 {
+
+public class Messages {
 
 	private int userid;
+	private int receiversID;
+	private String content;
 	int maxid= 0;
 
+    public Messages(int userid, int receiversID, String content) {
+		this.content = content;
+		this.userid = userid;
+		this.receiversID = receiversID;
+		sendMessagestoDB(this.userid, this.receiversID, this.content);
+	}
+
 	public void getChatbox(int userid) {
-		Connection conenction = null;
+		Connection connection = null;
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
 		try {
 			connection = DBcon.openConnection();
-			stmt = connection.preparedStatement("SELECT Messages.Sender, Messages.Receiver FROM Messages WHERE Messages.Sender = userid OR Messages.Receiver = userid GROUP BY Sender, Receiver");
+			stmt = connection.prepareStatement("SELECT Messages.Sender, Messages.Receiver FROM Messages WHERE Messages.Sender = userid OR Messages.Receiver = userid GROUP BY Sender, Receiver");
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				int sendersid = rs.getInt("Sender");
 				int receiversid = rs.getInt("Receiver");
 				if (sendersid == userid) {
-					stmt2 = connection.preparedStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Receiver = User.ID GROUP BY User.Username ");
+					stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Receiver = User.ID GROUP BY User.Username ");
 					ResultSet rs2 = stmt2.executeQuery();
 					while(rs2.next()) {
 						String receiversUN = rs2.getString("Username");
@@ -50,14 +62,14 @@ public class Messages3 {
         PreparedStatement stmt = null;
         try {
 			connection = DBcon.openConnection();
-			stmt = connection.PreparedStatement("SELECT User.Username, Message.Content, Message.MDateTime FROM User, Messages INNER JOIN Messages ON Messages.Sender = User.ID WHERE (Sender = receiversID AND Receiver = userid) OR (Sender = userid AND Receiver = receicersID) ORDER BY MessageID DESC");
+			stmt = connection.prepareStatement("SELECT User.Username, Message.Content, Message.MDateTime FROM User, Messages INNER JOIN Messages ON Messages.Sender = User.ID WHERE (Sender = receiversID AND Receiver = userid) OR (Sender = userid AND Receiver = receicersID) ORDER BY MessageID DESC");
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				String MessageContent = rs.getString("Content");
 				String sendersUN = rs.getString("Username");
 				System.out.println(sendersUN + ":" + MessageContent);
 			}
-		} catch (SQLExcheption e) {
+		} catch (SQLException e) {
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
@@ -71,7 +83,7 @@ public class Messages3 {
         maxid++;
         try {
 			connection = DBcon.openConnection();
-			stmt = connection.PreparedStatement("INSERT INTO Messages(MessageID,Content,MTime, MDate, Sender, Receiver) VALUES(maxid,content,java.time.LocalTime.now(), java.time.LocalDate.now(), user, receiverid)");
+			stmt = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MTime, MDate, Sender, Receiver) VALUES(maxid,content,java.time.LocalTime.now(), java.time.LocalDate.now(), user, receiverid)");
 		    ResultSet rs = stmt.exequteQuery();
 		} catch (SQLException e) {
 		} finally {
@@ -80,16 +92,7 @@ public class Messages3 {
 		}
 	}
 
-	public Messages3(int userid, int receiversID, String content) {
-		this.content = content;
-		this.userid = userid;
-		this.receiversID = receiversID;
-		sendMessagestoDB(this.userid, this.receiversID, this.content);
-	}
-
-
-
-	public static void openConversation(String username) {
+	public static void openConversation(String userid) {
 		System.out.println("Do you want to open a conversation?");
 		Scanner s = new Scanner(System.in);
 		String answer;
@@ -103,7 +106,7 @@ public class Messages3 {
 				receiver = answer2;
 				getMessagesby_userid(receiver);
 				receiverid = getIDfromUsername(receiver);
-				typeMessage(username, receiverid);
+				typeMessage(userid, receiverid);
 			} else if (answer != "no") {
 				System.out.println("Wrong! Answer should be 'yes' or 'no'");
 			}
@@ -111,7 +114,7 @@ public class Messages3 {
 
 	}
 
-	public static void typeMessage(int Userid, int receiversid) {
+	public static void typeMessage(int userid, int receiversid) {
 		System.out.println("Do you want to type a message?");
 		Scanner s3 = new Scanner(System.in);
 		String answer3;
@@ -121,7 +124,7 @@ public class Messages3 {
 				Scanner s4 = new Scanner(System.in);
 				String MessageContent;
 				MessageContent = s4.next();
-				Message message = new Message(Userid, receiversid, MessageContent);
+				Message message = new Message(userid, receiversid, MessageContent);
 			} else if (answer3 != "no") {
 				System.out.println("Wrong! Answer should be 'yes' or 'no'.");
 			}
@@ -133,7 +136,7 @@ public class Messages3 {
 		PreparedStatement stmt = null;
 		try {
 			connection = DBcon.openConnection();
-			stmt = connection.preparedStatement("SELECT ID FROM USERS WHERE Username = username");
+			stmt = connection.prepareStatement("SELECT ID FROM USERS WHERE Username = username");
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				int rtrn = rs.getInt("ID");
