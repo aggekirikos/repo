@@ -1,5 +1,7 @@
 package fOrk;
 
+
+
 import java.util.Scanner;
 public class Μain {
 	public static void main(String args[]){
@@ -58,7 +60,7 @@ public class Μain {
 			}
 		} while (j != -1);
 	}
-	private static void searchPost(String a) {
+	private static void searchPost(String a, /*User user*/) {
 		Scanner input2 = new Scanner(System.in);
 		int ttl = 0;
 			do {
@@ -80,7 +82,12 @@ public class Μain {
 				//καλείται η μέθοδος του review
 				System.out.println("Would you like to make a commen/t? Yes/No");
 				//καλούμε κατασκευαστη Comment
+				System.out.println("Would you like to make this user your cookmate? Yes/No");
+				//kaloume method pou kanw cookmate ton creator (user.makeCookmates(creatorID)) (thelw to creatorId tou)
+				//methodos 
 				//ttl = -1;
 			} while(ttl != -1);
 	}//end of searchPost
+	
+	
 }//end of class

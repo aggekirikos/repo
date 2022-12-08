@@ -1,6 +1,9 @@
 package fOrk;
 
 import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class User {
 
@@ -121,5 +124,23 @@ public class User {
 			System.out.println(post[j]);
 			j = j + 1;
 		}
+	}
+
+	public void makeCookmates(int creatorID) {
+		//TODO: na ton prosthesoume kai sto arraylist stigmiotypoy me ta cookmates
+			Connection connection= null;
+			PreparedStatement stmt= null;
+			try {
+				connection = DBcon.openConnection();
+				stmt = connection.prepareStatement("INSERT INTO Cookmates(UserID, CookmateID) VALUES(?,?)");
+				stmt.setInt(1, getID());
+				stmt.setInt(2, creatorID);
+			    stmt.executeUpdate();
+			} catch (SQLException e) {
+				System.out.println("Something went wrong while making this user your cookmate.");
+			} finally {
+				DBcon.closeStatement(stmt);
+				DBcon.closeConnection(connection);
+			}
 	}
 }
