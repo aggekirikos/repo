@@ -37,14 +37,16 @@ public class Messages {
 				int sendersid = rs.getInt("Sender");
 				int receiversid = rs.getInt("Receiver");
 				if (sendersid == userid) {
-					stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Receiver = User.ID GROUP BY User.Username ");
+					stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Receiver = User.ID WHERE Messages.Sender = ? GROUP BY User.Username ");
+					stmt2.setInt(1, userid);
 					ResultSet rs2 = stmt2.executeQuery();
 					while(rs2.next()) {
 						String receiversUN = rs2.getString("Username");
 						System.out.println(receiversUN);
 				    }
 				} else {
-					stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Sender = User.ID GROUP BY User.Username ");
+					stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Sender = User.ID WHERE Messages.Receiver = ? GROUP BY User.Username ");
+					stmt2.setInt(1, userid);
 					ResultSet rs2 = stmt2.executeQuery();
 					while(rs2.next()) {
 						String sendersUN = rs2.getString("Username");
@@ -64,7 +66,7 @@ public class Messages {
         PreparedStatement stmt = null;
         try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("SELECT User.Username, Messages.Content, Messages.MDateTime FROM User, Messages INNER JOIN Messages ON Messages.Sender = User.ID WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?) ORDER BY MessageID DESC");
+			stmt = connection.prepareStatement("SELECT User.Username, Messages.Content, Messages.MDateTime FROM User, Messages INNER JOIN Messages ON Messages.Sender = User.ID WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?) ORDER BY MessageID");
 			stmt.setInt(1, receiversID);
 			stmt.setInt(2, userid);
 			stmt.setInt(3, userid);
