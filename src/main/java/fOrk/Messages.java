@@ -29,7 +29,9 @@ public class Messages {
 		PreparedStatement stmt2 = null;
 		try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("SELECT Messages.Sender, Messages.Receiver FROM Messages WHERE Messages.Sender = userid OR Messages.Receiver = userid GROUP BY Sender, Receiver");
+			stmt = connection.prepareStatement("SELECT Messages.Sender, Messages.Receiver FROM Messages WHERE Messages.Sender = ? OR Messages.Receiver = ? GROUP BY Sender, Receiver");
+			stmt.setInt(1, userid);
+			stmt.setInt(2, userid);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				int sendersid = rs.getInt("Sender");
@@ -62,7 +64,11 @@ public class Messages {
         PreparedStatement stmt = null;
         try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("SELECT User.Username, Message.Content, Message.MDateTime FROM User, Messages INNER JOIN Messages ON Messages.Sender = User.ID WHERE (Sender = receiversID AND Receiver = userid) OR (Sender = userid AND Receiver = receicersID) ORDER BY MessageID DESC");
+			stmt = connection.prepareStatement("SELECT User.Username, Messages.Content, Messages.MDateTime FROM User, Messages INNER JOIN Messages ON Messages.Sender = User.ID WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?) ORDER BY MessageID DESC");
+			stmt.setInt(1, receiversID);
+			stmt.setInt(2, userid);
+			stmt.setInt(3, userid);
+			stmt.setInt(4, receiversID);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				String MessageContent = rs.getString("Content");
@@ -83,7 +89,11 @@ public class Messages {
         maxid++;
         try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MTime, MDate, Sender, Receiver) VALUES(maxid,content,java.time.LocalTime.now(), java.time.LocalDate.now(), user, receiverid)");
+			stmt = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MTime, MDate, Sender, Receiver) VALUES(?, ?, ?, ?, ?, ?)");
+		    stmt.setInt(1, maxid);
+		    stmt.setString(2, content);
+		    stmt.setInt(5, user);
+		    stmt.setInt(6, receiverid);
 		    ResultSet rs = stmt.executeQuery();
 		} catch (SQLException e) {
 		} finally {
@@ -118,6 +128,7 @@ public class Messages {
 		System.out.println("Do you want to type a message?");
 		Scanner s3 = new Scanner(System.in);
 		String answer3 = null;
+		answer3 = s3.next();
 		do {
 			if (answer3 == "yes") {
 				System.out.println("Type message");
@@ -137,7 +148,8 @@ public class Messages {
 		int rtrn = 0;
 		try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("SELECT ID FROM USERS WHERE Username = username");
+			stmt = connection.prepareStatement("SELECT ID FROM USERS WHERE Username = ?");
+			stmt.setString(1, username);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				rtrn = rs.getInt("ID");
@@ -151,4 +163,5 @@ public class Messages {
 		return rtrn;
 	}
 }
+
 
