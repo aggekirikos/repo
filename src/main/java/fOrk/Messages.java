@@ -92,7 +92,11 @@ public class Messages {
 		}
 	}
 
+<<<<<<< HEAD
 	public static void openConversation(String userid) {
+=======
+	public static void openConversation(String username) {
+>>>>>>> 55076b82dd4cb7d39aae6b740b5fa38822885c6d
 		System.out.println("Do you want to open a conversation?");
 		Scanner s = new Scanner(System.in);
 		String answer;
