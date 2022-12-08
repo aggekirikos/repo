@@ -92,11 +92,7 @@ public class Messages {
 		}
 	}
 
-<<<<<<< HEAD
-	public static void openConversation(String userid) {
-=======
-	public static void openConversation(String username) {
->>>>>>> 55076b82dd4cb7d39aae6b740b5fa38822885c6d
+	public void openConversation(int userid) {
 		System.out.println("Do you want to open a conversation?");
 		Scanner s = new Scanner(System.in);
 		String answer;
@@ -107,9 +103,9 @@ public class Messages {
 				String answer2;
 				Scanner s2 = new Scanner(System.in);
 				answer2 = s2.next();
-				receiver = answer2;
-				getMessagesby_userid(receiver);
-				receiverid = getIDfromUsername(receiver);
+				String receiver = answer2;
+				int receiverid = getIDfromUsername(receiver);
+				getMessagesby_userid(receiverid);
 				typeMessage(userid, receiverid);
 			} else if (answer != "no") {
 				System.out.println("Wrong! Answer should be 'yes' or 'no'");
@@ -128,7 +124,7 @@ public class Messages {
 				Scanner s4 = new Scanner(System.in);
 				String MessageContent;
 				MessageContent = s4.next();
-				Message message = new Message(userid, receiversid, MessageContent);
+				Messages message = new Messages(userid, receiversid, MessageContent);
 			} else if (answer3 != "no") {
 				System.out.println("Wrong! Answer should be 'yes' or 'no'.");
 			}
@@ -144,8 +140,8 @@ public class Messages {
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				int rtrn = rs.getInt("ID");
+				return rtrn;
 			}
-			return rtrn;
 		} catch (SQLException e) {
 		} finally {
 			DBcon.closeStatement(stmt);
