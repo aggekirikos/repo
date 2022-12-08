@@ -84,7 +84,7 @@ public class Messages {
         try {
 			connection = DBcon.openConnection();
 			stmt = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MTime, MDate, Sender, Receiver) VALUES(maxid,content,java.time.LocalTime.now(), java.time.LocalDate.now(), user, receiverid)");
-		    ResultSet rs = stmt.exequteQuery();
+		    ResultSet rs = stmt.executeQuery();
 		} catch (SQLException e) {
 		} finally {
 			DBcon.closeStatement(stmt);
@@ -117,7 +117,7 @@ public class Messages {
 	public static void typeMessage(int userid, int receiversid) {
 		System.out.println("Do you want to type a message?");
 		Scanner s3 = new Scanner(System.in);
-		String answer3;
+		String answer3 = null;
 		do {
 			if (answer3 == "yes") {
 				System.out.println("Type message");
@@ -134,19 +134,21 @@ public class Messages {
 	public int getIDfromUsername(String username) {
 		Connection connection = null;
 		PreparedStatement stmt = null;
+		int rtrn = 0;
 		try {
 			connection = DBcon.openConnection();
 			stmt = connection.prepareStatement("SELECT ID FROM USERS WHERE Username = username");
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
-				int rtrn = rs.getInt("ID");
-				return rtrn;
+				rtrn = rs.getInt("ID");
+
 			}
 		} catch (SQLException e) {
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
 		}
+		return rtrn;
 	}
 }
 
