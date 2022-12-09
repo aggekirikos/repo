@@ -4,10 +4,6 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.SQLException;
 public class DBcon {
-<<<<<<< HEAD
-=======
-
->>>>>>> 08351b776716bc3e95b8cd5426cce268d31ee8f6
 	public static Connection openConnection() {
 		/* Initialize Connection type object */
 		Connection dbcon = null;
@@ -45,21 +41,15 @@ public class DBcon {
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Post "
 					+ "(PostID INT NOT NULL PRIMARY KEY,"
 					+ "PostStatus INT,"
-					+ "RecipeTime TIME,"
+					+ "RecipeTime INT,"
 					+ "Content VARCHAR(800) NOT NULL,"
 					+ "Title VARCHAR(20) NOT NULL,"
 					+ "RecipeCategory VARCHAR(20),"
 					+ "DifficultyLevel VARCHAR(20),"
-<<<<<<< HEAD
 					+ "RecipeCost NUMERIC(5,2),"
 					+ "Reviews NUMERIC(5,2)"
 					+ "Evaluators INT"
 					+ "Creator VARCHAR(10) NOT NULL,"
-=======
-					+ "RecipeCost VARCHAR(5),"
-					+ "Reviews INT,"
-					+ "Creator INT NOT NULL,"
->>>>>>> 08351b776716bc3e95b8cd5426cce268d31ee8f6
 					+ "CONSTRAINT FK_Post_User FOREIGN KEY(Creator) REFERENCES [User](ID));");
 			System.out.println("TABLE Post CREATED");
 
@@ -71,7 +61,6 @@ public class DBcon {
 			System.out.println("TABLE Hashtags CREATED");
 
 			stmt.executeUpdate("Create TABLE IF NOT EXISTS stars "
-<<<<<<< HEAD
 					+"(star1 INT,"
 					+"star2 INT,"
 					+"star3 INT,"
@@ -80,21 +69,11 @@ public class DBcon {
 					+"PostID INT NOT NULL PRIMARY KEY,"
 					+"CONSTRAINT FK_stars_Post FOREIGN KEY(PostID) REFERENCES Post);");
 			System.out.println("TABLE stars CREATED");
-=======
-     	         	+ "(star1 INT,"
-             		+ "star2 INT,"
-            		+ "star3 INT,"
-            		+ "star4 INT,"
-            		+ "star5 INT,"
-             		+ "PostID VARCHAR(30) NOT NULL PRIMARY KEY,"
-     	        	+ "CONSTRAINT FK_stars_Post FOREIGN KEY(PostID) REFERENCES Post);");
-            System.out.println("TABLE stars CREATED");
->>>>>>> 08351b776716bc3e95b8cd5426cce268d31ee8f6
 
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Comment "
 					+ "(CommentID INT NOT NULL PRIMARY KEY,"
 					+ "Content VARCHAR(30) NOT NULL,"
-					+ "Sender INT NOT NULL,"
+					+ "Sender VARCHAR(10) NOT NULL,"
 					+ "ToPost VARCHAR(20) NOT NULL,"
 					//+ "Receiver VARCHAR(20),"
 					+ "CONSTRAINT FK_Comment_User FOREIGN KEY(Sender) REFERENCES [User](ID),"
@@ -114,8 +93,8 @@ public class DBcon {
 					+ "(MessageID INT NOT NULL PRIMARY KEY,"
 					+ "Content VARCHAR(500) NOT NULL,"
 					+ "MDateTime VARCHAR(25) NOT NULL,"
-					+ "Sender INT NOT NULL,"
-					+ "Receiver INT NOT NULL,"
+					+ "Sender VARCHAR(10) NOT NULL,"
+					+ "Receiver VARCHAR(10) NOT NULL,"
 					+ "CONSTRAINT FK_Messages_User_1 FOREIGN KEY(Sender) REFERENCES [User](ID),"
 					+ "CONSTRAINT FK_Messages_User_2 FOREIGN KEY(Receiver) REFERENCES [User](ID));");
 			System.out.println("TABLE Messages CREATED");
@@ -129,9 +108,6 @@ public class DBcon {
 			System.out.println("TABLE Cookmates CREATED");
 		} catch (Exception e) {
 			System.out.println("Could not create tables: " + e.getMessage());
-		} finally {
-			closeStatement(stmt);
-			closeConnection(dbcon);
 		}
 	}
 	public static void closeConnection(Connection dbcon) {
