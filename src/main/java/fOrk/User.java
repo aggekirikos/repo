@@ -3,14 +3,14 @@ package fOrk;
 import java.util.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class User {
 
-	Scanner myscan = new Scanner(System.in);
-	Scanner myscan1 = new Scanner(System.in);
-	Scanner myscan2 = new Scanner(System.in);
-	Scanner myscan3 = new Scanner(System.in);
+	static Scanner scanner1 = new Scanner(System.in);
+	static Scanner scanner2 = new Scanner(System.in);
+	static Scanner scanner3 = new Scanner(System.in);
 
 	int userId = 0;
 	String password;
@@ -21,16 +21,16 @@ public class User {
 	ArrayList<Post> posts = new ArrayList<Post>();
 	Post pst = new Post();
 
-	public User() {
-		userId = userId + 1;
-		System.out.println("Please create Password");
-		password = setPassword();
-		System.out.println("Please create Username");
-		username = setUsername();
-		System.out.println("Please create Name");
-		name = setName();
-		System.out.println("Please create small Bio");
-		bio = setBio();
+	public User(String pass, String uname, String nm, String BIO) {
+		userId = maxId();
+		//System.out.println("Please create Password");
+		password = pass;
+		//System.out.println("Please create Username");
+		username = uname;
+		//System.out.println("Please create Name");
+		name = nm;
+		//System.out.println("Please create small Bio");
+		bio = BIO;
 		Connection connection= null;
 		PreparedStatement stmt= null;
 		try {
@@ -59,7 +59,7 @@ public class User {
 		PreparedStatement prst = null;
 		try {
 			connection = DBcon.openConnection();
-			prst = connection.preparedStatement();
+			prst = connection.prepareStatement(select);
 			prst.setString(1, String.valueOf(id));
 			ResultSet resultSet = prst.executeQuery();
 			while (resultSet.next()){
@@ -80,7 +80,7 @@ public class User {
 		PreparedStatement stat = null;
 		try {
 			connection = DBcon.openConnection();
-			stat = con.preparedStatement();
+			stat = con.preparedStatement(slct);
 			stat.setString(1, String.valueOf(id));
 			ResultSet resultSet = stat.executeQuery();
 			while (resultSet.next()){
@@ -101,8 +101,7 @@ public class User {
 		return userId;
 	}
 
-	public String setPassword() {
-		String tempPassword = null;
+	public void setPassword(int tempPassword) {
 		boolean flag = false;
 		while (flag == false) {
 			tempPassword = myscan.nextLine();
@@ -113,7 +112,7 @@ public class User {
 				System.out.println("Password must have over 8 charecters!");
 			}
 		}
-		return tempPassword;
+		password = tempPassword;
 	}
 
 	public String getPassword() {
@@ -121,11 +120,8 @@ public class User {
 	}
 
 
-	public String setUsername() {
-		String tempUsername = "null";
-		System.out.println("Please give a Username");
-		tempUsername = myscan1.nextLine();
-		return tempUsername;
+	public void setUsername(String tempUsername) {
+		username = tempUsername;
 	}
 
 	public String getUsername() {
@@ -133,22 +129,16 @@ public class User {
 	}
 
 
-	public String setName() {
-		String tempName = "null";
-		System.out.println("Please give a Name");
-		tempName = myscan2.nextLine();
-		return tempName;
+	public void setName(String tempName) {
+		name = tempName;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public String setBio() {
-		String tempBio = "null";
-		System.out.println("Please give a Bio");
-		tempBio = myscan3.nextLine();
-		return tempBio;
+	public void setBio(tempBio) {
+		bio = tempBio;
 	}
 
 	public String getBio(){
@@ -161,7 +151,7 @@ public class User {
 
 	public void printPosts() {
 		int j = 0;
-		while ( post[j] != null) {  //make it arraylist
+		while ( posts.next() != null) {
 			System.out.println("\nPost " + (j+1));
 			j = j + 1;
 		}
@@ -171,15 +161,16 @@ public class User {
 		System.out.println("If you want to Edit your Username press 1\n");
 		System.out.println("If you want to Edit your Name press 2\n");
 		System.out.println("If you want to Edit your Bio press 3\n");
-		int temp2 = myscan2.nextLine();
+		int temp2 = myscan2.nextInt();
+		Connection connection= null;
+		PreparedStatement stmt= null;
 		if (temp2 == 1) {
-			username = setUsername();
-			Connection connection= null;
-			PreparedStatement stmt= null;
+			username =  = scanner1.nextLine();
 			try {
 				connection = DBcon.openConnection();
-				stmt = connection.prepareStatement("UPDATE User SET Username=?");
+				stmt = connection.prepareStatement("UPDATE User SET Username=? WHERE ID=?");
 				stmt.setString(1, username);
+				stmt.setInt(2, userId);
 			    int i = stmt.executeUpdate();
 			    if (i != 0) {
 					System.out.println("\nUpdated!\n");
@@ -197,13 +188,12 @@ public class User {
 			}
 		}
 		else if (temp2 == 2) {
-			name = setName();
-			Connection connection= null;
-			PreparedStatement stmt= null;
+			name =  = scanner2.nextLine();
 			try {
 				connection = DBcon.openConnection();
-				stmt = connection.prepareStatement("UPDATE User SET Name=?");
+				stmt = connection.prepareStatement("UPDATE User SET Name=? WHERE ID=?");
 				stmt.setString(1, name);
+				stmt.setString(2, userId);
 			    int i = stmt.executeUpdate();
 				if (i != 0) {
 					System.out.println("\nUpdated!\n");
@@ -221,11 +211,12 @@ public class User {
 			}
 		}
 		else if (temp2 == 3) {
-			bio = setBio();
+			bio =  = scanner3.nextLine();
 			try {
 				connection = DBcon.openConnection();
-				stmt = connection.prepareStatement("UPDATE User SET Bio=?");
+				stmt = connection.prepareStatement("UPDATE User SET Bio=? WHERE ID=?");
 				stmt.setString(1, bio);
+				stmt.setString(2, userId);
 				int i = stmt.executeUpdate();
 				if (i != 0) {
 					System.out.println("\nUpdated!\n");
@@ -245,7 +236,6 @@ public class User {
 	}
 
 	public void makeCookmates(int creatorID) {
-		//TODO: na ton prosthesoume kai sto arraylist stigmiotypoy me ta cookmates
 		Connection connection= null;
 		PreparedStatement stmt= null;
 		try {
@@ -255,10 +245,28 @@ public class User {
 			stmt.setInt(2, creatorID);
 		    stmt.executeUpdate();
 		} catch (SQLException e) {
-			System.out.println("Something went wrong while making this user your cookmate.");
+			System.out.println("Something went wrong while trying to make this user your cookmate.");
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
 		}
+	}
+
+	public static int maxId() {
+		String slct = "SELECT MAX(userId) FROM User";
+		Connection con = null;
+		PreparedStatement stat = null;
+		try {
+			connection = DBcon.openConnection();
+			slct = con.preparedStatement.executeUpdate();
+			userId = slct.getInt(1);
+		}
+		catch (SQLException e) {
+		}
+		finally {
+			DBcon.closeStatement(slct);
+			DBcon.closeConnection(con);
+		}
+		return userId;
 	}
 }
