@@ -59,8 +59,37 @@ public class �ain2 {
 					//���������� ������������ Message
 					break;
 				case 3 :
-					Post post = new Post();
-					//����� ������� showPost
+					System.out.println("Please enter the title, the content, the cost,"
+												+" the recipe time, /n the recipe category, difficulty level" +
+												" (simple, medium, difficult) and 1-5 hastags. Please follow the correct order : ");
+					String title = input2.nextLine();
+					String content = input2.nextLine();
+					double cost = input2.nextDouble();
+					int time = input2.nextInt();
+					String category = input2.nextLine();
+					String diffLevel = input2.nextLine();
+					String[] hastag = new String[5];
+					int c = 0;
+					do {
+						hastag[c] = input2.nextLine();
+						c++;
+						System.out.println("If you don;t want to enter more hastags, please type 'null'");
+					} while (hastag != null && c<5);
+					Connection con = DBcon.openConnection();
+					Statement stm = null;
+					int prevPostId = 0;
+					try {
+						stm = con.createStatement();
+						ResultSet result = stm.executeQuery("SELECT max(PostID) FROM Post");
+						prevPostId = result.getInt(1);
+					} catch (SQLException e) {
+					throw new RuntimeException(e);
+					} finally {
+							DBcon.closeStatement(stm);
+							DBcon.closeConnection(con);
+					}
+					Post post = new Post(prevPostId, title, content, cost, time, diffLevel, category, hastag);
+					System.out.println(post.getPost());
 					break;
 				case 4 :
 					System.out.println("\nPROFILE ");
@@ -82,32 +111,57 @@ public class �ain2 {
 			}
 		} while (j != -1);
 	}
+
 	private static void searchPost(String a, /*User user*/) {
 		Scanner input2 = new Scanner(System.in);
-		int ttl = 0;
+			int ttl = 0;
 			do {
-				System.out.print("Give 1 words correlated with the recipe you want, seperated wiht comma: ");
+				System.out.print("Give 1 words correlated with the recipe you want");
 				String rec = input2.nextLine();
-				//separate rec and taking the substrings as the hastags for searcing
-				//searcing and display titles of posts. �� ������������ �� ������
-				//������������ 1 ��� � ���� ��� hasNext
-				System.out.print("Choose the recipe you want by writing the number of /the title, or get back to " +
+				//searcing and display titles of posts. θα εμφανίζονται οι τίτλοι
+				//αριθμοιμένοι 1 εως ν μεσω της hasNext
+				//ΒΑΓΓΕΛΗΣ
+				System.out.print("Choose the recipe you want by writing the number of the title, or get /n back to " +
 						"the main menu by typing -1");
 				ttl = input2.nextInt();
 				if (ttl == -1) {
 					break;
 				}
 				//Select post end displaiy it
-				//������� ������� ��� ������� �� ���� id
-				//��������� ���� ���� ��� ��������� ��� ��� ��� ������������ ����� ���������
+				//Μέθοδος Βαγγέλη που βρίσκει το ποστ id
+				int i = 0; //id που θα επιστρεφεται
+				Post post = new Post(i);
+				post.getFullPost();
 				System.out.println("Would you like to review it? Yes/No");
-				//�������� � ������� ��� review
-				System.out.println("Would you like to make a commen/t? Yes/No");
-				//������� ������������ Comment
-				System.out.println("Would you like to make this user your cookmate? Yes/No");
-				//kaloume method pou kanw cookmate ton creator (user.makeCookmates(creatorID)) (thelw to creatorId tou)
-				//methodos
-				//ttl = -1;
+				//καλείται η μέθοδος του review με ορισμα το αντικείμενο Post που εμφανιζεται παραπανω
+				//post.makeReview
+				System.out.println("Would you like to make a comment? Yes/No");
+				String answer = input2.next();
+				if (answer == "Yes") {
+					String a = "a";
+					int postId = post.getPostId();
+					Connection connection = null;
+					PreparedStatement stm = null;
+					int commentId = 0;
+					try {
+						connection = DBcon.openConnection();
+						stm = (PreparedStatement) connection.createStatement("SELECT MAX(CommentID) FROM Comment");
+						ResultSet resultSet = stm.executeQuery();
+						commentId = resultSet.getInt(1);
+					} catch (Exception e) {}
+						post.createComment(a, postId, commentId);
+					}
+					System.out.println("Would you like to make recomment? Yes/No");
+					answer = input2.next();
+					if (answer == "Yes") {
+						System.out.println("please enter the id of the comment that you want to answer");
+						int ans = input2.nextInt();
+						Comment comment = new Comment(ans);
+						String username = null; //δεν εχει χρησιμοτητα το κανω για να δουλεψει
+						comment.makeReComment(username, post.getPostId(), ans);
+					}
+				}
+			//ttl = -1;
 			} while(ttl != -1);
 	}//end of searchPost
 
