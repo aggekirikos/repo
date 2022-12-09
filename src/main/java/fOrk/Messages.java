@@ -133,21 +133,23 @@ public class Messages {
 	}
 
 	public static void typeMessage(int userid, int receiversid) {
-		System.out.println("Do you want to type a message?");
-		Scanner s3 = new Scanner(System.in);
-		String answer3 = null;
-		answer3 = s3.next();
 		do {
-			if (answer3 == "yes") {
-				System.out.println("Type message");
-				Scanner s4 = new Scanner(System.in);
-				String MessageContent;
-				MessageContent = s4.next();
-				Messages message = new Messages(userid, receiversid, MessageContent);
-			} else if (answer3 != "no") {
-				System.out.println("Wrong! Answer should be 'yes' or 'no'.");
-			}
-		} while (answer3 != "yes" && answer3 != "no");
+			System.out.println("Do you want to type a message?");
+			Scanner s3 = new Scanner(System.in);
+			String answer3 = null;
+			answer3 = s3.next();
+			do {
+				if (answer3 == "yes") {
+					System.out.println("Type message");
+					Scanner s4 = new Scanner(System.in);
+					String MessageContent;
+					MessageContent = s4.next();
+					Messages message = new Messages(userid, receiversid, MessageContent);
+				} else if (answer3 != "no") {
+					System.out.println("Wrong! Answer should be 'yes' or 'no'.");
+				}
+			} while (answer3 != "yes" && answer3 != "no");
+		} while (answer3 == "yes");
 	}
 
 	public int getIDfromUsername(String username) {
