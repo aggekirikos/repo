@@ -1,7 +1,10 @@
 package fOrk;
 
 
-
+import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class �ain2 {
@@ -15,6 +18,7 @@ public class �ain2 {
 		int i = 0;
 		Scanner input1 = new Scanner(System.in);
 		Scanner scanner1 = new Scanner(System.in);
+		User user = null;
 		do {
 			System.out.print("Welcome to fOrk! Type 1 to SING IN, 2 to LOG IN, or -1 to END the program: ");
 			int preference = input1.nextInt();
@@ -30,19 +34,17 @@ public class �ain2 {
 				User user = new User();
 				//���� User �� ������� safe � user ��� �� ���� ��� �� ��������
 			} else if(preference == 2) {
-				//log in ������� ��� ���������� �� id ��� ������ ���� ��� username ��� password
-				//����� ������������ �� ������ �� int ���� �� ������ ����������� �� �� ��������������
-				//��� ������������ ��� id �� �� ����� �� ������� ��� �������� ��� ������� ��� ���
-				//������������ ������
+               int id = lognIn();
+			   User user = User(id);
 			} else if(preference == -1) {
 				i = -1;
 				System.exit(-1);
 			}
-			fOrkNavigation();
+			fOrkNavigation(user);
 		}while(i != -1);
 	}
 
-	private static void fOrkNavigation(/*User user*/) {
+	private static void fOrkNavigation(User user) {
 		int j = 0;
 		Scanner input2 = new Scanner(System.in);
 		do{
@@ -164,6 +166,41 @@ public class �ain2 {
 			//ttl = -1;
 			} while(ttl != -1);
 	}//end of searchPost
+	public static int logIn() {
+		boolean flag = false;
+		int userId = 0;
+		 Connection connection = null;
+		 PreparedStatement pst = null;
+		do {
+			System.out.println("Please enter your username");
+			Scanner inU = new Scanner(System.in);
+			System.out.println("Please enter your password");
+			Scanner inP = new Scanner(System.in);
+			String un = inU.nextLine();
+			String pw = inP.nextLine();
+		    String select = "SELECT username, password FROM User WHERE username =?, password=?";
+		    try {
+				connection = DBcon.openConnection();
+				pst = connection.prepareStatement(select);
+				pst.setString(1, un);
+				pst.setString(2, pw);
+				ResultSet resultSet = pst.executeQuery();
+				while (resultSet.next()) {
+					userId = resultSet.getInt("UserId");
+					flag = true;
 
-
+			    }
+		   }
+		   catch (SQLException e) {
+		   }
+		   finally {
+			   DBcon.closeStatement(pst);
+			   DBCON.closeConnection(connection);
+		   }
+		    if (flag == false) {
+		   		System.out.println("Sorry, the password or/and the username you inserted are not valid. Please try again.");
+	        }
+	  } while (flag == true);
+	  return userId;
+	}
 }//end of class
