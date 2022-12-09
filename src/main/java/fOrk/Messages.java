@@ -90,22 +90,30 @@ public class Messages {
 	public void sendMessagestoDB(int user, int receiverid, String content) {
 		Connection connection = null;
         PreparedStatement stmt = null;
+        PreparedStatement stmt2 = null;
         maxid++;
         try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MDateTime, Sender, Receiver) VALUES(?, ?, ?, ?, ?)");
+			stmt = connection.prepareStatemnt("SELECT MAX(MessageID) FROM Messages");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.nextInt()); {
+				int maxid = rs.getInt("MessageID");
+				maxid++;
+			}
+			stmt2 = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MDateTime, Sender, Receiver) VALUES(?, ?, ?, ?, ?)");
 		    LocalDateTime datetime1 = LocalDateTime.now();
    		    DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		    String formatDateTime = datetime1.format(format);
-		    stmt.setInt(1, maxid);
-		    stmt.setString(2, content);
-		    stmt.setString(3, formatDateTime);
-		    stmt.setInt(4, user);
-		    stmt.setInt(5, receiverid);
-		    stmt.executeUpdate();
+		    stmt2.setInt(1, maxid);
+		    stmt2.setString(2, content);
+		    stmt2.setString(3, formatDateTime);
+		    stmt2.setInt(4, user);
+		    stmt2.setInt(5, receiverid);
+		    stmt2.executeUpdate();
 		} catch (SQLException e) {
 		} finally {
 			DBcon.closeStatement(stmt);
+			DBcon.closeStatement(stmt2);
 			DBcon.closeConnection(connection);
 		}
 	}
