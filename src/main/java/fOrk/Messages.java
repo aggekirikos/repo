@@ -66,7 +66,7 @@ public class Messages {
         PreparedStatement stmt = null;
         try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("SELECT User.Username, Messages.Content, Messages.MDateTime FROM User, Messages INNER JOIN Messages ON Messages.Sender = User.ID WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?) ORDER BY MessageID");
+			stmt = connection.prepareStatement("SELECT User.Username, Messages.Content, Messages.MDateTime FROM User INNER JOIN Messages ON Messages.Sender = User.ID WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?) ORDER BY MessageID");
 			stmt.setInt(1, receiversID);
 			stmt.setInt(2, userid);
 			stmt.setInt(3, userid);
@@ -75,7 +75,8 @@ public class Messages {
 			while(rs.next()) {
 				String MessageContent = rs.getString("Content");
 				String sendersUN = rs.getString("Username");
-				System.out.println(sendersUN + ":" + MessageContent);
+				String dt = rs.getString("MDateTime");
+				System.out.println(sendersUN + ":" + MessageContent + "at" + dt);
 			}
 		} catch (SQLException e) {
 		} finally {
@@ -91,11 +92,15 @@ public class Messages {
         maxid++;
         try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MTime, MDate, Sender, Receiver) VALUES(?, ?, ?, ?, ?, ?)");
+			stmt = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MDateTime, Sender, Receiver) VALUES(?, ?, ?, ?, ?)");
+		    LocalDateTime datetime1 = LocalDateTime.now();
+   		    DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		    String formatDateTime = datetime1.format(format);
 		    stmt.setInt(1, maxid);
 		    stmt.setString(2, content);
-		    stmt.setInt(5, user);
-		    stmt.setInt(6, receiverid);
+		    stmt.setString(3, formatDateTime);
+		    stmt.setInt(4, user);
+		    stmt.setInt(5, receiverid);
 		    ResultSet rs = stmt.executeQuery();
 		} catch (SQLException e) {
 		} finally {
