@@ -53,6 +53,7 @@ public class Messages {
 						System.out.println(sendersUN);
 					}
 				}
+				DBcon.closeStatement(stmt2);
 			}
 		} catch (SQLException e) {
 		} finally {
@@ -101,7 +102,7 @@ public class Messages {
 		    stmt.setString(3, formatDateTime);
 		    stmt.setInt(4, user);
 		    stmt.setInt(5, receiverid);
-		    ResultSet rs = stmt.executeQuery();
+		    stmt.executeUpdate();
 		} catch (SQLException e) {
 		} finally {
 			DBcon.closeStatement(stmt);
