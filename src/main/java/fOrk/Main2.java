@@ -1,13 +1,14 @@
 package fOrk;
 
 
-import java.util.*;
+import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.sql.ResultSet;
 
-public class �ain2 {
+public class Main2 {
 
 	static Scanner myscan = new Scanner(System.in);
 	static Scanner myscan1 = new Scanner(System.in);
@@ -118,53 +119,46 @@ public class �ain2 {
 		Scanner input2 = new Scanner(System.in);
 			int ttl = 0;
 			do {
-				System.out.print("Give 1 words correlated with the recipe you want");
+				System.out.print("Give 1 hashtag correlated with the recipe you want or type back to go back: ");
 				String rec = input2.nextLine();
-				//searcing and display titles of posts. θα εμφανίζονται οι τίτλοι
-				//αριθμοιμένοι 1 εως ν μεσω της hasNext
-				//ΒΑΓΓΕΛΗΣ
-				System.out.print("Choose the recipe you want by writing the number of the title, or get /n back to " +
-						"the main menu by typing -1");
-				ttl = input2.nextInt();
-				if (ttl == -1) {
-					break;
-				}
-				//Select post end displaiy it
-				//Μέθοδος Βαγγέλη που βρίσκει το ποστ id
-				int i = 0; //id που θα επιστρεφεται
-				Post post = new Post(i);
-				post.getFullPost();
-				System.out.println("Would you like to review it? Yes/No");
-				//καλείται η μέθοδος του review με ορισμα το αντικείμενο Post που εμφανιζεται παραπανω
-				//post.makeReview
-				System.out.println("Would you like to make a comment? Yes/No");
-				String answer = input2.next();
-				if (answer == "Yes") {
-					String a = "a";
-					int postId = post.getPostId();
-					Connection connection = null;
-					PreparedStatement stm = null;
-					int commentId = 0;
-					try {
-						connection = DBcon.openConnection();
-						stm = (PreparedStatement) connection.createStatement("SELECT MAX(CommentID) FROM Comment");
-						ResultSet resultSet = stm.executeQuery();
-						commentId = resultSet.getInt(1);
-					} catch (Exception e) {}
-						post.createComment(a, postId, commentId);
-					}
-					System.out.println("Would you like to make recomment? Yes/No");
-					answer = input2.next();
-					if (answer == "Yes") {
-						System.out.println("please enter the id of the comment that you want to answer");
-						int ans = input2.nextInt();
-						Comment comment = new Comment(ans);
-						String username = null; //δεν εχει χρησιμοτητα το κανω για να δουλεψει
-						comment.makeReComment(username, post.getPostId(), ans);
+				if (rec != "back") {
+					//searcing and display titles of posts. θα εμφανίζονται οι τίτλοι
+					int postId = search(rec);
+					if (postId != -1) {
+						Post post = new Post(postId);
+						post.getFullPost();
+						System.out.println("Would you like to review it? Yes/No");
+						//καλείται η μέθοδος του review με ορισμα το αντικείμενο Post που εμφανιζεται παραπανω
+						//post.makeReview
+						System.out.println("Would you like to make a comment? Yes/No");
+						String answer = input2.next();
+						if (answer == "Yes") {
+							String a = "a";
+							int postId = post.getPostId();
+							Connection connection = null;
+							PreparedStatement stm = null;
+							int commentId = 0;
+							try {
+								connection = DBcon.openConnection();
+								stm = (PreparedStatement) connection.createStatement("SELECT MAX(CommentID) FROM Comment");
+								ResultSet resultSet = stm.executeQuery();
+								commentId = resultSet.getInt(1);
+							} catch (Exception e) {}
+								post.createComment(a, postId, commentId);
+							}
+							System.out.println("Would you like to make recomment? Yes/No");
+							answer = input2.next();
+							if (answer == "Yes") {
+								System.out.println("please enter the id of the comment that you want to answer");
+								int ans = input2.nextInt();
+								Comment comment = new Comment(ans);
+								String username = null; //δεν εχει χρησιμοτητα το κανω για να δουλεψει
+								comment.makeReComment(username, post.getPostId(), ans);
+							}
+						}
 					}
 				}
-			//ttl = -1;
-			} while(ttl != -1);
+			} while(rec != "back");
 	}//end of searchPost
 	public static int logIn() {
 		boolean flag = false;
@@ -203,4 +197,44 @@ public class �ain2 {
 	  } while (flag == true);
 	  return userId;
 	}
+	public static int search(String hashtag) {
+		String select = ("SELECT PostID, Title, Username FROM User, Hashtags, Post WHERE Post.PostID = Hashtags.PostID AND User.ID = Hashtags.Creator AND Hashtags.Hashtag = ?");
+		Connection connection = null;
+		PreparedStatement srch = null;
+		int usrChoice = 0;
+		int counter = 0;
+		ArrayList<Integer> postIdList = new ArrayList<Integer>();
+		do {
+			try {
+			     connection = DBcon.openConnection();
+			     srch = connection.prepareStatement(select);
+			     srch.setString(1, hashtag);
+			     ResultSet rs = srch.executeQuery();
+			     while (rs.next()) {
+					counter++;
+					int aa = rs.getInt("PostId");
+					postIdList.add(aa);
+					String bb = rs.getString("Title");
+					String cc = rs.getString("username");
+					System.out.println(counter + " " + bb + " " + cc);
+			     }
+			     if (counter == 0) {
+				 	System.out.println("Seems like there was no recipe with this hashtag, try another one:(");
+				 } else {
+				 	System.out.println("Choose a recipe you like from the following list or -1 to go back!");
+				 	Scanner input = new Scanner(System.in);
+				 	usrChoice = input.nextInt();
+				 }
+			} catch (SQLException e) {
+			} finally {
+				DBcon.closeStatement(srch);
+				DBcon.closeConnection(connection);
+			}
+		  } while ((usrChoice <= counter && usrChoice > 0) || (usrChoice != -1));
+		  int UsersChoice = -1;
+		  if (usrChoice != -1) {
+			   UsersChoice = postIdList.get(usrChoice - 1);
+		  }
+		  return UsersChoice;
+	  }
 }//end of class
