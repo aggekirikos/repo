@@ -21,7 +21,7 @@ public class Messages {
 		this.receiversID = receiversID;
 		sendMessagestoDB(this.userid, this.receiversID, this.content);
 	}
-
+/*
 	public void getChatbox(int userid) {
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -84,19 +84,19 @@ public class Messages {
 			DBcon.closeConnection(connection);
 		}
 	}
-
+*/
 
 	public void sendMessagestoDB(int user, int receiverid, String content) {
 		Connection connection = null;
         PreparedStatement stmt = null;
         PreparedStatement stmt2 = null;
-        maxid++;
         try {
+			int maxid = 0;
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatemnt("SELECT MAX(MessageID) FROM Messages");
+			stmt = connection.prepareStatement("SELECT MAX(MessageID) FROM Messages");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				int maxid = rs.getInt("MessageID");
+				maxid = rs.getInt("MessageID");
 				maxid++;
 			}
 			stmt2 = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MDateTime, Sender, Receiver) VALUES(?, ?, ?, ?, ?)");
@@ -116,7 +116,7 @@ public class Messages {
 			DBcon.closeConnection(connection);
 		}
 	}
-
+/*
 	public void openConversation(int userid) {
 		System.out.println("Do you want to open a conversation?");
 		Scanner s = new Scanner(System.in);
@@ -178,7 +178,7 @@ public class Messages {
 			DBcon.closeConnection(connection);
 		}
 		return rtrn;
-	}
+	}*/
 }
 
 

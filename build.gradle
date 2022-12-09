@@ -1,6 +1,6 @@
 plugins {
     id 'application'
-    id 'com.github.spotbugs' version '4.7.3'
+   // id 'com.github.spotbugs' version '4.7.3'
     id 'checkstyle'
 }
 
@@ -43,7 +43,7 @@ test {
 /* Configure spotbugs to maximize the analysis effort level
 and set the priority threshold for reporting bugs to low
 so that all bugs are reported */
-spotbugs {
+/*spotbugs {
     effort = 'max'
     reportLevel = 'low'
 }
@@ -63,7 +63,7 @@ spotbugsTest {
         html.required.set(true)
     }
 }
-
+*/
 checkstyle {
     toolVersion = '8.29'
 }

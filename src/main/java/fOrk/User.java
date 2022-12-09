@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class User {
 
@@ -19,7 +20,6 @@ public class User {
 	String bio;
 	ArrayList<String> cookmates = new ArrayList<String>();
 	ArrayList<Post> posts = new ArrayList<Post>();
-	Post pst = new Post();
 
 	public User(String pass, String uname, String nm, String BIO) {
 		userId = maxId();
@@ -35,7 +35,7 @@ public class User {
 		PreparedStatement stmt= null;
 		try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("INSERT INTO User(UserID, Password, Username, Name, Bio) VALUES(?,?,?,?,?)");
+			stmt = connection.prepareStatement("INSERT INTO User(ID, Password, Username, Name, Bio) VALUES(?,?,?,?,?)");
 			stmt.setInt(1, userId);
 			stmt.setString(2, password);
 			stmt.setString(3, username);
@@ -80,11 +80,11 @@ public class User {
 		PreparedStatement stat = null;
 		try {
 			connection = DBcon.openConnection();
-			stat = con.preparedStatement(slct);
+			stat = con.prepareStatement(slct);
 			stat.setString(1, String.valueOf(id));
 			ResultSet resultSet = stat.executeQuery();
 			while (resultSet.next()){
-				String temp = resultSet.getString("PostID");
+				int temp = resultSet.getInt("PostID");
 				Post post = new Post(temp);
 				posts.add(post);
 			}
@@ -100,8 +100,8 @@ public class User {
 	public int getUserId() {
 		return userId;
 	}
-
-	public void setPassword(int tempPassword) {
+	Scanner myscan = new Scanner(System.in);
+	public void setPassword(String tempPassword) {
 		boolean flag = false;
 		while (flag == false) {
 			tempPassword = myscan.nextLine();
@@ -137,7 +137,7 @@ public class User {
 		return name;
 	}
 
-	public void setBio(tempBio) {
+	public void setBio(String tempBio) {
 		bio = tempBio;
 	}
 
@@ -151,9 +151,12 @@ public class User {
 
 	public void printPosts() {
 		int j = 0;
-		while ( posts.next() != null) {
+		while (j < posts.size()) {
 			System.out.println("\nPost " + (j+1));
 			j = j + 1;
+		}
+		if(posts.size() == 0) {
+			System.out.println("No posts yet");
 		}
 	}
 
@@ -161,11 +164,11 @@ public class User {
 		System.out.println("If you want to Edit your Username press 1\n");
 		System.out.println("If you want to Edit your Name press 2\n");
 		System.out.println("If you want to Edit your Bio press 3\n");
-		int temp2 = myscan2.nextInt();
+		int temp2 = myscan.nextInt();
 		Connection connection= null;
 		PreparedStatement stmt= null;
 		if (temp2 == 1) {
-			username =  = scanner1.nextLine();
+			username =  scanner1.nextLine();
 			try {
 				connection = DBcon.openConnection();
 				stmt = connection.prepareStatement("UPDATE User SET Username=? WHERE ID=?");
@@ -188,12 +191,12 @@ public class User {
 			}
 		}
 		else if (temp2 == 2) {
-			name =  = scanner2.nextLine();
+			name = scanner2.nextLine();
 			try {
 				connection = DBcon.openConnection();
 				stmt = connection.prepareStatement("UPDATE User SET Name=? WHERE ID=?");
 				stmt.setString(1, name);
-				stmt.setString(2, userId);
+				stmt.setString(2, String.valueOf(userId));
 			    int i = stmt.executeUpdate();
 				if (i != 0) {
 					System.out.println("\nUpdated!\n");
@@ -211,12 +214,12 @@ public class User {
 			}
 		}
 		else if (temp2 == 3) {
-			bio =  = scanner3.nextLine();
+			bio =  scanner3.nextLine();
 			try {
 				connection = DBcon.openConnection();
 				stmt = connection.prepareStatement("UPDATE User SET Bio=? WHERE ID=?");
 				stmt.setString(1, bio);
-				stmt.setString(2, userId);
+				stmt.setString(2, String.valueOf(userId));
 				int i = stmt.executeUpdate();
 				if (i != 0) {
 					System.out.println("\nUpdated!\n");
@@ -252,19 +255,21 @@ public class User {
 		}
 	}
 
-	public static int maxId() {
+	public int maxId() {
 		String slct = "SELECT MAX(userId) FROM User";
 		Connection con = null;
-		PreparedStatement stat = null;
+		Statement stat = null;
 		try {
-			connection = DBcon.openConnection();
-			slct = con.preparedStatement.executeUpdate();
-			userId = slct.getInt(1);
+			con = DBcon.openConnection();
+			stat = con.createStatement();
+			ResultSet rs = stat.executeQuery(slct);
+			userId = rs.getInt(1);
+			userId++;
 		}
 		catch (SQLException e) {
 		}
 		finally {
-			DBcon.closeStatement(slct);
+			DBcon.closeStatement(stat);
 			DBcon.closeConnection(con);
 		}
 		return userId;
