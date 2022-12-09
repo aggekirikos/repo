@@ -14,7 +14,6 @@ public class Messages {
 	private int userid;
 	private int receiversID;
 	private String content;
-	int maxid= 0;
 
     public Messages(int userid, int receiversID, String content) {
 		this.content = content;
@@ -96,7 +95,7 @@ public class Messages {
 			connection = DBcon.openConnection();
 			stmt = connection.prepareStatemnt("SELECT MAX(MessageID) FROM Messages");
 			ResultSet rs = stmt.executeQuery();
-			while (rs.nextInt()); {
+			while (rs.next()) {
 				int maxid = rs.getInt("MessageID");
 				maxid++;
 			}
@@ -141,10 +140,10 @@ public class Messages {
 	}
 
 	public static void typeMessage(int userid, int receiversid) {
+		String answer3 = null;
 		do {
 			System.out.println("Do you want to type a message?");
 			Scanner s3 = new Scanner(System.in);
-			String answer3 = null;
 			answer3 = s3.next();
 			do {
 				if (answer3 == "yes") {
@@ -157,7 +156,7 @@ public class Messages {
 					System.out.println("Wrong! Answer should be 'yes' or 'no'.");
 				}
 			} while (answer3 != "yes" && answer3 != "no");
-		} while (answer3 == "yes");
+		} while (answer3 != "no");
 	}
 
 	public int getIDfromUsername(String username) {
