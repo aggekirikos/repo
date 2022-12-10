@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.sql.SQLException;
 
 public class Post {
-	public static int PostId;
+	public int PostId;
 	private String DifficutlyLevel;
 	public int PostStatus = 0;//When PostStatus is 0 the post is deleted. When PostStatus is 1 the post exists
 	public int RecipeTime;
@@ -19,7 +19,6 @@ public class Post {
 	public String [] hashtags = new String [5];
 	int Creator ;
 	int [] stars = new int[5];
-	int evaluators = 0;
 	int sum = 0;
 	Scanner input = new Scanner(System.in);
 
@@ -94,8 +93,8 @@ public class Post {
 		try {
 			preparedStatement1 = connection.prepareStatement("SELECT * FROM Post WHERE PostID = ?");
 			preparedStatement3 = connection.prepareStatement("SELECT * FROM stars WHERE PostID = ?");
-			preparedStatement1.setString(1, String.valueOf(id));
-			preparedStatement3.setString(1, String.valueOf(id));
+			preparedStatement1.setInt(1, id);
+			preparedStatement3.setInt(1, id);
 			ResultSet rs = preparedStatement1.executeQuery();
 			ResultSet rs1 = preparedStatement3.executeQuery();
 			while (rs.next()) {
@@ -105,21 +104,19 @@ public class Post {
 				RecipeCost = rs.getDouble("RecipeCost");
 				RecipeCategory = rs.getString("RecipeCategory");
 				DifficultyLevel = rs.getString("DifficultyLevel");
-				evaluators = rs.getInt("evaluators");
-				Reviews = rs.getDouble("Reviews");
 				boolean flag = true;
-				do{
-					PreparedStatement preparedStatement2 = connection.prepareStatement("SELECT * FROM Comment" +
-							"WHERE PostID = ToPost");
-					ResultSet resultSet = preparedStatement2.executeQuery();
-					while (resultSet.next()) {
-						int ID = resultSet.getInt("CommentID");
-						Comment comment = new Comment(ID);
-						comments.add(comment);
-					}
-					DBcon.closeStatement(preparedStatement2);
-					flag = false;
-				} while(flag);
+
+				PreparedStatement preparedStatement2 = connection.prepareStatement("SELECT * FROM Comment" +
+						"WHERE PostID = ?");
+				preparedStatement2.setInt(1, PostId);
+				ResultSet resultSet = preparedStatement2.executeQuery();
+				while (resultSet.next()) {
+					int commId = resultSet.getInt("CommentID");
+					Comment comment = new Comment(commId);
+					comments.add(comment);
+				}
+				DBcon.closeStatement(preparedStatement2);
+
 			}
 			while(rs1.next()) {
 				stars[1] = rs1.getInt("star1");
@@ -144,7 +141,7 @@ public class Post {
 		Reviews = sum2 / sum;
 	}
 
-	public void createComment(int from, int toPost, int id ) {
+	public void createComment(int from, int toPost) {
 		String answer = input.next();
 		if (answer == "Yes") {
 			System.out.print("Please type the comment : ");
@@ -155,19 +152,40 @@ public class Post {
 	}
 
 	public void makeReview() {
-		System.out.println("Do you like the post?Rate it with 0 to 5 stars");
+		System.out.println("How much do you like this post? Rate from 1 to 5 stars.");
 		int rate;
 		do {
 			rate = input.nextInt();
-		} while (rate < 0 || rate > 5);
+		} while (rate < 1 || rate > 5);
 
-		stars[rate] = stars[rate] + 1;
-		evaluators = evaluators + 1;
+		stars[rate - 1] = stars[rate - 1] + 1;
 		for (int i = 0; i<5; i++) {
 			sum = sum + (i+1) * stars[i];
 		}
-		Reviews = sum/evaluators;
-		sendReviewstoDB(Reviews,evaluators,stars);
+		int evaluatorsNumber = evaluators();
+		Reviews = (double ) sum/evaluatorsNumber;
+		sendReviewstoDB(Reviews,evaluatorsNumber,stars);
+	}
+
+	public int evaluators(){
+		Connection connection = DBcon.openConnection();
+		PreparedStatement preparedStatement = null;
+		String select = "SELECT (star1 + star2 + star3 + star4 + star5) AS Evaluators FROM stars WHERE PostID = ?";
+		int evaluatorsNumber = 0;
+		try {
+			preparedStatement = connection.prepareStatement(select);
+			preparedStatement.setInt(1, PostId);
+			ResultSet rs = preparedStatement.executeQuery();
+			while(rs.next()){
+				evaluatorsNumber = rs.getInt(1);
+			}
+		} catch(SQLException e){
+
+		} finally {
+			DBcon.closeStatement(preparedStatement);
+			DBcon.closeConnection(connection);
+		}
+		return evaluatorsNumber;
 	}
 
 	public int getPostId() {
@@ -240,12 +258,6 @@ public class Post {
 			connection = DBcon.openConnection();
 			stmt1 = connection.prepareStatement("INSERT INTO Post(PostID,PostStatus,RecipeTime,Content,Title,RecipeCategory,DifficultyLevel,RecipeCost,Creator) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			int i = 0;
-			while(hashtags[i] != null) {
-				stmt2 = connection.prepareStatement("INSERT INTO Hashtags(Hashtag,PostID) VALUES(?, ?)");
-				stmt2.setString(1, hashtags[i]);
-				stmt2.setInt(2, maxid);
-				stmt2.executeUpdate();
-			}
 			stmt1.setInt(1, maxid);
 			stmt1.setInt(2, PostStatus);
 			stmt1.setInt(3, RecipeTime);
@@ -256,6 +268,13 @@ public class Post {
 			stmt1.setDouble(8, RecipeCost);
 			stmt1.setInt(9, Creator);
 			stmt1.executeUpdate();
+			while(hashtags[i] != null) {
+				stmt2 = connection.prepareStatement("INSERT INTO Hashtags(Hashtag,PostID) VALUES(?, ?)");
+				stmt2.setString(1, hashtags[i]);
+				stmt2.setInt(2, maxid);
+				stmt2.executeUpdate();
+				i++;
+			}
 		} catch (SQLException e) {
 			System.out.println("Something went wrong while creating this post" + e.getMessage());
 		} finally {
@@ -267,19 +286,17 @@ public class Post {
 
 	public void sendReviewstoDB(double reviews, int evaluators, int[] stars) {
 		Connection connection = null;
-		PreparedStatement stmt1 = null;
 		PreparedStatement stmt2 = null;
 		int maxid = getPostId();
 		try {
 			connection = DBcon.openConnection();
 			stmt2 = connection.prepareStatement("INSERT INTO stars(star1,star2,star3,star4,star5,PostID) VALUES(?, ?, ?, ?, ?, ?)");
-			stmt2.setInt(1, stars[1]);
-			stmt2.setInt(2, stars[2]);
-			stmt2.setInt(3, stars[3]);
-			stmt2.setInt(4, stars[4]);
-			stmt2.setInt(5, stars[5]);
+			stmt2.setInt(1, stars[0]);
+			stmt2.setInt(2, stars[1]);
+			stmt2.setInt(3, stars[2]);
+			stmt2.setInt(4, stars[3]);
+			stmt2.setInt(5, stars[4]);
 			stmt2.setInt(6, maxid);
-			stmt1.executeUpdate();
 			stmt2.executeUpdate();
 		} catch (SQLException e) {
 		} finally {
@@ -325,15 +342,18 @@ public class Post {
 	}*/
 
 	public void getPost() {
-		System.out.println( "Title of the post:" + getTitle() + "/nContent of the post:" + getContent() + "/nThe time required for " +
-				"this recipe is" + getRecipeTime() + "/nThe cost for this recipe is:" + getRecipeCost() + "euros" + "/The" +
-				" difficulty Level of this recipe is:" + getDifficultyLevel() + "/nThe category of this recipe is:"
-				+ getRecipeCategory() + "/nThis post has " + Reviews + "stars" + "/nThis post's comments are");
-		int loops = comments.size();
-		int i = 0;
-		while (i < loops) {
-			Comment comment = comments.get(i);
-			comment.printCommentRec();
+		System.out.println( "Title of the post:" + getTitle() + "\nContent of the post:" + getContent() + "\nThe time required for " +
+				"this recipe is" + getRecipeTime() + "\nThe cost for this recipe is:" + getRecipeCost() + "euros" + "\nThe" +
+				" difficulty Level of this recipe is:" + getDifficultyLevel() + "\nThe category of this recipe is:"
+				+ getRecipeCategory() + "\nThis post has " + Reviews + "stars" + "\nThis post's comments are");
+		if (comments.size() == 0) {
+			System.out.println("This post has no comments yet");
+		} else {
+		  int loops = comments.size();
+		  for  (int i = 0; i < loops; i++) {
+				Comment comment = comments.get(i);
+				comment.printCommentRec();
+			}
 		}
 	}
 }

@@ -23,13 +23,12 @@ public class User {
 	ArrayList<Post> posts = new ArrayList<Post>();
 
 	public User(String pass, String uname, String nm, String BIO) {
-		userId = maxId();
+		maxId();
 		setPassword(pass);
-		String tempPass = getPassword();
-		password = tempPass;
-		username = uname;
+		setUsername(uname);
 		name = nm;
 		bio = BIO;
+		System.out.println(userId + password + username + name + bio);
 		Connection connection= null;
 		PreparedStatement stmt= null;
 		try {
@@ -43,7 +42,7 @@ public class User {
 		    stmt.executeUpdate();
 		}
 		catch (SQLException e) {
-			System.out.println("Something went wrong while creating your Profile");
+			System.out.println("Something went wrong while creating your Profile"+ e.getMessage());
 		}
 		finally {
 			DBcon.closeStatement(stmt);
@@ -53,13 +52,13 @@ public class User {
 
 	public User(int id) {
 		this.userId = id;
-		String select = "SELECT * FROM User WHERE userId=?";
+		String select = "SELECT * FROM User WHERE ID=?";
 		Connection connection = null;
 		PreparedStatement prst = null;
 		try {
 			connection = DBcon.openConnection();
 			prst = connection.prepareStatement(select);
-			prst.setString(1, String.valueOf(id));
+			prst.setInt(1, id);
 			ResultSet resultSet = prst.executeQuery();
 			while (resultSet.next()){
 				this.password = resultSet.getString("Password");
@@ -74,13 +73,13 @@ public class User {
 			DBcon.closeStatement(prst);
 			DBcon.closeConnection(connection);
 		}
-		String slct = "SELECT PostId FROM Post WHERE Creator=?";
+		String slct = "SELECT PostID FROM Post WHERE Creator=?";
 		Connection con = null;
 		PreparedStatement stat = null;
 		try {
-			connection = DBcon.openConnection();
+			con = DBcon.openConnection();
 			stat = con.prepareStatement(slct);
-			stat.setString(1, String.valueOf(id));
+			stat.setInt(1, id);
 			ResultSet resultSet = stat.executeQuery();
 			while (resultSet.next()){
 				int temp = resultSet.getInt("PostID");
@@ -102,26 +101,52 @@ public class User {
 
 	public void setPassword(String tempPassword) {
 		boolean flag = false;
-		while (flag == false) {
-			tempPassword = myscan.nextLine();
+		while (!flag) {
 			if (tempPassword.length() > 8) {
 				flag = true;
 			}
 			else {
-				System.out.println("Password must have over 8 charecters!");
+				System.out.println("Password must have over 8 characters! Please choose a new one.");
+				tempPassword = myscan.next();
 			}
 		}
 		password = tempPassword;
+	}
+
+	public void setUsername(String tempUsername) {
+		Connection connection= null;
+		PreparedStatement stmt= null;
+		boolean flag;
+		do  {
+			flag = false;
+			try {
+				connection = DBcon.openConnection();
+				stmt = connection.prepareStatement("SELECT ID FROM User WHERE Username = ?");
+				stmt.setString(1, tempUsername);
+				ResultSet rs = stmt.executeQuery();
+				while (rs.next()) {
+					flag = true;
+					System.out.println("This username already exists! Please choose a new one.");
+				}
+			} catch (SQLException e) {
+				System.out.println("Could not set your username.");
+			} finally {
+				DBcon.closeStatement(stmt);
+				DBcon.closeConnection(connection);
+			}
+			if (flag) {
+				Scanner scanner = new Scanner(System.in);
+				tempUsername = scanner.next();
+			} else {
+				username = tempUsername;
+			}
+		} while (flag);
 	}
 
 	public String getPassword() {
 		return password;
 	}
 
-
-	public void setUsername(String tempUsername) {
-		username = tempUsername;
-	}
 
 	public String getUsername() {
 			return username;
@@ -160,80 +185,101 @@ public class User {
 	}
 
 	public void editProfile(){
-		System.out.println("If you want to Edit your Username press 1\n");
-		System.out.println("If you want to Edit your Name press 2\n");
-		System.out.println("If you want to Edit your Bio press 3\n");
+		System.out.println("If you want to Edit your Username press 1.");
+		System.out.println("If you want to Edit your Name press 2.");
+		System.out.println("If you want to Edit your Bio press 3.");
+		System.out.println("If you want to Edit your Password press 4.");
 		int temp2 = myscan.nextInt();
 		Connection connection= null;
 		PreparedStatement stmt= null;
-		if (temp2 == 1) {
-			username =  scanner1.nextLine();
-			try {
-				connection = DBcon.openConnection();
-				stmt = connection.prepareStatement("UPDATE User SET Username=? WHERE ID=?");
-				stmt.setString(1, username);
-				stmt.setInt(2, userId);
-			    int i = stmt.executeUpdate();
-			    if (i != 0) {
-					System.out.println("\nUpdated!\n");
-				}
-				else {
+		switch (temp2) {
+			case 1:
+				System.out.println("Please insert your new Username.");
+				String answer1 = scanner1.nextLine();
+				setUsername(answer1);
+				try {
+					connection = DBcon.openConnection();
+					stmt = connection.prepareStatement("UPDATE User SET Username=? WHERE ID=?");
+					stmt.setString(1, username);
+					stmt.setInt(2, userId);
+					int i = stmt.executeUpdate();
+					if (i != 0) {
+						System.out.println("\nUpdated!\n");
+					} else {
+						System.out.println("\nUpdate Failed!\n");
+					}
+				} catch (SQLException e) {
 					System.out.println("\nUpdate Failed!\n");
+				} finally {
+					DBcon.closeStatement(stmt);
+					DBcon.closeConnection(connection);
 				}
-			}
-			catch (SQLException e) {
-				System.out.println("\nUpdate Failed!\n");
-			}
-			finally {
-				DBcon.closeStatement(stmt);
-				DBcon.closeConnection(connection);
-			}
-		}
-		else if (temp2 == 2) {
-			name = scanner2.nextLine();
-			try {
-				connection = DBcon.openConnection();
-				stmt = connection.prepareStatement("UPDATE User SET Name=? WHERE ID=?");
-				stmt.setString(1, name);
-				stmt.setString(2, String.valueOf(userId));
-			    int i = stmt.executeUpdate();
-				if (i != 0) {
-					System.out.println("\nUpdated!\n");
-				}
-				else {
+				break;
+			case 2:
+				System.out.println("Please insert your new Name.");
+				name = scanner2.nextLine();
+
+				try {
+					connection = DBcon.openConnection();
+					stmt = connection.prepareStatement("UPDATE User SET Name=? WHERE ID=?");
+					stmt.setString(1, name);
+					stmt.setString(2, String.valueOf(userId));
+					int i = stmt.executeUpdate();
+					if (i != 0) {
+						System.out.println("\nUpdated!\n");
+					} else {
+						System.out.println("\nUpdate Failed!\n");
+					}
+				} catch (SQLException e) {
 					System.out.println("\nUpdate Failed!\n");
+				} finally {
+					DBcon.closeStatement(stmt);
+					DBcon.closeConnection(connection);
 				}
-			}
-			catch (SQLException e) {
-				System.out.println("\nUpdate Failed!\n");
-			}
-			finally {
-				DBcon.closeStatement(stmt);
-				DBcon.closeConnection(connection);
-			}
-		}
-		else if (temp2 == 3) {
-			bio =  scanner3.nextLine();
-			try {
-				connection = DBcon.openConnection();
-				stmt = connection.prepareStatement("UPDATE User SET Bio=? WHERE ID=?");
-				stmt.setString(1, bio);
-				stmt.setString(2, String.valueOf(userId));
-				int i = stmt.executeUpdate();
-				if (i != 0) {
-					System.out.println("\nUpdated!\n");
-				}
-				else {
+				break;
+			case 3:
+				System.out.println("Please insert your new bio");
+				bio = scanner3.nextLine();
+				try {
+					connection = DBcon.openConnection();
+					stmt = connection.prepareStatement("UPDATE User SET Bio = ? WHERE ID=?");
+					stmt.setString(1, bio);
+					stmt.setInt(2, userId);
+					int i = stmt.executeUpdate();
+					if (i != 0) {
+						System.out.println("\nUpdated!\n");
+					} else {
+						System.out.println("\nUpdate Failed!\n");
+					}
+				} catch (SQLException e) {
 					System.out.println("\nUpdate Failed!\n");
+				} finally {
+					DBcon.closeStatement(stmt);
+					DBcon.closeConnection(connection);
 				}
-			}
-			catch (SQLException e) {
-				System.out.println("\nUpdate Failed!\n");
-			}
-			finally {
-				DBcon.closeStatement(stmt);
-				DBcon.closeConnection(connection);
-			}
+				break;
+			case 4:
+				System.out.println("Please insert your new password.");
+				String answer2 = scanner3.nextLine();
+				setPassword(answer2);
+				try {
+					connection = DBcon.openConnection();
+					stmt = connection.prepareStatement("UPDATE User SET Password = ? WHERE ID = ?");
+					stmt.setString(1, password);
+					stmt.setInt(2, userId);
+					int j = stmt.executeUpdate();
+					if (j != 0) {
+						System.out.println("\nUpdated!\n");
+					} else {
+						System.out.println("\nUpdate Failed!\n");
+					}
+				} catch (SQLException e) {
+					System.out.println("\nUpdate Failed!\n");
+				} finally {
+					DBcon.closeStatement(stmt);
+					DBcon.closeConnection(connection);
+				}
+				break;
 		}
 	}
 
@@ -254,8 +300,8 @@ public class User {
 		}
 	}
 
-	public int maxId() {
-		String slct = "SELECT MAX(userId) FROM User";
+	public void maxId() {
+		String slct = "SELECT MAX(ID) FROM User";
 		Connection con = null;
 		Statement stat = null;
 		try {
@@ -263,7 +309,6 @@ public class User {
 			stat = con.createStatement();
 			ResultSet rs = stat.executeQuery(slct);
 			userId = rs.getInt(1);
-			userId++;
 		}
 		catch (SQLException e) {
 		}
@@ -271,6 +316,6 @@ public class User {
 			DBcon.closeStatement(stat);
 			DBcon.closeConnection(con);
 		}
-		return userId;
+		userId++;
 	}
 }

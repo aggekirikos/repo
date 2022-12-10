@@ -25,8 +25,6 @@ public class Main {
 
 		int i = 0;
 		Scanner input1 = new Scanner(System.in);
-		Scanner scanner1 = new Scanner(System.in);
-		User user = null;
 		do {
 			System.out.print("Welcome to fOrk! Type 1 to SING UP, 2 to LOG IN, or -1 to END the program: ");
 			int preference = input1.nextInt();
@@ -39,15 +37,15 @@ public class Main {
 				String tempName = myscan2.nextLine();
 				System.out.println("Please create small Bio");
 				String tempBio = myscan3.nextLine();
-				user = new User(tempPassword, tempUsername, tempName, tempBio);
+				User user = new User(tempPassword, tempUsername, tempName, tempBio);
+				fOrkNavigation(user);
 			} else if(preference == 2) {
                int id = logIn();
-			   user = new User(id);
+			   User user = new User(id);
+			   fOrkNavigation(user);
 			} else if(preference == -1) {
 				i = -1;
-				System.exit(-1);
 			}
-			fOrkNavigation(user);
 		}while(i != -1);
 	}
 
@@ -56,8 +54,12 @@ public class Main {
 		Scanner input2 = new Scanner(System.in);
 		do{
 			System.out.println("Choose the act you want to do! \n 1: Search a recipe \n 2: Check your chatbox"
-					+ "\n 3: Make a post \n 4: Profile \n 5: Disconnect");
+					+ "\n 3: Make a post \n 4: See or Edit Your Profile \n 5: Log Out \n 6: Leave Fork");
 			int preference = input2.nextInt();
+			while (preference < 1 || preference > 6) {
+				System.out.println("Please insert a number from 1 to 6!");
+				preference = input2.nextInt();
+			}
 			switch (preference) {
 				case 1:
 					searchPost(user);
@@ -105,8 +107,6 @@ public class Main {
 						System.out.println(hastag[k]);
 					}
 
-					Connection con = DBcon.openConnection();
-					Statement stm = null;
 					Post post = new Post(user.getUserId(), title, content, cost, time, diffLevel, category, hastag);
 					post.getPost();
 					break;
@@ -116,43 +116,61 @@ public class Main {
 					System.out.println("Name : " + user.getName());
 					System.out.println("Bio : " + user.getBio());
 					user.printPosts();
-					System.out.println("If you want to go to Edit you Profile press 1\n");
+					System.out.println("If you want to edit you Profile press 1. Else press 2");
 					int answer2 = input2.nextInt();
+					while (answer2 != 1 && answer2 != 2) {
+						System.out.println("Please insert 1 or 2");
+						answer2 = input2.nextInt();
+					}
 					if(answer2 == 1) {
 						user.editProfile();
+						//System.out.print("Do you want to edit any of your posts? Yes/No");
 					}
-					//System.out.print("Do you want to edit any of your posts? Yes/No");
 					break;
 				case 5 :
 					j = -1;
-					//aposyndesi me th basi
 					break;
+				case 6 :
+					System.exit(1);
 			}
 		} while (j != -1);
 	}
 
 	private static void searchPost(User user) {
 		Scanner input2 = new Scanner(System.in);
-		int ttl = 0;
-		String rec = null;
+		String rec;
 		do {
-			System.out.print("Give 1 hashtag correlated with the recipe you want or type back to go back: ");
+			System.out.println("Give 1 hashtag correlated with the recipe you want or type back to go back.");
 			rec = input2.nextLine();
+			System.out.println("1");
 			if (!rec.equals("back")) {
 				int postId = search(rec);
+				System.out.println("2");
 				if (postId != -1) {
 					Post post = new Post(postId);
 					post.getPost();
 					System.out.println("Would you like to review it? Yes/No");
-					//post.makeReview
-					System.out.println("Would you like to make a comment? Yes/No");
 					String answer = input2.next();
-					if (answer.equals("Yes")) {
-						System.out.println("Please type the comment: ");
-						String content = input2.nextLine();
-						Comment comment = new Comment(content, user.getUserId(), postId);
+					while (!answer.equals("Yes") && !answer.equals("No")) {
+						System.out.println("Please insert Yes or No");
+						answer = input2.next();
 					}
-					System.out.println("Would you like to make recomment? Yes/No");
+					if (answer.equals("Yes")) {
+						post.makeReview();
+					}
+					System.out.println("Would you like to make a comment? Yes/No");
+                    answer = input2.next();
+					while (!answer.equals("Yes") && !answer.equals("No")) {
+						System.out.println("Please enter Yes or No");
+						answer = input2.next();
+					}
+					if (answer.equals("Yes")) {
+						System.out.print("Please type the comment: ");
+						input2.nextLine();
+						String com = input2.nextLine();
+						Comment comment = new Comment(com, user.getUserId(), postId);
+					}
+					System.out.println("Would you like to respond to a comment? Yes/No");
 					answer = input2.nextLine();
 					if (answer.equals("Yes")) {
 						System.out.println("please enter the id of the comment that you want to answer");
@@ -172,17 +190,17 @@ public class Main {
 	}//end of searchPost
 	public static int logIn() {
 		boolean flag = false;
-		int userId = 0;
+		int userId = -1;
 		 Connection connection = null;
 		 PreparedStatement pst = null;
 		do {
 			System.out.println("Please enter your username");
 			Scanner inU = new Scanner(System.in);
+			String un = inU.nextLine();
 			System.out.println("Please enter your password");
 			Scanner inP = new Scanner(System.in);
-			String un = inU.nextLine();
 			String pw = inP.nextLine();
-		    String select = "(SELECT ID FROM [User] WHERE Username =?, Password=?);";
+		    String select = "SELECT ID FROM User WHERE Username=? AND Password=?";
 		    try {
 				connection = DBcon.openConnection();
 				pst = connection.prepareStatement(select);
@@ -192,55 +210,63 @@ public class Main {
 				while (resultSet.next()) {
 					userId = resultSet.getInt("ID");
 					flag = true;
-
 			    }
 		   }
 		   catch (SQLException e) {
+				System.out.println(e.getMessage() );
 		   }
 		   finally {
 			   DBcon.closeStatement(pst);
 			   DBcon.closeConnection(connection);
 		   }
-		    if (flag == false) {
+		    if (!flag) {
 		   		System.out.println("Sorry, the password or/and the username you inserted are not valid. Please try again.");
 	        }
-	  } while (flag == true);
+	  } while (!flag);
 	  return userId;
 	}
 	public static int search(String hashtag) {
-		String select = ("SELECT PostID, Title, Username FROM User, Hashtags, Post WHERE Post.PostID = Hashtags.PostID AND User.ID = Hashtags.Creator AND Hashtags.Hashtag = ?");
+		String select = ("SELECT Post.PostID, Title, Username FROM User, Hashtags, Post WHERE Post.PostID = Hashtags.PostID AND User.ID = Post.Creator AND Hashtags.Hashtag = ?");
 		Connection connection = null;
 		PreparedStatement srch = null;
 		int usrChoice = 0;
 		int counter = 0;
 		ArrayList<Integer> postIdList = new ArrayList<Integer>();
-		do {
+		System.out.println("6");
 			try {
 			     connection = DBcon.openConnection();
+				 System.out.println("5");
 			     srch = connection.prepareStatement(select);
+				 System.out.println("3");
 			     srch.setString(1, hashtag);
 			     ResultSet rs = srch.executeQuery();
+				 System.out.println("4");
 			     while (rs.next()) {
 					counter++;
-					int aa = rs.getInt("PostId");
+					int aa = rs.getInt("PostID");
 					postIdList.add(aa);
 					String bb = rs.getString("Title");
-					String cc = rs.getString("username");
+					String cc = rs.getString("Username");
 					System.out.println(counter + " " + bb + " " + cc);
 			     }
 			     if (counter == 0) {
 				 	System.out.println("Seems like there was no recipe with this hashtag, try another one:(");
 				 } else {
-				 	System.out.println("Choose a recipe you like from the following list or -1 to go back!");
+				 	System.out.println("Please choose a recipe you like from the following list or -1 to go back!");
 				 	Scanner input = new Scanner(System.in);
 				 	usrChoice = input.nextInt();
+					while (usrChoice != -1 && (usrChoice < 1 || usrChoice > counter)) {
+						System.out.println("Wrong input. Please choose a recipe you like from the following list or -1 to go back!");
+						input = new Scanner(System.in);
+						usrChoice = input.nextInt();
+					 }
 				 }
 			} catch (SQLException e) {
+				System.out.println("Something went wrong while searching your hashtag." + e.getMessage());
 			} finally {
 				DBcon.closeStatement(srch);
 				DBcon.closeConnection(connection);
 			}
-		  } while ((usrChoice <= counter && usrChoice > 0) || (usrChoice != -1));
 		  int UsersChoice = -1;
 		  if (usrChoice != -1) {
 			   UsersChoice = postIdList.get(usrChoice - 1);

@@ -33,7 +33,7 @@ public class DBcon {
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS [User] "
 					+ "(ID INT NOT NULL PRIMARY KEY,"
 					+ "Password VARCHAR(30) NOT NULL,"
-					+ "Username VARCHAR(30) NOT NULL,"
+					+ "Username VARCHAR(30) UNIQUE NOT NULL,"
 					+ "Name VARCHAR(30) NOT NULL,"
 					+ "Bio VARCHAR(100));");
 			System.out.println("TABLE User CREATED");

@@ -25,8 +25,8 @@ public class Comment {
         PreparedStatement pst = null;
         try {
             connection = DBcon.openConnection();
-            pst = connection.prepareStatement("SELECT * FROM Comment WHERE CommentID=?");
-            pst.setString(1, String.valueOf(id));
+            pst = connection.prepareStatement(select);
+            pst.setInt(1, id);
             ResultSet resultSet = pst.executeQuery();
             while (resultSet.next()) {
                 this.commentContent = resultSet.getString("Content");
@@ -34,7 +34,7 @@ public class Comment {
                 this.from = resultSet.getInt("Sender");
             }
             pst = connection.prepareStatement("SELECT RecommentID FROM Recomment WHERE Receiver = ?");
-            pst.setString(1, String.valueOf(id));
+            pst.setInt(1, id);
             resultSet = pst.executeQuery();
             while (resultSet.next()) {
                 Recomment recomment = new Recomment(resultSet.getInt(1),commentId);
