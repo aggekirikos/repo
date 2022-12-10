@@ -2,7 +2,6 @@ package fOrk;
 
 
 import org.sqlite.core.DB;
-
 import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +28,7 @@ public class Main {
 		Scanner scanner1 = new Scanner(System.in);
 		User user = null;
 		do {
-			System.out.print("Welcome to fOrk! Type 1 to SING IN, 2 to LOG IN, or -1 to END the program: ");
+			System.out.print("Welcome to fOrk! Type 1 to SING UP, 2 to LOG IN, or -1 to END the program: ");
 			int preference = input1.nextInt();
 			if(preference == 1) {
 				System.out.println("Please create Password");

@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.sql.Statement;
 import java.sql.SQLException;
+
 public class Post {
-	public static int PostId = 0;
+	public static int PostId;
 	private String DifficutlyLevel;
 	public int PostStatus = 0;//When PostStatus is 0 the post is deleted. When PostStatus is 1 the post exists
 	public int RecipeTime;
@@ -24,8 +25,8 @@ public class Post {
 
 	public Post(int userId, String title, String content, double cost, int time,
 				String diLevel,String category, String[] has) {
+		PostId = maxidfromDB();
 		Creator = userId;
-		maxidfromDB();
 		PostStatus = 1;
 		Title = title;
 		Content = content;
@@ -35,8 +36,41 @@ public class Post {
 		RecipeCategory = category;
 		hashtags = has;
 		sendPosttoDB(/*PostId,PostStatus,RecipeTime,Content,Title,RecipeCategory,DifficutlyLevel,RecipeCost,Creator,hashtags*/);
+		/*Connection connection = null;
+		PreparedStatement stmt1 = null;
+		PreparedStatement stmt2 = null;
+		int maxid = getPostId();
+		try {
+			connection = DBcon.openConnection();
+			stmt1 = connection.prepareStatement("INSERT INTO Post(PostID,PostStatus,RecipeTime,Content,Title,RecipeCategory,DifficultyLevel,RecipeCost,Creator) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			int i = 0;
+			stmt1.setInt(1, maxid);
+			stmt1.setInt(2, PostStatus);
+			stmt1.setInt(3, RecipeTime);
+			stmt1.setString(4, Content);
+			stmt1.setString(5, Title);
+			stmt1.setString(6, RecipeCategory);
+			stmt1.setString(7, DifficultyLevel);
+			stmt1.setDouble(8, RecipeCost);
+			stmt1.setInt(9, Creator);
+			stmt1.executeUpdate();
+			while(hashtags[i] != null) {
+				stmt2 = connection.prepareStatement("INSERT INTO Hashtags(Hashtag,PostID) VALUES(?, ?)");
+				stmt2.setString(1, hashtags[i]);
+				stmt2.setInt(2, maxid);
+				stmt2.executeUpdate();
+			}
+			} catch (SQLException e) {
+				System.out.println("Something went wrong while creating this post" + e.getMessage());
+			} finally {
+				DBcon.closeStatement(stmt1);
+				DBcon.closeStatement(stmt2);
+				DBcon.closeConnection(connection);
+			}
+		}*/
 	}
-	public static void maxidfromDB() {
+
+	public int maxidfromDB() {
 		Connection connection = DBcon.openConnection();
 		Statement statement = null;
 		try {
@@ -44,14 +78,16 @@ public class Post {
 			ResultSet rs = statement.executeQuery("SELECT max(PostID) FROM Post");
 			PostId = rs.getInt(1);
 			PostId++;
-		} catch (Exception e) {}
+		} catch (SQLException e) {}
 		finally {
 			DBcon.closeStatement(statement);
 			DBcon.closeConnection(connection);
 		}
+		return PostId;
 	}
 
 	public Post(int id) {
+		this.PostId = id;
 		Connection connection = DBcon.openConnection();
 		PreparedStatement preparedStatement1 = null;
 		PreparedStatement preparedStatement3 = null;
@@ -99,6 +135,7 @@ public class Post {
 			DBcon.closeConnection(connection);
 		}
 	}
+
 	public void getReview() {
 		int sum2 = 0;
 		for (int k = 0; k < 5; k++) {
@@ -107,8 +144,7 @@ public class Post {
 		Reviews = sum2 / sum;
 	}
 
-public void createComment(int
-								  from, int toPost, int id ) {
+	public void createComment(int from, int toPost, int id ) {
 		String answer = input.next();
 		if (answer == "Yes") {
 			System.out.print("Please type the comment : ");
@@ -117,6 +153,7 @@ public void createComment(int
 			comments.add(comment);
 		}
 	}
+
 	public void makeReview() {
 		System.out.println("Do you like the post?Rate it with 0 to 5 stars");
 		int rate;
@@ -132,48 +169,63 @@ public void createComment(int
 		Reviews = sum/evaluators;
 		sendReviewstoDB(Reviews,evaluators,stars);
 	}
+
 	public int getPostId() {
 		return PostId;
 	}
+
 	public int getCreator() {
 		return Creator;
 	}
+
 	public String getTitle() {
 		return Title;
 	}
+
 	public void setTitle(String Title) {
 		this.Title = Title;
 	}
+
 	public String getContent() {
 		return Content;
 	}
+
 	public void setContent(String Content) {
 		this.Content = Content;
 	}
+
 	public double getRecipeCost() {
 		return RecipeCost;
 	}
+
 	public void setRecipeCost(double RecipeCost) {
 		this.RecipeCost = RecipeCost;
 	}
+
 	public int getRecipeTime() {
 		return RecipeTime;
 	}
+
 	public void setRecipeTime(int RecipeTime) {
 		this.RecipeTime = RecipeTime;
 	}
+
 	public String getDifficultyLevel(){
 		return DifficultyLevel;
 	}
+
 	public void setDifficultyLevel(String DifficultyLevel) {
 		this.DifficultyLevel = DifficultyLevel;
 	}
+
 	public String getRecipeCategory() {
 		return RecipeCategory;
 	}
+
 	public void setRecipeCategory(String RecipeCategory) {
 		this.RecipeCategory = RecipeCategory;
 	}
+
 	public double getReviews() {
 		return Reviews;
 	}
@@ -192,6 +244,7 @@ public void createComment(int
 				stmt2 = connection.prepareStatement("INSERT INTO Hashtags(Hashtag,PostID) VALUES(?, ?)");
 				stmt2.setString(1, hashtags[i]);
 				stmt2.setInt(2, maxid);
+				stmt2.executeUpdate();
 			}
 			stmt1.setInt(1, maxid);
 			stmt1.setInt(2, PostStatus);
@@ -203,7 +256,6 @@ public void createComment(int
 			stmt1.setDouble(8, RecipeCost);
 			stmt1.setInt(9, Creator);
 			stmt1.executeUpdate();
-			stmt2.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println("Something went wrong while creating this post" + e.getMessage());
 		} finally {
@@ -255,6 +307,7 @@ public void createComment(int
 			System.out.println("You cannot edit this post");
 		}
 	}
+
 	public void deletePost() {
 		if (Creator == User.getID) {
 		PostStatus = 0;
@@ -267,9 +320,10 @@ public void createComment(int
 		Reviews = 0;
 		comments[PostId] = null;
 		}else{
-					System.out.println("You cannot delete this post");
+			System.out.println("You cannot delete this post");
 		}
 	}*/
+
 	public void getPost() {
 		System.out.println( "Title of the post:" + getTitle() + "/nContent of the post:" + getContent() + "/nThe time required for " +
 				"this recipe is" + getRecipeTime() + "/nThe cost for this recipe is:" + getRecipeCost() + "euros" + "/The" +

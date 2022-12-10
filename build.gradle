@@ -7,10 +7,10 @@ plugins {
 group = 'com.dmst.fOrk'
 version = '1.0'
 
-java {
+/*java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-}
+}*/
 
 application {
     mainClass = 'fOrk.Main'

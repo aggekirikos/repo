@@ -12,8 +12,9 @@ public class User {
 	static Scanner scanner1 = new Scanner(System.in);
 	static Scanner scanner2 = new Scanner(System.in);
 	static Scanner scanner3 = new Scanner(System.in);
+	static Scanner myscan = new Scanner(System.in);
 
-	int userId = 0;
+	int userId;
 	String password;
 	String username;
 	String name;
@@ -23,13 +24,11 @@ public class User {
 
 	public User(String pass, String uname, String nm, String BIO) {
 		userId = maxId();
-		//System.out.println("Please create Password");
-		password = pass;
-		//System.out.println("Please create Username");
+		setPassword(pass);
+		String tempPass = getPassword();
+		password = tempPass;
 		username = uname;
-		//System.out.println("Please create Name");
 		name = nm;
-		//System.out.println("Please create small Bio");
 		bio = BIO;
 		Connection connection= null;
 		PreparedStatement stmt= null;
@@ -100,7 +99,7 @@ public class User {
 	public int getUserId() {
 		return userId;
 	}
-	Scanner myscan = new Scanner(System.in);
+
 	public void setPassword(String tempPassword) {
 		boolean flag = false;
 		while (flag == false) {
