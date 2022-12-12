@@ -389,7 +389,7 @@ public class Main {
 		int rtrn = -1;
 		try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("SELECT ID FROM USERS WHERE Username = ?");
+			stmt = connection.prepareStatement("SELECT ID FROM User WHERE Username = ?");
 			stmt.setString(1, username);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
