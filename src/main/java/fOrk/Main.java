@@ -409,7 +409,7 @@ public class Main {
 		return rtrn;
 	}
 
-	public static int getUsernamefromID(int id) {
+	public static String getUsernamefromID(int id) {
 			Connection connection = null;
 			PreparedStatement stmt = null;
 			String rtrn;
