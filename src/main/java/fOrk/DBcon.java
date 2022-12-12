@@ -91,8 +91,8 @@ public class DBcon {
 					+ "(MessageID INT NOT NULL PRIMARY KEY,"
 					+ "Content VARCHAR(500) NOT NULL,"
 					+ "MDateTime VARCHAR(25) NOT NULL,"
-					+ "Sender VARCHAR(30) NOT NULL,"
-					+ "Receiver VARCHAR(30) NOT NULL,"
+					+ "Sender INT NOT NULL,"
+					+ "Receiver INT NOT NULL,"
 					+ "CONSTRAINT FK_Messages_User_1 FOREIGN KEY(Sender) REFERENCES [User](ID),"
 					+ "CONSTRAINT FK_Messages_User_2 FOREIGN KEY(Receiver) REFERENCES [User](ID));");
 			System.out.println("TABLE Messages CREATED");
