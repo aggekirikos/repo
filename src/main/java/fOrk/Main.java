@@ -367,8 +367,8 @@ public class Main {
 			connection = DBcon.openConnection();
 			stmt = connection.prepareStatement("SELECT Messages.Content, Messages.MDateTime, Messages.Sender FROM Messages WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?) ORDER BY MessageID");
 			stmt.setInt(1, receiversID);
-			stmt.setInt(2, user.getUserId());
-			stmt.setInt(3, user.getUserId());
+			stmt.setInt(2, user);
+			stmt.setInt(3, user);
 			stmt.setInt(4, receiversID);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
