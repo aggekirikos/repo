@@ -65,7 +65,7 @@ public class Main {
 					searchPost(user);
 					break;
 				case 2:
-					getChatbox(user.getUserId());
+					getChatbox(user);
 					openConversation(user);
 					break;
 				case 3:
@@ -314,7 +314,7 @@ public class Main {
 		}
 	}
 
-	public static void openConversation(User user) {
+	public static void openConversation(int userid) {
 		System.out.println("Do you want to open a conversation?");
 		Scanner s = new Scanner(System.in);
 		String answer;
@@ -331,8 +331,8 @@ public class Main {
 					receiverid = -1;
 					receiverid = getIDfromUsername(receiver);
 				} while (receiverid == -1);
-				getMessagesby_userid(receiverid, user);
-				typeMessage(user.getUserId(), receiverid);
+				getMessagesby_userid(receiverid, userid);
+				typeMessage(userid, receiverid);
 			} else if (!answer.equals("no")) {
 				System.out.println("Wrong! Answer should be 'yes' or 'no'");
 			}
@@ -360,15 +360,15 @@ public class Main {
 		} while (!answer3.equals("no"));
 	}
 
-	public static void getMessagesby_userid(int receiversID, User user) {
+	public static void getMessagesby_userid(int receiversID, int userid) {
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		try {
 			connection = DBcon.openConnection();
 			stmt = connection.prepareStatement("SELECT Messages.Content, Messages.MDateTime, Messages.Sender FROM Messages WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?) ORDER BY MessageID");
 			stmt.setInt(1, receiversID);
-			stmt.setInt(2, user);
-			stmt.setInt(3, user);
+			stmt.setInt(2, userid);
+			stmt.setInt(3, userid);
 			stmt.setInt(4, receiversID);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
