@@ -131,6 +131,7 @@ public class DBcon {
 			System.out.println("Could not close the SQL statement: " + e.getMessage());
 		}
 	}
+
 	public static void deleteTables(Connection dbcon) {
 		/* Try block for making the DB connection and excecuting the given statement. */
 		Statement stmt = null;
