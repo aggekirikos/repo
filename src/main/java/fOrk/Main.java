@@ -364,17 +364,19 @@ public class Main {
 		PreparedStatement stmt = null;
 		try {
 			connection = DBcon.openConnection();
-			stmt = connection.prepareStatement("SELECT User.Username, Messages.Content, Messages.MDateTime FROM User INNER JOIN Messages ON Messages.Sender = User.ID WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?) ORDER BY MessageID");
+			stmt = connection.prepareStatement("SELECT Messages.Content, Messages.MDateTime, Messages.Sender FROM Messages WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?) ORDER BY MessageID");
 			stmt.setInt(1, receiversID);
 			stmt.setInt(2, user.getUserId());
 			stmt.setInt(3, user.getUserId());
 			stmt.setInt(4, receiversID);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
+				int sendersid = rs.getInt("Sender");
+				int receiverid = rs.getInt("Receiver");
+				String sendersun = getUsernamefromID(sendersid);
 				String MessageContent = rs.getString("Content");
-				String sendersUN = rs.getString("Username");
 				String dt = rs.getString("MDateTime");
-				System.out.println(sendersUN + ":" + MessageContent + "at" + dt);
+				System.out.println(sendersun + ":" + MessageContent + "at" + dt);
 			}
 		} catch (SQLException e) {
 		} finally {
@@ -406,6 +408,25 @@ public class Main {
 		}
 		return rtrn;
 	}
+
+	public static int getUsernamefromID(int id) {
+			Connection connection = null;
+			PreparedStatement stmt = null;
+			String rtrn;
+			try {
+				connection = DBcon.openConnection();
+				stmt = connection.prepareStatement("SELECT Username FROM User WHERE ID = ?");
+				stmt.setInt(1, id);
+				ResultSet rs = stmt.executeQuery();
+				while(rs.next()) {
+					rtrn = rs.getString("Username");
+
+				}
+			} catch (SQLException e) {
+			} finally {
+				DBcon.closeStatement(stmt);
+				DBcon.closeConnection(connection);
+		}
 
 	public static 	String create() {
 		Scanner input1 = new Scanner(System.in);
