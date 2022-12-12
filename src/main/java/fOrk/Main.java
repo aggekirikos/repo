@@ -318,6 +318,7 @@ public class Main {
 		Scanner s = new Scanner(System.in);
 		String answer;
 		do {
+			int receiverid;
 			answer = s.next();
 			if (answer.equals("yes")) {
 				do {
@@ -326,7 +327,7 @@ public class Main {
 					Scanner s2 = new Scanner(System.in);
 					answer2 = s2.next();
 					String receiver = answer2;
-					int receiverid = 0;
+					receiverid = 0;
 					receiverid = getIDfromUsername(receiver);
 				} while (receiverid == 0);
 				getMessagesby_userid(receiverid, user);
