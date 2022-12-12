@@ -307,6 +307,7 @@ public class Main {
 				DBcon.closeStatement(stmt2);
 			}
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
@@ -379,6 +380,7 @@ public class Main {
 				System.out.println(sendersun + ":" + MessageContent + "at" + dt);
 			}
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
