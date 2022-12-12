@@ -344,8 +344,8 @@ public class Main {
 		do {
 			System.out.println("Do you want to type a message?");
 			Scanner s3 = new Scanner(System.in);
-			answer3 = s3.next();
 			do {
+				answer3 = s3.next();
 				if (answer3.equals("yes")) {
 					System.out.println("Type message");
 					Scanner s4 = new Scanner(System.in);
