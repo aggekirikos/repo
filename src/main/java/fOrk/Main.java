@@ -327,9 +327,9 @@ public class Main {
 					Scanner s2 = new Scanner(System.in);
 					answer2 = s2.next();
 					String receiver = answer2;
-					receiverid = 0;
+					receiverid = -1;
 					receiverid = getIDfromUsername(receiver);
-				} while (receiverid == 0);
+				} while (receiverid == -1);
 				getMessagesby_userid(receiverid, user);
 				typeMessage(user.getUserId(), receiverid);
 			} else if (!answer.equals("no")) {
@@ -386,7 +386,7 @@ public class Main {
 	public static int getIDfromUsername(String username) {
 		Connection connection = null;
 		PreparedStatement stmt = null;
-		int rtrn = 0;
+		int rtrn = -1;
 		try {
 			connection = DBcon.openConnection();
 			stmt = connection.prepareStatement("SELECT ID FROM USERS WHERE Username = ?");
@@ -401,7 +401,7 @@ public class Main {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
 		}
-		if (rtrn == 0); {
+		if (rtrn == -1); {
 			System.out.println("The user you entered does not exist. Please type a new one");
 		}
 		return rtrn;
