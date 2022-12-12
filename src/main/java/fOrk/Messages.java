@@ -129,7 +129,9 @@ public class Messages {
 				Scanner s2 = new Scanner(System.in);
 				answer2 = s2.next();
 				String receiver = answer2;
-				int receiverid = getIDfromUsername(receiver);
+				do {
+					int receiverid = getIDfromUsername(receiver);
+				} while (receiverid == 0);
 				getMessagesby_userid(receiverid);
 				typeMessage(userid, receiverid);
 			} else if (answer != "no") {
@@ -176,6 +178,9 @@ public class Messages {
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
+		}
+		if (rtrn == 0) {
+			System.out.println("The username you entered does not exist. Please type a new one!");
 		}
 		return rtrn;
 	}*/

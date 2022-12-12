@@ -325,7 +325,9 @@ public class Main {
 				Scanner s2 = new Scanner(System.in);
 				answer2 = s2.next();
 				String receiver = answer2;
-				int receiverid = getIDfromUsername(receiver);
+				do {
+					int receiverid = getIDfromUsername(receiver);
+				} while (receiverid == 0);
 				getMessagesby_userid(receiverid, user);
 				typeMessage(user.getUserId(), receiverid);
 			} else if (!answer.equals("no")) {
@@ -396,6 +398,9 @@ public class Main {
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
+		}
+		if (rtrn == 0); {
+			System.out.println("The user you entered does not exist. Please type a new one");
 		}
 		return rtrn;
 	}
