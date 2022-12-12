@@ -401,7 +401,7 @@ public class Main {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
 		}
-		if (rtrn == -1); {
+		if (rtrn == -1) {
 			System.out.println("The user you entered does not exist. Please type a new one");
 		}
 		return rtrn;
