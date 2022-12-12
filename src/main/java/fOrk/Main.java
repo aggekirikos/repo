@@ -66,7 +66,7 @@ public class Main {
 					break;
 				case 2:
 					getChatbox(user.getUserId());
-					openConversation(user);
+					openConversation(user.getUserId());
 					break;
 				case 3:
 					System.out.println("Please insert your recipes title.");
@@ -274,7 +274,7 @@ public class Main {
 		  return UsersChoice;
 	  }
 
-	public static void getChatbox(User userid) {
+	public static void getChatbox(int userid) {
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
@@ -313,7 +313,7 @@ public class Main {
 		}
 	}
 
-	public static void openConversation(User userid) {
+	public static void openConversation(int userid) {
 		System.out.println("Do you want to open a conversation?");
 		Scanner s = new Scanner(System.in);
 		String answer;
@@ -339,7 +339,7 @@ public class Main {
 
 	}
 
-	public static void typeMessage(User userid, int receiversid) {
+	public static void typeMessage(int userid, int receiversid) {
 		String answer3 = null;
 		do {
 			System.out.println("Do you want to type a message?");
@@ -359,7 +359,7 @@ public class Main {
 		} while (!answer3.equals("no"));
 	}
 
-	public static void getMessagesby_userid(int receiversID, User userid) {
+	public static void getMessagesby_userid(int receiversID, int userid) {
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		try {
