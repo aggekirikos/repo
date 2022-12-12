@@ -320,13 +320,13 @@ public class Main {
 		do {
 			answer = s.next();
 			if (answer.equals("yes")) {
-				System.out.println("Type the user you want to chat");
-				String answer2;
-				Scanner s2 = new Scanner(System.in);
-				answer2 = s2.next();
-				String receiver = answer2;
-				int receiverid = 0;
 				do {
+					System.out.println("Type the user you want to chat");
+					String answer2;
+					Scanner s2 = new Scanner(System.in);
+					answer2 = s2.next();
+					String receiver = answer2;
+					int receiverid = 0;
 					receiverid = getIDfromUsername(receiver);
 				} while (receiverid == 0);
 				getMessagesby_userid(receiverid, user);
