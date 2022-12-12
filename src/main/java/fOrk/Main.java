@@ -325,8 +325,9 @@ public class Main {
 				Scanner s2 = new Scanner(System.in);
 				answer2 = s2.next();
 				String receiver = answer2;
+				int receiverid == 0;
 				do {
-					int receiverid = getIDfromUsername(receiver);
+					receiverid = getIDfromUsername(receiver);
 				} while (receiverid == 0);
 				getMessagesby_userid(receiverid, user);
 				typeMessage(user.getUserId(), receiverid);
