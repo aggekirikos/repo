@@ -65,8 +65,8 @@ public class Main {
 					searchPost(user);
 					break;
 				case 2:
-					getChatbox(user);
-					openConversation(user);
+					getChatbox(user.getUserId());
+					openConversation(user.getUserId());
 					break;
 				case 3:
 					System.out.println("Please insert your recipes title.");
