@@ -325,7 +325,7 @@ public class Main {
 				Scanner s2 = new Scanner(System.in);
 				answer2 = s2.next();
 				String receiver = answer2;
-				int receiverid == 0;
+				int receiverid = 0;
 				do {
 					receiverid = getIDfromUsername(receiver);
 				} while (receiverid == 0);
