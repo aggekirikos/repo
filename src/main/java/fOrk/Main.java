@@ -412,7 +412,7 @@ public class Main {
 	public static String getUsernamefromID(int id) {
 			Connection connection = null;
 			PreparedStatement stmt = null;
-			String rtrn;
+			String rtrn = null;
 			try {
 				connection = DBcon.openConnection();
 				stmt = connection.prepareStatement("SELECT Username FROM User WHERE ID = ?");
