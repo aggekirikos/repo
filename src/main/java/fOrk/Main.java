@@ -19,7 +19,7 @@ public class Main {
 
 	public static void main(String args[]){
 		Connection connection1 = DBcon.openConnection();
-		DBcon.deleteTables(connection1);
+		/*DBcon.deleteTables(connection1);*/
 		Connection connection2 = DBcon.openConnection();
 		DBcon.createTable(connection2);
 
