@@ -427,6 +427,7 @@ public class Main {
 				DBcon.closeStatement(stmt);
 				DBcon.closeConnection(connection);
 		    }
+		    return rtrn;
 	}
 
 	public static 	String create() {
