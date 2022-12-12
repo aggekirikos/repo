@@ -285,14 +285,14 @@ public class Main {
 			stmt.setInt(2, userid);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
-				int sendersid = rs.getInt("Sender");
-				int receiversid = rs.getInt("Receiver");
+				int sendersid = rs.getInt("Messages.Sender");
+				int receiversid = rs.getInt("Messages.Receiver");
 				if (sendersid == userid) {
 					stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Receiver = User.ID WHERE Messages.Sender = ? GROUP BY User.Username ");
 					stmt2.setInt(1, userid);
 					ResultSet rs2 = stmt2.executeQuery();
 					while(rs2.next()) {
-						String receiversUN = rs2.getString("Username");
+						String receiversUN = rs2.getString("User.Username");
 						System.out.println(receiversUN);
 					}
 				} else {
@@ -300,7 +300,7 @@ public class Main {
 					stmt2.setInt(1, userid);
 					ResultSet rs2 = stmt2.executeQuery();
 					while(rs2.next()) {
-						String sendersUN = rs2.getString("Username");
+						String sendersUN = rs2.getString("User.Username");
 						System.out.println(sendersUN);
 					}
 				}
