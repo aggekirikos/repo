@@ -96,10 +96,10 @@ public class Messages {
 			stmt = connection.prepareStatement("SELECT MAX(MessageID) FROM Messages");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				maxid = rs.getInt("MessageID");
+				maxid = rs.getInt(1);
 				maxid++;
 			}
-			stmt2 = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MDateTime, Sender, Receiver) VALUES(?, ?, ?, ?, ?)");
+			stmt2 = connection.prepareStatement("INSERT INTO Messages(MessageID,Content,MDateTime,Sender,Receiver) VALUES(?, ?, ?, ?, ?)");
 		    LocalDateTime datetime1 = LocalDateTime.now();
    		    DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		    String formatDateTime = datetime1.format(format);
@@ -110,6 +110,7 @@ public class Messages {
 		    stmt2.setInt(5, receiverid);
 		    stmt2.executeUpdate();
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeStatement(stmt2);

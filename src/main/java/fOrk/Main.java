@@ -19,7 +19,7 @@ public class Main {
 
 	public static void main(String args[]){
 		Connection connection1 = DBcon.openConnection();
-		/*DBcon.deleteTables(connection1);*/
+		DBcon.deleteTables(connection1);
 		Connection connection2 = DBcon.openConnection();
 		DBcon.createTable(connection2);
 
@@ -275,6 +275,7 @@ public class Main {
 	  }
 
 	public static void getChatbox(int userid) {
+		System.out.println("Your chatbox is :");
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
@@ -285,14 +286,14 @@ public class Main {
 			stmt.setInt(2, userid);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
-				int sendersid = rs.getInt("Messages.Sender");
-				int receiversid = rs.getInt("Messages.Receiver");
+				int sendersid = rs.getInt("Sender");
+				int receiversid = rs.getInt("Receiver");
 				if (sendersid == userid) {
 					stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Receiver = User.ID WHERE Messages.Sender = ? GROUP BY User.Username ");
 					stmt2.setInt(1, userid);
 					ResultSet rs2 = stmt2.executeQuery();
 					while(rs2.next()) {
-						String receiversUN = rs2.getString("User.Username");
+						String receiversUN = rs2.getString("Username");
 						System.out.println(receiversUN);
 					}
 				} else {
@@ -300,21 +301,22 @@ public class Main {
 					stmt2.setInt(1, userid);
 					ResultSet rs2 = stmt2.executeQuery();
 					while(rs2.next()) {
-						String sendersUN = rs2.getString("User.Username");
+						String sendersUN = rs2.getString("Username");
 						System.out.println(sendersUN);
 					}
 				}
-				DBcon.closeStatement(stmt2);
 			}
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 		} finally {
 			DBcon.closeStatement(stmt);
+			DBcon.closeStatement(stmt2);
 			DBcon.closeConnection(connection);
 		}
 	}
 
 	public static void openConversation(int userid) {
-		System.out.println("Do you want to open a conversation?");
+		System.out.println("Would you like to open a conversation?");
 		Scanner s = new Scanner(System.in);
 		String answer;
 		do {
@@ -322,7 +324,7 @@ public class Main {
 			answer = s.next();
 			if (answer.equals("yes")) {
 				do {
-					System.out.println("Type the user you want to chat");
+					System.out.println("Type the user you want to chat with: ");
 					String answer2;
 					Scanner s2 = new Scanner(System.in);
 					answer2 = s2.next();
@@ -342,12 +344,12 @@ public class Main {
 	public static void typeMessage(int userid, int receiversid) {
 		String answer3 = null;
 		do {
-			System.out.println("Do you want to type a message?");
+			System.out.println("Would you like to type a message?");
 			Scanner s3 = new Scanner(System.in);
 			do {
 				answer3 = s3.next();
 				if (answer3.equals("yes")) {
-					System.out.println("Type message");
+					System.out.println("Please type your message : ");
 					Scanner s4 = new Scanner(System.in);
 					String MessageContent;
 					MessageContent = s4.next();
@@ -372,13 +374,14 @@ public class Main {
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				int sendersid = rs.getInt("Sender");
-				int receiverid = rs.getInt("Receiver");
+				//int receiverid = rs.getInt("Receiver");
 				String sendersun = getUsernamefromID(sendersid);
 				String MessageContent = rs.getString("Content");
 				String dt = rs.getString("MDateTime");
-				System.out.println(sendersun + ":" + MessageContent + "at" + dt);
+				System.out.println(sendersun + " : " + MessageContent + " sent at " + dt);
 			}
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
@@ -396,9 +399,9 @@ public class Main {
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				rtrn = rs.getInt("ID");
-
 			}
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
@@ -420,9 +423,9 @@ public class Main {
 				ResultSet rs = stmt.executeQuery();
 				while(rs.next()) {
 					rtrn = rs.getString("Username");
-
 				}
 			} catch (SQLException e) {
+				System.out.println(e.getMessage());
 			} finally {
 				DBcon.closeStatement(stmt);
 				DBcon.closeConnection(connection);
