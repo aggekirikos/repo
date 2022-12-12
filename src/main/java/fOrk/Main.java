@@ -170,14 +170,16 @@ public class Main {
 						String com = input2.nextLine();
 						Comment comment = new Comment(com, user.getUserId(), postId);
 					}
-					System.out.println("Would you like to respond to a comment? Yes/No");
-					answer = input2.nextLine();
-					if (answer.equals("Yes")) {
-						System.out.println("please enter the id of the comment that you want to answer");
-						int ans = input2.nextInt();
-						Comment comment = new Comment(ans);
-						int userId = user.getUserId();
-						comment.makeReComment(userId, post.getPostId(), ans);
+					if (post.commentListSize()) {
+						System.out.println("Would you like to respond to a comment? Yes/No");
+						answer = input2.nextLine();
+						if (answer.equals("Yes")) {
+							System.out.println("please enter the id of the comment that you want to answer");
+							int ans = input2.nextInt();
+							Comment comment = new Comment(ans);
+							int userId = user.getUserId();
+							comment.makeReComment(userId, post.getPostId(), ans);
+						}
 					}
 					System.out.println("Do you want to make this user your cookmate");
 					answer = input2.nextLine();

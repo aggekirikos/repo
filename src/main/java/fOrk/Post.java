@@ -305,6 +305,13 @@ public class Post {
 		}
 	}
 
+	public boolean commentListSize() {
+		if (comments.size() != 0)
+			return true;
+		else
+			return false;
+	}
+
 	/*public void editPost() {
 		Scanner input =  new Scanner(System.in);
 		if (Creator == User.getID()) {
