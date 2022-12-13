@@ -106,7 +106,9 @@ public class Post {
 		}
 		for (int commentId: commId) {
 			Comment comment = new Comment(commentId);
-			comments.add(comment);
+			if (comment.checkFirstLineComment()) {
+				comments.add(comment);
+			}
 		}
 	}
 

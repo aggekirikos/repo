@@ -101,7 +101,6 @@ public class Comment {
     public void getRecomments() {
         int loops = recomments.size();
         int i = 0;
-        System.out.println(recomments.size());
         if (!recomments.isEmpty()) {
             System.out.println("   with responds:  ");
             while (i < loops) {

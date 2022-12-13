@@ -179,7 +179,7 @@ public class Main {
 							int ans = input2.nextInt();
 							Comment comment = post.comments.get(ans-1);//new Comment(ans);
 							int userId = user.getUserId();
-							comment.makeReComment(userId, post.getPostId(), ans);
+							comment.makeReComment(userId, post.getPostId(), comment.commentId);
 						}
 					}
 					System.out.println("Do you want to make this user your cookmate");
