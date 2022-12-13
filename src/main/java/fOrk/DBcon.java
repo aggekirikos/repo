@@ -36,7 +36,7 @@ public class DBcon {
 					+ "Username VARCHAR(30) UNIQUE NOT NULL,"
 					+ "Name VARCHAR(30) NOT NULL,"
 					+ "Bio VARCHAR(100));");
-			System.out.println("TABLE User CREATED");
+			//System.out.println("TABLE User CREATED");
 
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Post "
 					+ "(PostID INT NOT NULL PRIMARY KEY,"
@@ -49,14 +49,14 @@ public class DBcon {
 					+ "RecipeCost NUMERIC(5,2),"
 					+ "Creator VARCHAR(30) NOT NULL,"
 					+ "CONSTRAINT FK_Post_User FOREIGN KEY(Creator) REFERENCES [User](ID));");
-			System.out.println("TABLE Post CREATED");
+			//System.out.println("TABLE Post CREATED");
 
 			stmt.executeUpdate("Create TABLE IF NOT EXISTS Hashtags "
 					+ "(Hashtag VARCHAR(50) NOT NULL,"
 					+ "PostID INT NOT NULL,"
 					+ "CONSTRAINT PK_Hashtags PRIMARY KEY (PostID,Hashtag)"
 					+ "CONSTRAINT FK_Hashtags_Post FOREIGN KEY(PostID) REFERENCES Post);");
-			System.out.println("TABLE Hashtags CREATED");
+			//System.out.println("TABLE Hashtags CREATED");
 
 			stmt.executeUpdate("Create TABLE IF NOT EXISTS stars "
 					+"(star1 INT,"
@@ -66,7 +66,7 @@ public class DBcon {
 					+"star5 INT,"
 					+"PostID INT NOT NULL PRIMARY KEY,"
 					+"CONSTRAINT FK_stars_Post FOREIGN KEY(PostID) REFERENCES Post);");
-			System.out.println("TABLE stars CREATED");
+			//System.out.println("TABLE stars CREATED");
 
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Comment "
 					+ "(CommentID INT NOT NULL PRIMARY KEY,"
@@ -77,14 +77,14 @@ public class DBcon {
 					+ "CONSTRAINT FK_Comment_User FOREIGN KEY(Sender) REFERENCES [User](ID),"
 					//+ "CONSTRAINT FK_Comment_Comment FOREIGN KEY(Receiver) REFERENCES Comment(CommentID),"
 					+ "CONSTRAINT FK_Comment_Post FOREIGN KEY(ToPost) REFERENCES Post(PostID));");
-			System.out.println("TABLE Comment CREATED");
+			//System.out.println("TABLE Comment CREATED");
 
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Recomment "
 					+ "(RecommentID INT NOT NULL PRIMARY KEY, "
 					+ "Receiver INT NOT NULL, "
 					+ "CONSTRAINT FK_Recomment_Comment_1 FOREIGN KEY(RecommentID) REFERENCES Comment(CommentID), "
 					+ "CONSTRAINT FK_Recomment_Comment_2 FOREIGN KEY(Receiver) REFERENCES Comment(CommentID));");
-			System.out.println("TABLE Recomment CREATED");
+			//System.out.println("TABLE Recomment CREATED");
 
 			/* if connection is still open*/
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Messages "
@@ -95,7 +95,7 @@ public class DBcon {
 					+ "Receiver INT NOT NULL,"
 					+ "CONSTRAINT FK_Messages_User_1 FOREIGN KEY(Sender) REFERENCES [User](ID),"
 					+ "CONSTRAINT FK_Messages_User_2 FOREIGN KEY(Receiver) REFERENCES [User](ID));");
-			System.out.println("TABLE Messages CREATED");
+			//System.out.println("TABLE Messages CREATED");
 
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Cookmates "
 					+ "(UserID INT NOT NULL,"
@@ -103,7 +103,7 @@ public class DBcon {
 					+ "CONSTRAINT FK_Cookmates_User_1 FOREIGN KEY(UserID) REFERENCES [User](ID),"
 					+ "CONSTRAINT FK_Cookmates_User_2 FOREIGN KEY(CookmateID) REFERENCES [User](ID),"
 					+ "CONSTRAINT PK_Cookmates PRIMARY KEY(UserID, CookmateID));");
-			System.out.println("TABLE Cookmates CREATED");
+			//System.out.println("TABLE Cookmates CREATED");
 		} catch (Exception e) {
 			System.out.println("Could not create tables: " + e.getMessage());
 		} finally {
@@ -147,7 +147,7 @@ public class DBcon {
 			stmt.executeUpdate("DROP TABLE Hashtags;");
 			stmt.executeUpdate("DROP TABLE Post;");
 			stmt.executeUpdate("DROP TABLE [User];");
-			System.out.println("SUCCESFULLY DELETED TABLES");
+			//System.out.println("SUCCESFULLY DELETED TABLES");
 			stmt.close();
 			dbcon.close();
 		} catch (SQLException e) {

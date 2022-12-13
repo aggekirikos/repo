@@ -28,7 +28,7 @@ public class User {
 		setUsername(uname);
 		name = nm;
 		bio = BIO;
-		System.out.println(userId + password + username + name + bio);
+
 		Connection connection= null;
 		PreparedStatement stmt= null;
 		try {

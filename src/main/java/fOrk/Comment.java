@@ -102,7 +102,7 @@ public class Comment {
         int loops = recomments.size();
         int i = 0;
         if (!recomments.isEmpty()) {
-            System.out.println("   with responds:  ");
+            System.out.println("   Responds:  ");
             while (i < loops) {
                 System.out.print("   ");
                 recomments.get(i).printComment();
@@ -111,7 +111,7 @@ public class Comment {
         }
     }
     public void printComment() {
-        System.out.println( getCommentContent() +" from " + username );
+        System.out.println(  username + ": " + getCommentContent() );
     }
     public void printCommentRec(int counter) {
             System.out.print(" " + (counter + 1) + ": ");

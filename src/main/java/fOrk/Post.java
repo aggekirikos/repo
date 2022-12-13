@@ -13,7 +13,8 @@ public class Post {
 	public int PostStatus = 0;//When PostStatus is 0 the post is deleted. When PostStatus is 1 the post exists
 	public int RecipeTime;
 	public String Content,Title,RecipeCategory,DifficultyLevel;
-	public double RecipeCost,Reviews;
+	public double RecipeCost;
+	double Reviews = 0;
 	ArrayList<Comment> comments = new ArrayList<Comment>();
 	public String [] hashtags = new String [5];
 	int Creator ;
@@ -85,7 +86,9 @@ public class Post {
 			for (int i = 0; i<5; i++) {
 				sum = sum + (i+1) * stars[i];
 			}
-			Reviews = (double ) sum/evaluators();
+			if (evaluators() != 0) {
+				Reviews = (double ) sum/evaluators();
+			}
 
 			preparedStatement2 = connection.prepareStatement("SELECT * FROM Comment " +
 					" WHERE ToPost = ? ");
@@ -112,16 +115,9 @@ public class Post {
 		}
 	}
 
-	public void getReview() {
-		int sum2 = 0;
-		for (int k = 0; k < 5; k++) {
-			sum2 = sum2 + stars[k];
-		}
-		Reviews = sum2 / sum;
-	}
-
 	public void createComment(int from, int toPost) {
 		String answer = input.next();
+		answer = Main.checkAnswer(answer);
 		if (answer == "Yes") {
 			System.out.print("Please type the comment : ");
 			String a = input.nextLine();
@@ -142,7 +138,10 @@ public class Post {
 			sum = sum + (i+1) * stars[i];
 		}
 		sendReviewstoDB(rate);
-		Reviews = (double ) sum/evaluators();
+		if (evaluators() != 0) {
+			Reviews = (double) sum / evaluators();
+		}
+
 	}
 
 	public int evaluators(){
@@ -330,10 +329,14 @@ public class Post {
 	}*/
 
 	public void getPost() {
-		System.out.println( "Title of the post:" + getTitle() + "\nContent of the post:" + getContent() + "\nThe time required for " +
-				"this recipe is" + getRecipeTime() + "\nThe cost for this recipe is:" + getRecipeCost() + "euros" + "\nThe" +
-				" difficulty Level of this recipe is:" + getDifficultyLevel() + "\nThe category of this recipe is:"
-				+ getRecipeCategory() + "\nThis post has " + Reviews + "stars" + "\nThis post's comments are: ");
+		System.out.println( "Title of the post: " + getTitle() + "\n" +
+				"Content of the post: " + getContent() + "\n" +
+				"The time required for this recipe is: " + getRecipeTime() + "\n" +
+				"The cost for this recipe is:" + getRecipeCost() + " €" + "\n" +
+				"The difficulty Level of this recipe is: " + getDifficultyLevel() + "\nT" +
+				"he category of this recipe is: " + getRecipeCategory() + "\n" +
+				"This post has " + Reviews + " stars" + "\n" +
+				"This post's comments are: ");
 		if (comments.size() == 0) {
 			System.out.println("  This post has no comments yet");
 		} else {

@@ -18,21 +18,21 @@ public class Main {
 	static Scanner myscan3 = new Scanner(System.in);
 
 	public static void main(String args[]){
-		//Connection connection1 = DBcon.openConnection();
-		//DBcon.deleteTables(connection1);
+		Connection connection1 = DBcon.openConnection();
+		DBcon.deleteTables(connection1);
 		Connection connection2 = DBcon.openConnection();
 		DBcon.createTable(connection2);
 
 		int i = 0;
 		Scanner input1 = new Scanner(System.in);
 		do {
-			System.out.print("Welcome to fOrk! Type 1 to SING UP, 2 to LOG IN, or -1 to END the program: ");
+			System.out.print("Welcome to fOrk! Type 1 to SING UP, 2 to LOG IN, or -1 to LEAVE fOrk : ");
 			int preference = input1.nextInt();
 			if(preference == 1) {
-				System.out.println("Please create Password");
-				String tempPassword = myscan.nextLine();
 				System.out.println("Please create Username");
 				String tempUsername = myscan1.nextLine();
+				System.out.println("Please create Password");
+				String tempPassword = myscan.nextLine();
 				System.out.println("Please create Name");
 				String tempName = myscan2.nextLine();
 				System.out.println("Please create small Bio");
@@ -82,7 +82,7 @@ public class Main {
 					String diffLevel = input2.next();
 					int flag=1;
 					while (flag==1) {
-						if ((diffLevel.equals("Simple") || diffLevel.equals("Mediun")) || diffLevel.equals("Difficult")) {
+						if ((diffLevel.equals("Simple") || diffLevel.equals("Medium")) || diffLevel.equals("Difficult")) {
 							flag = 2;
 						} else {
 							System.out.println("Please describe the difficulty level with easy or medium or difficult");
@@ -99,12 +99,9 @@ public class Main {
 					}
 					int i = 0;
 					while (i < answ) {
+						System.out.println("Please insert your hashtag");
 						hastag[i] = input2.next();
 						i++;
-					}
-
-					for (int k=0; k<5; k++) {
-						System.out.println(hastag[k]);
 					}
 
 					Post post = new Post(user.getUserId(), title, content, cost, time, diffLevel, category, hastag);
@@ -142,28 +139,20 @@ public class Main {
 		do {
 			System.out.println("Give 1 hashtag correlated with the recipe you want or type back to go back.");
 			rec = input2.nextLine();
-			System.out.println("1");
 			if (!rec.equals("back")) {
 				int postId = search(rec);
-				System.out.println("2");
 				if (postId != -1) {
 					Post post = new Post(postId);
 					post.getPost();
 					System.out.println("Would you like to review it? Yes/No");
 					String answer = input2.next();
-					while (!answer.equals("Yes") && !answer.equals("No")) {
-						System.out.println("Please insert Yes or No");
-						answer = input2.next();
-					}
+					answer = checkAnswer(answer);
 					if (answer.equals("Yes")) {
 						post.makeReview();
 					}
 					System.out.println("Would you like to make a comment? Yes/No");
                     answer = input2.next();
-					while (!answer.equals("Yes") && !answer.equals("No")) {
-						System.out.println("Please enter Yes or No");
-						answer = input2.next();
-					}
+
 					if (answer.equals("Yes")) {
 						System.out.print("Please type the comment: ");
 						input2.nextLine();
@@ -174,6 +163,7 @@ public class Main {
 						System.out.println("Would you like to respond to a comment? Yes/No");
 						input2.nextLine();
 						answer = input2.nextLine();
+						answer = checkAnswer(answer);
 						if (answer.equals("Yes")) {
 							System.out.println("please enter the number of the comment that you want to answer");
 							int ans = input2.nextInt();
@@ -183,14 +173,14 @@ public class Main {
 						}
 					}
 					System.out.println("Do you want to make this user your cookmate");
-					//input2.nextLine();
 					answer = input2.nextLine();
+					answer = checkAnswer(answer);
 					if (answer.equals("Yes")) {
 						user.makeCookmates(post.getCreator());
 					}
 				}
 			}
-		} while (!rec.equals("back"));
+		} while (!rec.equals("Back"));
 	}//end of searchPost
 	public static int logIn() {
 		boolean flag = false;
@@ -236,15 +226,11 @@ public class Main {
 		int usrChoice = 0;
 		int counter = 0;
 		ArrayList<Integer> postIdList = new ArrayList<Integer>();
-		System.out.println("6");
 			try {
 			     connection = DBcon.openConnection();
-				 System.out.println("5");
 			     srch = connection.prepareStatement(select);
-				 System.out.println("3");
 			     srch.setString(1, hashtag);
 			     ResultSet rs = srch.executeQuery();
-				 System.out.println("4");
 			     while (rs.next()) {
 					counter++;
 					int aa = rs.getInt("PostID");
@@ -256,7 +242,7 @@ public class Main {
 			     if (counter == 0) {
 				 	System.out.println("Seems like there was no recipe with this hashtag, try another one:(");
 				 } else {
-				 	System.out.println("Please choose a recipe you like from the following list or -1 to go back!");
+				 	System.out.println("Please choose a recipe you like from the following list or -1 to go Back!");
 				 	Scanner input = new Scanner(System.in);
 				 	usrChoice = input.nextInt();
 					while (usrChoice != -1 && (usrChoice < 1 || usrChoice > counter)) {
@@ -283,30 +269,52 @@ public class Main {
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
+		PreparedStatement stmt3 = null;
 		try {
 			connection = DBcon.openConnection();
 			stmt = connection.prepareStatement("SELECT Messages.Sender, Messages.Receiver FROM Messages WHERE Messages.Sender = ? OR Messages.Receiver = ? GROUP BY Sender, Receiver");
 			stmt.setInt(1, userid);
 			stmt.setInt(2, userid);
 			ResultSet rs = stmt.executeQuery();
-			while(rs.next()) {
-				int sendersid = rs.getInt("Sender");
-				int receiversid = rs.getInt("Receiver");
-				if (sendersid == userid) {
-					stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Receiver = User.ID WHERE Messages.Sender = ? GROUP BY User.Username ");
-					stmt2.setInt(1, userid);
-					ResultSet rs2 = stmt2.executeQuery();
-					while(rs2.next()) {
-						String receiversUN = rs2.getString("Username");
-						System.out.println(receiversUN);
+			double temp = 0.0;
+			double check = 0.0;
+			while (rs.next()) {
+				temp = temp + 1;
+			}
+			stmt3 = connection.prepareStatement("SELECT Messages.Sender, Messages.Receiver FROM Messages WHERE Messages.Sender = ? OR Messages.Receiver = ? GROUP BY Sender, Receiver");
+			stmt3.setInt(1, userid);
+			stmt3.setInt(2, userid);
+			ResultSet rs3 = stmt3.executeQuery();
+			while(rs3.next()) {
+				check = check + 1;
+				if (temp == 1) {
+					if (rs3.getInt("Sender") == userid) {
+						System.out.println(getUsernamefromID(rs3.getInt("Receiver")));
+					} else {
+						System.out.println(getUsernamefromID(rs3.getInt("Sender")));
 					}
 				} else {
-					stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Sender = User.ID WHERE Messages.Receiver = ? GROUP BY User.Username ");
-					stmt2.setInt(1, userid);
-					ResultSet rs2 = stmt2.executeQuery();
-					while(rs2.next()) {
-						String sendersUN = rs2.getString("Username");
-						System.out.println(sendersUN);
+					while (check <= temp / 2) {
+						System.out.println("2nd while");
+						int sendersid = rs3.getInt("Sender");
+						int receiversid = rs3.getInt("Receiver");
+						if (sendersid == userid) {
+							stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Receiver = User.ID WHERE Messages.Sender = ? GROUP BY User.Username ");
+							stmt2.setInt(1, userid);
+							ResultSet rs2 = stmt2.executeQuery();
+							while (rs2.next()) {
+								String receiversUN = rs2.getString("Username");
+								System.out.println(receiversUN);
+							}
+						} else {
+							stmt2 = connection.prepareStatement("SELECT User.Username FROM User INNER JOIN Messages ON Messages.Sender = User.ID WHERE Messages.Receiver = ? GROUP BY User.Username ");
+							stmt2.setInt(1, userid);
+							ResultSet rs2 = stmt2.executeQuery();
+							while (rs2.next()) {
+								String sendersUN = rs2.getString("Username");
+								System.out.println(sendersUN);
+							}
+						}
 					}
 				}
 			}
@@ -315,6 +323,7 @@ public class Main {
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeStatement(stmt2);
+			DBcon.closeStatement(stmt3);
 			DBcon.closeConnection(connection);
 		}
 	}
@@ -326,7 +335,8 @@ public class Main {
 		do {
 			int receiverid;
 			answer = s.next();
-			if (answer.equals("yes")) {
+			answer = checkAnswer(answer);
+			if (answer.equals("Yes")) {
 				do {
 					System.out.println("Type the user you want to chat with: ");
 					String answer2;
@@ -338,10 +348,8 @@ public class Main {
 				} while (receiverid == -1);
 				getMessagesby_userid(receiverid, userid);
 				typeMessage(userid, receiverid);
-			} else if (!answer.equals("no")) {
-				System.out.println("Wrong! Answer should be 'yes' or 'no'");
 			}
-		} while (!answer.equals("yes") && !answer.equals("no"));
+		} while (!answer.equals("Yes") && !answer.equals("No"));
 
 	}
 
@@ -352,17 +360,16 @@ public class Main {
 			Scanner s3 = new Scanner(System.in);
 			do {
 				answer3 = s3.next();
-				if (answer3.equals("yes")) {
+				answer3 = checkAnswer(answer3);
+				if (answer3.equals("Yes")) {
 					System.out.println("Please type your message : ");
 					Scanner s4 = new Scanner(System.in);
 					String MessageContent;
 					MessageContent = s4.next();
 					Messages message = new Messages(userid, receiversid, MessageContent);
-				} else if (!answer3.equals("no")) {
-					System.out.println("Wrong! Answer should be 'yes' or 'no'.");
 				}
-			} while (!answer3.equals("yes") && !answer3.equals("no"));
-		} while (!answer3.equals("no"));
+			} while (!answer3.equals("Yes") && !answer3.equals("No"));
+		} while (!answer3.equals("No"));
 	}
 
 	public static void getMessagesby_userid(int receiversID, int userid) {
@@ -444,22 +451,30 @@ public class Main {
 		System.out.println("Please enter the number of ingredients of your recipe.");
 		int i1 = input1.nextInt();
 		System.out.println("Please enter the ingredients of your recipe.");
-		String content = "Ingredients: \n";
+		String content = "\n Ingredients: ";
 		for (int i2 = 0; i2 < i1+1; i2++) {
-			content += input1.nextLine() + "\n";
+			content += " - " + input1.nextLine() + "\n";
 		}
 		System.out.println("Please enter the number of steps needed to create your recipe.");
 		//String[] steps = new String [input2.nextInt()];
 		int i3 = input2.nextInt();
 		System.out.println("Please enter the recipes steps in order.");
-		content += "Recipe steps: \n";
+		content += "\n Recipe steps: ";
 		for (int i4 = 0; i4 < i3+1; i4++) {
-			content += input2.nextLine() + "\n";
+			content += " - " +  input2.nextLine() + "\n";
 		}
 		System.out.println("\nYou have entered the following recipe: ");
 
 		System.out.println(content);
 		return content;
+	}
+	public static String checkAnswer(String an){
+		Scanner n = new Scanner(System.in);
+		while (!an.equals("Yes") && !an.equals("No")) {
+			System.out.println("Invalid answer. Please insert Yes or No");
+			an = n.nextLine();
+		}
+		return an;
 	}
 
 }//end of class
