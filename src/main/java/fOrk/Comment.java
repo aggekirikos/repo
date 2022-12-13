@@ -20,7 +20,7 @@ public class Comment {
     public Comment(){}
     public Comment(int id) {
         this.commentId = id;
-        String select = "SELECT * FROM Comment WHERE CommentID=?";
+        String select = "SELECT * FROM Comment,Recomment WHERE CommentID=? AND RecommentID!=CommentID";
         Connection connection = null;
         PreparedStatement pst = null;
         try {
@@ -35,12 +35,12 @@ public class Comment {
             }
             pst = connection.prepareStatement("SELECT RecommentID FROM Recomment WHERE Receiver = ?");
             pst.setInt(1, id);
-            resultSet = pst.executeQuery();
-            while (resultSet.next()) {
+            ResultSet resultSet2 = pst.executeQuery();
+            while (resultSet2.next()) {
                 Recomment recomment = new Recomment(resultSet.getInt(1),commentId);
                 recomments.add(recomment);
             }
-        } catch (SQLException e) {
+        } catch (SQLException e) { System.out.println(e.getMessage());
         }  finally {
             DBcon.closeStatement(pst);
             DBcon.closeConnection(connection);
@@ -55,7 +55,7 @@ public class Comment {
             ResultSet rs = stm.executeQuery("SELECT MAX(CommentID) FROM Comment");
             commentId = rs.getInt(1);
             commentId++;
-        } catch (Exception e) {}
+        } catch (Exception e) { System.out.println(e.getMessage());}
         finally {
             DBcon.closeStatement(stm);
             DBcon.closeConnection(con);
@@ -68,13 +68,13 @@ public class Comment {
         try {
             connection = DBcon.openConnection();
             pst = connection.prepareStatement("INSERT INTO Comment VALUES (?,?,?,?)");
-            pst.setString(1, String.valueOf(commentId));
+            pst.setInt(1, commentId);
             pst.setString(2, commentContent);
-            pst.setString(3, String.valueOf(from));
-            pst.setString(4, String.valueOf(to));
+            pst.setInt(3, from);
+            pst.setInt(4, to);
             pst.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(pst);
             DBcon.closeConnection(connection);
@@ -95,13 +95,17 @@ public class Comment {
     public void getRecomments() {
         int loops = recomments.size();
         int i = 0;
-        while (i < loops) {
-            System.out.println("     " + recomments.get(i));
-            i++;
+        if (!recomments.isEmpty()) {
+            System.out.println("   with responds:  ");
+            while (i < loops-1) {
+                System.out.print("   ");
+                recomments.get(i-1).printCommentRec();
+                i++;
+            }
         }
     }
     public void printCommentRec() {
-        System.out.print( getCommentContent() +" from " + from + " with responds: ");
+        System.out.println( getCommentContent() +" from " + from );
         getRecomments();
     }
 }

@@ -19,13 +19,17 @@ public class Recomment extends Comment {
             this.toComment = toComment;
             RecommentID = recId;
             while (rs.next()) {
-                String content = rs.getString("Content");
-                String sender = rs.getString("Sender");
-                int toPost = rs.getInt("ToPost");
+                commentContent = rs.getString("Content");
+                from = rs.getInt("Sender");
+                to = rs.getInt("ToPost");
                 break;
             }
 
-        } catch (Exception w) {}
+        } catch (SQLException e) {System.out.println(e.getMessage());
+        }finally{
+            DBcon.closeStatement(preparedStatement);
+            DBcon.closeConnection(con);
+        }
     }
     public Recomment(String content, int from, int toPost, int toComment ) {
         super(content, from, toPost);
@@ -34,17 +38,18 @@ public class Recomment extends Comment {
         PreparedStatement pst = null;
         Statement statement = null;
         RecommentID = commentId;
-          try {
+        try {
             connection = DBcon.openConnection();
-            pst = connection.prepareStatement("INSERT INTO Recomment VALUES (?,?)");
-            pst.setString(1, String.valueOf(commentId));
-            pst.setString(2, String.valueOf(RecommentID));
+            pst = connection.prepareStatement("INSERT INTO Recomment(RecommentID, Receiver) VALUES (?,?)");
+            pst.setInt(1, RecommentID);
+            pst.setInt(2, this.toComment);
             pst.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }  finally {
             DBcon.closeStatement(pst);
             DBcon.closeConnection(connection);
         }
     }
+
 }

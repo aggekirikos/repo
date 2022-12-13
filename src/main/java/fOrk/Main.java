@@ -18,8 +18,8 @@ public class Main {
 	static Scanner myscan3 = new Scanner(System.in);
 
 	public static void main(String args[]){
-		Connection connection1 = DBcon.openConnection();
-		DBcon.deleteTables(connection1);
+		//Connection connection1 = DBcon.openConnection();
+		//DBcon.deleteTables(connection1);
 		Connection connection2 = DBcon.openConnection();
 		DBcon.createTable(connection2);
 
@@ -172,6 +172,7 @@ public class Main {
 					}
 					if (post.commentListSize()) {
 						System.out.println("Would you like to respond to a comment? Yes/No");
+						input2.nextLine();
 						answer = input2.nextLine();
 						if (answer.equals("Yes")) {
 							System.out.println("please enter the id of the comment that you want to answer");
@@ -182,6 +183,7 @@ public class Main {
 						}
 					}
 					System.out.println("Do you want to make this user your cookmate");
+					//input2.nextLine();
 					answer = input2.nextLine();
 					if (answer.equals("Yes")) {
 						user.makeCookmates(post.getCreator());

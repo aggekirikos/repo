@@ -10,7 +10,6 @@ import java.sql.SQLException;
 
 public class Post {
 	public int PostId;
-	private String DifficutlyLevel;
 	public int PostStatus = 0;//When PostStatus is 0 the post is deleted. When PostStatus is 1 the post exists
 	public int RecipeTime;
 	public String Content,Title,RecipeCategory,DifficultyLevel;
@@ -34,39 +33,7 @@ public class Post {
 		DifficultyLevel = diLevel;
 		RecipeCategory = category;
 		hashtags = has;
-		sendPosttoDB(/*PostId,PostStatus,RecipeTime,Content,Title,RecipeCategory,DifficutlyLevel,RecipeCost,Creator,hashtags*/);
-		/*Connection connection = null;
-		PreparedStatement stmt1 = null;
-		PreparedStatement stmt2 = null;
-		int maxid = getPostId();
-		try {
-			connection = DBcon.openConnection();
-			stmt1 = connection.prepareStatement("INSERT INTO Post(PostID,PostStatus,RecipeTime,Content,Title,RecipeCategory,DifficultyLevel,RecipeCost,Creator) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			int i = 0;
-			stmt1.setInt(1, maxid);
-			stmt1.setInt(2, PostStatus);
-			stmt1.setInt(3, RecipeTime);
-			stmt1.setString(4, Content);
-			stmt1.setString(5, Title);
-			stmt1.setString(6, RecipeCategory);
-			stmt1.setString(7, DifficultyLevel);
-			stmt1.setDouble(8, RecipeCost);
-			stmt1.setInt(9, Creator);
-			stmt1.executeUpdate();
-			while(hashtags[i] != null) {
-				stmt2 = connection.prepareStatement("INSERT INTO Hashtags(Hashtag,PostID) VALUES(?, ?)");
-				stmt2.setString(1, hashtags[i]);
-				stmt2.setInt(2, maxid);
-				stmt2.executeUpdate();
-			}
-			} catch (SQLException e) {
-				System.out.println("Something went wrong while creating this post" + e.getMessage());
-			} finally {
-				DBcon.closeStatement(stmt1);
-				DBcon.closeStatement(stmt2);
-				DBcon.closeConnection(connection);
-			}
-		}*/
+		sendPosttoDB();
 	}
 
 	public int maxidfromDB() {
@@ -107,7 +74,7 @@ public class Post {
 				boolean flag = true;
 
 				PreparedStatement preparedStatement2 = connection.prepareStatement("SELECT * FROM Comment" +
-						"WHERE PostID = ?");
+						" WHERE ToPost = ?");
 				preparedStatement2.setInt(1, PostId);
 				ResultSet resultSet = preparedStatement2.executeQuery();
 				while (resultSet.next()) {
@@ -119,13 +86,19 @@ public class Post {
 
 			}
 			while(rs1.next()) {
-				stars[1] = rs1.getInt("star1");
-				stars[2] = rs1.getInt("star2");
-				stars[3] = rs1.getInt("star3");
-				stars[4] = rs1.getInt("star4");
-				stars[5] = rs1.getInt("star5");
+				stars[0] = rs1.getInt("star1");
+				stars[1] = rs1.getInt("star2");
+				stars[2] = rs1.getInt("star3");
+				stars[3] = rs1.getInt("star4");
+				stars[4] = rs1.getInt("star5");
 			}
-		} catch (Exception e) {}
+			for (int i = 0; i<5; i++) {
+				sum = sum + (i+1) * stars[i];
+			}
+			Reviews = (double ) sum/evaluators();
+		} catch (Exception e) {
+			System.out.println(e.getMessage() + "post");
+		}
 		finally {
 			DBcon.closeStatement(preparedStatement1);
 			DBcon.closeStatement(preparedStatement3);
@@ -162,9 +135,8 @@ public class Post {
 		for (int i = 0; i<5; i++) {
 			sum = sum + (i+1) * stars[i];
 		}
-		int evaluatorsNumber = evaluators();
-		Reviews = (double ) sum/evaluatorsNumber;
-		sendReviewstoDB(Reviews,evaluatorsNumber,stars);
+		sendReviewstoDB(rate);
+		Reviews = (double ) sum/evaluators();
 	}
 
 	public int evaluators(){
@@ -253,6 +225,7 @@ public class Post {
 		Connection connection = null;
 		PreparedStatement stmt1 = null;
 		PreparedStatement stmt2 = null;
+		PreparedStatement stmt3 = null;
 		int maxid = getPostId();
 		try {
 			connection = DBcon.openConnection();
@@ -275,30 +248,32 @@ public class Post {
 				stmt2.executeUpdate();
 				i++;
 			}
+			stmt3 = connection.prepareStatement("INSERT INTO stars(star1,star2,star3,star4,star5,PostID) VALUES(0, 0, 0, 0, 0, ?)");
+			stmt3.setInt(1, maxid);
+			stmt3.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println("Something went wrong while creating this post" + e.getMessage());
 		} finally {
 			DBcon.closeStatement(stmt1);
 			DBcon.closeStatement(stmt2);
+			DBcon.closeStatement(stmt3);
 			DBcon.closeConnection(connection);
 		}
 	}
 
-	public void sendReviewstoDB(double reviews, int evaluators, int[] stars) {
+	public void sendReviewstoDB( int rate) {
+		// rate (1-5)
 		Connection connection = null;
 		PreparedStatement stmt2 = null;
-		int maxid = getPostId();
+		String select = java.text.MessageFormat.format("UPDATE stars SET {0} = ? WHERE PostID=?", "star" + rate);
 		try {
 			connection = DBcon.openConnection();
-			stmt2 = connection.prepareStatement("INSERT INTO stars(star1,star2,star3,star4,star5,PostID) VALUES(?, ?, ?, ?, ?, ?)");
-			stmt2.setInt(1, stars[0]);
-			stmt2.setInt(2, stars[1]);
-			stmt2.setInt(3, stars[2]);
-			stmt2.setInt(4, stars[3]);
-			stmt2.setInt(5, stars[4]);
-			stmt2.setInt(6, maxid);
+			stmt2 = connection.prepareStatement(select);
+			stmt2.setInt(1, stars[rate-1]);
+			stmt2.setInt(2, getPostId());
 			stmt2.executeUpdate();
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 		} finally {
 			DBcon.closeStatement(stmt2);
 			DBcon.closeConnection(connection);
@@ -352,9 +327,9 @@ public class Post {
 		System.out.println( "Title of the post:" + getTitle() + "\nContent of the post:" + getContent() + "\nThe time required for " +
 				"this recipe is" + getRecipeTime() + "\nThe cost for this recipe is:" + getRecipeCost() + "euros" + "\nThe" +
 				" difficulty Level of this recipe is:" + getDifficultyLevel() + "\nThe category of this recipe is:"
-				+ getRecipeCategory() + "\nThis post has " + Reviews + "stars" + "\nThis post's comments are");
+				+ getRecipeCategory() + "\nThis post has " + Reviews + "stars" + "\nThis post's comments are: ");
 		if (comments.size() == 0) {
-			System.out.println("This post has no comments yet");
+			System.out.println("  This post has no comments yet");
 		} else {
 		  int loops = comments.size();
 		  for  (int i = 0; i < loops; i++) {
