@@ -175,9 +175,9 @@ public class Main {
 						input2.nextLine();
 						answer = input2.nextLine();
 						if (answer.equals("Yes")) {
-							System.out.println("please enter the id of the comment that you want to answer");
+							System.out.println("please enter the number of the comment that you want to answer");
 							int ans = input2.nextInt();
-							Comment comment = new Comment(ans);
+							Comment comment = post.comments.get(ans-1);//new Comment(ans);
 							int userId = user.getUserId();
 							comment.makeReComment(userId, post.getPostId(), ans);
 						}
@@ -272,7 +272,7 @@ public class Main {
 				DBcon.closeConnection(connection);
 			}
 		  int UsersChoice = -1;
-		  if (usrChoice != -1) {
+		  if (usrChoice != -1 && usrChoice!=0) {
 			   UsersChoice = postIdList.get(usrChoice - 1);
 		  }
 		  return UsersChoice;

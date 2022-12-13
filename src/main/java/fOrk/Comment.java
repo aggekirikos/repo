@@ -16,13 +16,15 @@ public class Comment {
 
     ArrayList<Recomment> recomments = new ArrayList<Recomment>();
     protected int from;
+    protected String username;
     protected int to;
     public Comment(){}
     public Comment(int id) {
         this.commentId = id;
-        String select = "SELECT * FROM Comment,Recomment WHERE CommentID=? AND RecommentID!=CommentID";
+        String select = "SELECT Content, ToPost, Sender, Username FROM Comment, User WHERE CommentID=? AND Sender = ID";
         Connection connection = null;
         PreparedStatement pst = null;
+        PreparedStatement pst2 = null;
         try {
             connection = DBcon.openConnection();
             pst = connection.prepareStatement(select);
@@ -32,17 +34,19 @@ public class Comment {
                 this.commentContent = resultSet.getString("Content");
                 this.to = resultSet.getInt("ToPost");
                 this.from = resultSet.getInt("Sender");
+                this.username= resultSet.getString("Username");
             }
-            pst = connection.prepareStatement("SELECT RecommentID FROM Recomment WHERE Receiver = ?");
-            pst.setInt(1, id);
-            ResultSet resultSet2 = pst.executeQuery();
+            pst2 = connection.prepareStatement("SELECT RecommentID FROM Recomment WHERE Receiver = ?");
+            pst2.setInt(1, id);
+            ResultSet resultSet2 = pst2.executeQuery();
             while (resultSet2.next()) {
-                Recomment recomment = new Recomment(resultSet.getInt(1),commentId);
+                Recomment recomment = new Recomment(resultSet2.getInt(1),commentId);
                 recomments.add(recomment);
             }
         } catch (SQLException e) { System.out.println(e.getMessage());
         }  finally {
             DBcon.closeStatement(pst);
+            DBcon.closeStatement(pst2);
             DBcon.closeConnection(connection);
         }
     }
@@ -63,6 +67,7 @@ public class Comment {
         commentContent = content;
         this.from = from;
         this.to = to;//Refers to specific post
+        recomments = null;
         Connection connection = null;
         PreparedStatement pst = null;
         try {
@@ -84,6 +89,7 @@ public class Comment {
     public String getCommentContent(){
         return commentContent;
     }
+
     public void makeReComment(int userId, int postId, int commentId) {
         System.out.print("Type the recomment: ");
         String a = inp.nextLine();
@@ -95,17 +101,43 @@ public class Comment {
     public void getRecomments() {
         int loops = recomments.size();
         int i = 0;
+        System.out.println(recomments.size());
         if (!recomments.isEmpty()) {
             System.out.println("   with responds:  ");
-            while (i < loops-1) {
+            while (i < loops) {
                 System.out.print("   ");
-                recomments.get(i-1).printCommentRec();
+                recomments.get(i).printComment();
                 i++;
             }
         }
     }
-    public void printCommentRec() {
-        System.out.println( getCommentContent() +" from " + from );
-        getRecomments();
+    public void printComment() {
+        System.out.println( getCommentContent() +" from " + username );
+    }
+    public void printCommentRec(int counter) {
+            System.out.print(" " + (counter + 1) + ": ");
+            printComment();
+            getRecomments();
+    }
+    public boolean checkFirstLineComment() {
+        Connection connection = DBcon.openConnection();
+        Statement statement = null;
+        String select = "SELECT RecommentID FROM Recomment";
+        boolean first_line = true;
+        try {
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(select);
+            while(resultSet.next()) {
+                if(commentId == resultSet.getInt(1)) {
+                    first_line = false;
+                }
+            }
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+        } finally {
+            DBcon.closeStatement(statement);
+            DBcon.closeConnection(connection);
+        }
+        return first_line;
     }
 }

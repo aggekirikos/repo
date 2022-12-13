@@ -140,6 +140,7 @@ public class DBcon {
 			stmt = dbcon.createStatement();
 			/* Executes the given statement that drops the tables */
 			stmt.executeUpdate("DROP TABLE Cookmates;");
+			stmt.executeUpdate("DROP TABLE Recomment;");
 			stmt.executeUpdate("DROP TABLE Messages;");
 			stmt.executeUpdate("DROP TABLE Comment;");
 			stmt.executeUpdate("DROP TABLE stars;");

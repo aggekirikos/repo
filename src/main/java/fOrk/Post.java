@@ -54,8 +54,10 @@ public class Post {
 
 	public Post(int id) {
 		this.PostId = id;
+		ArrayList<Integer> commId= new ArrayList<Integer>();
 		Connection connection = DBcon.openConnection();
 		PreparedStatement preparedStatement1 = null;
+		PreparedStatement preparedStatement2 = null;
 		PreparedStatement preparedStatement3 = null;
 		try {
 			preparedStatement1 = connection.prepareStatement("SELECT * FROM Post WHERE PostID = ?");
@@ -72,18 +74,6 @@ public class Post {
 				RecipeCategory = rs.getString("RecipeCategory");
 				DifficultyLevel = rs.getString("DifficultyLevel");
 				boolean flag = true;
-
-				PreparedStatement preparedStatement2 = connection.prepareStatement("SELECT * FROM Comment" +
-						" WHERE ToPost = ?");
-				preparedStatement2.setInt(1, PostId);
-				ResultSet resultSet = preparedStatement2.executeQuery();
-				while (resultSet.next()) {
-					int commId = resultSet.getInt("CommentID");
-					Comment comment = new Comment(commId);
-					comments.add(comment);
-				}
-				DBcon.closeStatement(preparedStatement2);
-
 			}
 			while(rs1.next()) {
 				stars[0] = rs1.getInt("star1");
@@ -96,13 +86,27 @@ public class Post {
 				sum = sum + (i+1) * stars[i];
 			}
 			Reviews = (double ) sum/evaluators();
+
+			preparedStatement2 = connection.prepareStatement("SELECT * FROM Comment " +
+					" WHERE ToPost = ? ");
+			preparedStatement2.setInt(1, PostId);
+			ResultSet resultSet = preparedStatement2.executeQuery();
+
+			while (resultSet.next()) {
+				commId.add(resultSet.getInt("CommentID"));
+			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage() + "post");
 		}
 		finally {
 			DBcon.closeStatement(preparedStatement1);
+			DBcon.closeStatement(preparedStatement2);
 			DBcon.closeStatement(preparedStatement3);
 			DBcon.closeConnection(connection);
+		}
+		for (int commentId: commId) {
+			Comment comment = new Comment(commentId);
+			comments.add(comment);
 		}
 	}
 
@@ -332,9 +336,13 @@ public class Post {
 			System.out.println("  This post has no comments yet");
 		} else {
 		  int loops = comments.size();
+		  int counter = 0;
 		  for  (int i = 0; i < loops; i++) {
 				Comment comment = comments.get(i);
-				comment.printCommentRec();
+			    if (comment.checkFirstLineComment()) {
+					comment.printCommentRec(counter);
+					counter++;
+				}
 			}
 		}
 	}

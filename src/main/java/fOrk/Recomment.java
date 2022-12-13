@@ -13,7 +13,7 @@ public class Recomment extends Comment {
         PreparedStatement preparedStatement = null;
         try {
             con = DBcon.openConnection();
-            preparedStatement = con.prepareStatement("SELECT * FROM Comment WHERE CommentID = ?");
+            preparedStatement = con.prepareStatement("SELECT Content, ToPost, Sender, Username FROM Comment, User WHERE CommentID=? AND Sender = ID");
             preparedStatement.setInt(1, recId);
             ResultSet rs = preparedStatement.executeQuery();
             this.toComment = toComment;
@@ -22,14 +22,15 @@ public class Recomment extends Comment {
                 commentContent = rs.getString("Content");
                 from = rs.getInt("Sender");
                 to = rs.getInt("ToPost");
+                username= rs.getString("Username");
                 break;
             }
-
         } catch (SQLException e) {System.out.println(e.getMessage());
         }finally{
             DBcon.closeStatement(preparedStatement);
             DBcon.closeConnection(con);
         }
+
     }
     public Recomment(String content, int from, int toPost, int toComment ) {
         super(content, from, toPost);
