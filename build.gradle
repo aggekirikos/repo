@@ -1,16 +1,11 @@
 plugins {
     id 'application'
-   // id 'com.github.spotbugs' version '4.7.3'
+    id 'com.github.spotbugs' version '4.7.3'
     id 'checkstyle'
 }
 
 group = 'com.dmst.fOrk'
 version = '1.0'
-
-/*java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}*/
 
 application {
     mainClass = 'fOrk.Main'
@@ -40,30 +35,34 @@ test {
     useJUnit()
 }
 
-/* Configure spotbugs to maximize the analysis effort level
-and set the priority threshold for reporting bugs to low
-so that all bugs are reported */
-/*spotbugs {
+spotbugs {
+    // Configure spotbugs not to fail the build if it finds violations
+    ignoreFailures = true
+    // Suppress spotbugs's stacktrace
+    showStackTraces = false
+    // Maximize the analysis effort level
     effort = 'max'
+    /* Set the priority threshold for reporting bugs to low 
+    so that all bugs are reported */
     reportLevel = 'low'
 }
 
-// Configure SpotbugsMain to create both xml and html reports
+// Configure SpotbugsMain to create html reports
 spotbugsMain {
     reports {
-        xml.required.set(true)
+        xml.required.set(false)
         html.required.set(true)
     }
 }
 
-// Configure SpotbugsTest to create both xml and html reports
+// Configure SpotbugsTest to create html reports
 spotbugsTest {
     reports {
-        xml.required.set(true)
+        xml.required.set(false)
         html.required.set(true)
     }
 }
-*/
+
 checkstyle {
     toolVersion = '8.29'
 }
