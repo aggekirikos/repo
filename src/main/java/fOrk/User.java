@@ -9,11 +9,6 @@ import java.sql.Statement;
 
 public class User {
 
-	static Scanner scanner1 = new Scanner(System.in);
-	static Scanner scanner2 = new Scanner(System.in);
-	static Scanner scanner3 = new Scanner(System.in);
-	static Scanner myscan = new Scanner(System.in);
-
 	/**
 	* Unique ID number for every user
 	*/
@@ -58,7 +53,6 @@ public class User {
 		setUsername(uname);
 		name = nm;
 		bio = BIO;
-		cookmates = null;
 
 		Connection connection= null;
 		PreparedStatement stmt= null;
@@ -160,9 +154,10 @@ public class User {
 	/**
 	* Method that checks if the password entered by the user is correct
 	*
-	* @param tempPassord The password that the user has entered
+	* @param tempPassword The password that the user has entered
 	*/
 	public void setPassword(String tempPassword) {
+		Scanner scanner = new Scanner(System.in);
 		boolean flag = false;
 		while (!flag) {
 			if (tempPassword.length() > 8) {
@@ -170,7 +165,7 @@ public class User {
 			}
 			else {
 				System.out.println("Password must have over 8 characters! Please choose a new one.");
-				tempPassword = myscan.next();
+				tempPassword = scanner.next();
 			}
 		}
 		password = tempPassword;
@@ -182,8 +177,9 @@ public class User {
 	* @param tempUsername The username that the user has entered
 	*/
 	public void setUsername(String tempUsername) {
-		Connection connection= null;
-		PreparedStatement stmt= null;
+		Scanner scanner = new Scanner(System.in);
+		Connection connection = null;
+		PreparedStatement stmt = null;
 		boolean flag;
 		do  {
 			flag = false;
@@ -194,7 +190,6 @@ public class User {
 				ResultSet rs = stmt.executeQuery();
 				while (rs.next()) {
 					flag = true;
-					System.out.println("This username already exists! Please choose a new one.");
 				}
 			} catch (SQLException e) {
 				System.out.println("Could not set your username.");
@@ -203,12 +198,14 @@ public class User {
 				DBcon.closeConnection(connection);
 			}
 			if (flag) {
-				Scanner scanner = new Scanner(System.in);
+				System.out.println("This username already exists! Please choose a new one.");
 				tempUsername = scanner.next();
-			} else {
-				username = tempUsername;
 			}
+			/*} else {
+				username = tempUsername;
+			}*/
 		} while (flag);
+		username = tempUsername;
 	}
 
 	/**
@@ -287,17 +284,18 @@ public class User {
 	*/
 
 	public void editProfile(){
+		Scanner scanner = new Scanner(System.in);
 		System.out.println("If you want to Edit your Username press 1.");
 		System.out.println("If you want to Edit your Name press 2.");
 		System.out.println("If you want to Edit your Bio press 3.");
 		System.out.println("If you want to Edit your Password press 4.");
-		int temp2 = myscan.nextInt();
+		int temp2 = scanner.nextInt();
 		Connection connection= null;
 		PreparedStatement stmt= null;
 		switch (temp2) {
 			case 1:
-				System.out.println("Please insert your new Username.");
-				setUsername(scanner1.nextLine());
+				System.out.println("Please insert your new Username: ");
+				setUsername(scanner.next());
 				try {
 					connection = DBcon.openConnection();
 					stmt = connection.prepareStatement("UPDATE User SET Username=? WHERE ID=?");
@@ -317,8 +315,8 @@ public class User {
 				}
 				break;
 			case 2:
-				System.out.println("Please insert your new Name.");
-				setName(scanner2.nextLine());
+				System.out.println("Please insert your new Name: ");
+				setName(scanner.next());
 				try {
 					connection = DBcon.openConnection();
 					stmt = connection.prepareStatement("UPDATE User SET Name=? WHERE ID=?");
@@ -338,8 +336,9 @@ public class User {
 				}
 				break;
 			case 3:
-				System.out.println("Please insert your new bio");
-				setBio(scanner3.nextLine());
+				System.out.println("Please insert your new bio: ");
+				scanner.nextLine();
+				setBio(scanner.nextLine());
 				try {
 					connection = DBcon.openConnection();
 					stmt = connection.prepareStatement("UPDATE User SET Bio = ? WHERE ID=?");
@@ -359,8 +358,8 @@ public class User {
 				}
 				break;
 			case 4:
-				System.out.println("Please insert your new password.");
-				String answer2 = scanner3.nextLine();
+				System.out.println("Please insert your new password: ");
+				String answer2 = scanner.next();
 				setPassword(answer2);
 				try {
 					connection = DBcon.openConnection();
