@@ -66,7 +66,7 @@ public class Post {
 	*/
 	int sum = 0;
 
-	Scanner input = new Scanner(System.in);
+	Scanner input = new Scanner(System.in,"utf-8");
 	/**
 	* Constructor that adds values to the instance variables
 	*
@@ -107,6 +107,7 @@ public class Post {
 		try {
 			statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT max(PostID) FROM Post");
+			rs.close();
 			postId = rs.getInt(1);
 			postId++;
 		} catch (SQLException e) {}
@@ -137,7 +138,9 @@ public class Post {
 			preparedStatement1.setInt(1, id);
 			preparedStatement3.setInt(1, id);
 			ResultSet rs = preparedStatement1.executeQuery();
+			rs.close();
 			ResultSet rs1 = preparedStatement3.executeQuery();
+			rs1.close();
 			while (rs.next()) {
 				postId = rs.getInt("PostID");
 				title = rs.getString("Title");
@@ -165,11 +168,11 @@ public class Post {
 					" WHERE ToPost = ? ");
 			preparedStatement2.setInt(1, postId);
 			ResultSet resultSet = preparedStatement2.executeQuery();
-
+			resultSet.close();
 			while (resultSet.next()) {
 				commId.add(resultSet.getInt("CommentID"));
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println(e.getMessage() + "post");
 		}
 		finally {
@@ -232,6 +235,7 @@ public class Post {
 			preparedStatement = connection.prepareStatement(select);
 			preparedStatement.setInt(1, postId);
 			ResultSet rs = preparedStatement.executeQuery();
+			rs.close();
 			while(rs.next()){
 				evaluatorsNumber = rs.getInt(1);
 			}
