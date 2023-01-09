@@ -11,14 +11,38 @@ import java.util.Scanner;
 
 public class Comment {
     Scanner inp = new Scanner(System.in);
+    /**
+     * Unique ID number for every comment and recomment
+     */
     protected int commentId;
+    /**
+     * The content of the comment
+     */
     protected String commentContent;
-
+    /**
+     * Recomments that refer to this comment
+     */
     ArrayList<Recomment> recomments = new ArrayList<Recomment>();
+    /**
+     * The ID og the sender of to comment
+     */
     protected int from;
+    /**
+     * The username of the sender of the comment
+     */
     protected String username;
+    /**
+     * The ID of the post in witch the comment refers
+     */
     protected int to;
+    /**
+     * Default constructor
+     */
     public Comment(){}
+    /**
+     * Constructor that retrieves the comment characteristics
+     * from database, searching by comment ID
+     */
     public Comment(int id) {
         this.commentId = id;
         String select = "SELECT Content, ToPost, Sender, Username FROM Comment, User WHERE CommentID=? AND Sender = ID";
@@ -50,6 +74,9 @@ public class Comment {
             DBcon.closeConnection(connection);
         }
     }
+    /**
+     * Basic constructor that creates a comment using the arguments
+     */
     public Comment(String content , int from, int to) {
         Connection con = null;
         Statement stm = null;
@@ -66,8 +93,8 @@ public class Comment {
         }
         commentContent = content;
         this.from = from;
+        this.username = Main.getUsernamefromID(from);
         this.to = to;//Refers to specific post
-        recomments = null;
         Connection connection = null;
         PreparedStatement pst = null;
         try {
@@ -85,23 +112,30 @@ public class Comment {
             DBcon.closeConnection(connection);
         }
     }
-
+    /**
+     * Returns the content of every comment
+     */
     public String getCommentContent(){
         return commentContent;
     }
-
+    /**
+     * Method we use to create a recomment on a comment
+     */
     public void makeReComment(int userId, int postId, int commentId) {
         System.out.print("Type the recomment: ");
         String a = inp.nextLine();
         int recId = recomments.size() + 1;
         Recomment r = new Recomment( a, userId, postId, commentId);
         recomments.add(r);
-        System.out.print("Recomment is added!");
+        System.out.println("Recomment is added!");
     }
+    /**
+     * Method that returns all the recomments of a comment
+     */
     public void getRecomments() {
-        int loops = recomments.size();
-        int i = 0;
         if (!recomments.isEmpty()) {
+            int loops = recomments.size();
+            int i = 0;
             System.out.println("   Responds:  ");
             while (i < loops) {
                 System.out.print("   ");
@@ -110,9 +144,16 @@ public class Comment {
             }
         }
     }
+    /**
+     * Method that prints the comment and it's sender's name
+     */
     public void printComment() {
         System.out.println(  username + ": " + getCommentContent() );
     }
+    /**
+     * Method that prints the comment with it's sender's name by using printComment,
+     * and all the recomments of this comment
+     */
     public void printCommentRec(int counter) {
             System.out.print(" " + (counter + 1) + ": ");
             printComment();

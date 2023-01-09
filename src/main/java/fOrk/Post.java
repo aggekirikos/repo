@@ -70,6 +70,7 @@ public class Post {
 			while (rs.next()) {
 				PostId = rs.getInt("PostID");
 				Title = rs.getString("Title");
+				Creator = rs.getInt("Creator");
 				Content = rs.getString("Content");
 				RecipeCost = rs.getDouble("RecipeCost");
 				RecipeCategory = rs.getString("RecipeCategory");
@@ -83,8 +84,8 @@ public class Post {
 				stars[3] = rs1.getInt("star4");
 				stars[4] = rs1.getInt("star5");
 			}
-			for (int i = 0; i<5; i++) {
-				sum = sum + (i+1) * stars[i];
+			for (int i = 0; i < 5; i++) {
+				sum = sum + (i + 1) * stars[i];
 			}
 			if (evaluators() != 0) {
 				Reviews = (double ) sum/evaluators();
@@ -99,7 +100,7 @@ public class Post {
 				commId.add(resultSet.getInt("CommentID"));
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage() + "post");
+			System.out.println(e.getMessage());
 		}
 		finally {
 			DBcon.closeStatement(preparedStatement1);
@@ -110,20 +111,13 @@ public class Post {
 		for (int commentId: commId) {
 			Comment comment = new Comment(commentId);
 			if (comment.checkFirstLineComment()) {
-				comments.add(comment);
+				createComment(comment);
 			}
 		}
 	}
 
-	public void createComment(int from, int toPost) {
-		String answer = input.next();
-		answer = Main.checkAnswer(answer);
-		if (answer == "Yes") {
-			System.out.print("Please type the comment : ");
-			String a = input.nextLine();
-			Comment comment = new Comment(a, from, toPost);
+	public void createComment(Comment comment) {
 			comments.add(comment);
-		}
 	}
 
 	public void makeReview() {
@@ -132,11 +126,8 @@ public class Post {
 		do {
 			rate = input.nextInt();
 		} while (rate < 1 || rate > 5);
-
 		stars[rate - 1] = stars[rate - 1] + 1;
-		for (int i = 0; i<5; i++) {
-			sum = sum + (i+1) * stars[i];
-		}
+		sum += rate;
 		sendReviewstoDB(rate);
 		if (evaluators() != 0) {
 			Reviews = (double) sum / evaluators();
@@ -332,10 +323,10 @@ public class Post {
 		System.out.println( "Title of the post: " + getTitle() + "\n" +
 				"Content of the post: " + getContent() + "\n" +
 				"The time required for this recipe is: " + getRecipeTime() + "\n" +
-				"The cost for this recipe is:" + getRecipeCost() + " €" + "\n" +
+				"The cost for this recipe is: " + getRecipeCost() + " €" + "\n" +
 				"The difficulty Level of this recipe is: " + getDifficultyLevel() + "\nT" +
 				"he category of this recipe is: " + getRecipeCategory() + "\n" +
-				"This post has " + Reviews + " stars" + "\n" +
+				"This post has " + String.format("%.2f", Reviews) + " stars" + "\n" +
 				"This post's comments are: ");
 		if (comments.size() == 0) {
 			System.out.println("  This post has no comments yet");

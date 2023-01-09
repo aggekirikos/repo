@@ -14,13 +14,43 @@ public class User {
 	static Scanner scanner3 = new Scanner(System.in);
 	static Scanner myscan = new Scanner(System.in);
 
+	/**
+	* Unique ID number for every user
+	*/
 	int userId;
+	/**
+	* The password that each user has
+	*/
 	String password;
+	/**
+	* The username that each user has
+	*/
 	String username;
+	/**
+	* The full name of each user
+	*/
 	String name;
+	/**
+	* Some Information that the user can add for himself
+	*/
 	String bio;
-	ArrayList<String> cookmates = new ArrayList<String>();
-	ArrayList<Post> posts = new ArrayList<Post>();
+	/**
+	* The people with whom the user has become friends
+	*/
+	ArrayList<String> cookmates = new ArrayList<>();
+	/**
+	* The posts that the user has made
+	*/
+	ArrayList<Post> posts = new ArrayList<>();
+
+	/**
+	* Constructor that adds values to the instance variables
+	*
+	* @param pass  The password of the user
+	* @param uname The username of the user
+	* @param nm    The full name of the user
+	* @param BIO   Some Information that the user can add for himself
+	*/
 
 	public User(String pass, String uname, String nm, String BIO) {
 		maxId();
@@ -28,6 +58,7 @@ public class User {
 		setUsername(uname);
 		name = nm;
 		bio = BIO;
+		cookmates = null;
 
 		Connection connection= null;
 		PreparedStatement stmt= null;
@@ -49,56 +80,88 @@ public class User {
 			DBcon.closeConnection(connection);
 		}
 	}
+	/**
+	* Constructor that retrieves the user's characteristics from database,
+	* the list of the posts that the user has made and the list of the user's
+	* cookmates searching by user ID
+	*
+	* @param id  The user's ID
+	*/
 
 	public User(int id) {
 		this.userId = id;
 		String select = "SELECT * FROM User WHERE ID=?";
-		Connection connection = null;
-		PreparedStatement prst = null;
+		Connection connection = DBcon.openConnection();
+		PreparedStatement psmtUser = null;
 		try {
-			connection = DBcon.openConnection();
-			prst = connection.prepareStatement(select);
-			prst.setInt(1, id);
-			ResultSet resultSet = prst.executeQuery();
-			while (resultSet.next()){
-				this.password = resultSet.getString("Password");
-				this.username = resultSet.getString("Username");
-				this.name = resultSet.getString("Name");
-				this.bio = resultSet.getString("Bio");
+			psmtUser = connection.prepareStatement(select);
+			psmtUser.setInt(1, id);
+			ResultSet rsUser = psmtUser.executeQuery();
+			while (rsUser.next()){
+				this.password = rsUser.getString("Password");
+				this.username = rsUser.getString("Username");
+				this.name = rsUser.getString("Name");
+				this.bio = rsUser.getString("Bio");
 			}
 		}
 		catch (SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		finally {
-			DBcon.closeStatement(prst);
-			DBcon.closeConnection(connection);
+			DBcon.closeStatement(psmtUser);
 		}
-		String slct = "SELECT PostID FROM Post WHERE Creator=?";
-		Connection con = null;
-		PreparedStatement stat = null;
+		String selectPost = "SELECT PostID FROM Post WHERE Creator=?";
+		PreparedStatement psmtPost = null;
 		try {
-			con = DBcon.openConnection();
-			stat = con.prepareStatement(slct);
-			stat.setInt(1, id);
-			ResultSet resultSet = stat.executeQuery();
-			while (resultSet.next()){
-				int temp = resultSet.getInt("PostID");
+			psmtPost = connection.prepareStatement(selectPost);
+			psmtPost.setInt(1, id);
+			ResultSet rsPost = psmtPost.executeQuery();
+			while (rsPost.next()){
+				int temp = rsPost.getInt("PostID");
 				Post post = new Post(temp);
-				posts.add(post);
+				addPost(post);
 			}
 		}
 		catch (SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		finally {
-			DBcon.closeStatement(stat);
-			DBcon.closeConnection(con);
+			DBcon.closeStatement(psmtPost);
 		}
+		String selectCookmates = "SELECT CookmateID FROM Cookmates WHERE UserID=?";
+		PreparedStatement psmtCookmates = null;
+		try {
+			psmtCookmates = connection.prepareStatement(selectCookmates);
+			psmtCookmates.setInt(1, id);
+			ResultSet rsCookmates = psmtCookmates.executeQuery();
+			while (rsCookmates.next()){
+				int cookmateID = rsCookmates.getInt("CookmateID");
+				cookmates.add(Main.getUsernamefromID(cookmateID));
+			}
+		}
+		catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
+			DBcon.closeStatement(psmtCookmates);
+		}
+		DBcon.closeConnection(connection);
 	}
 
+	/**
+	* Method that returns the User's ID
+	*
+	* @return the user's ID
+	*/
 	public int getUserId() {
 		return userId;
 	}
 
+	/**
+	* Method that checks if the password entered by the user is correct
+	*
+	* @param tempPassord The password that the user has entered
+	*/
 	public void setPassword(String tempPassword) {
 		boolean flag = false;
 		while (!flag) {
@@ -113,6 +176,11 @@ public class User {
 		password = tempPassword;
 	}
 
+	/**
+	*Method that checks if the username entered by the user is correct
+	*
+	* @param tempUsername The username that the user has entered
+	*/
 	public void setUsername(String tempUsername) {
 		Connection connection= null;
 		PreparedStatement stmt= null;
@@ -143,46 +211,80 @@ public class User {
 		} while (flag);
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
+	/**
+	* Method that returns the user's username
+	*
+	* @return the user's username
+	*/
 
 	public String getUsername() {
 			return username;
 	}
 
+	/**
+	* Method that changes the full name of the user
+	*
+	* @param tempName The user's new full Name
+	**/
 
 	public void setName(String tempName) {
 		name = tempName;
 	}
 
+	/**
+	* Method that returns the user's full name
+	*
+	* @return The user's full name
+	*/
+
 	public String getName() {
 		return name;
 	}
+
+	/**
+	* Method that changes the Bio of the user
+	*
+	* @param tempBio The new Bio of the user
+	*
+	*/
 
 	public void setBio(String tempBio) {
 		bio = tempBio;
 	}
 
+	/**
+	* Method that returns the user's Bio
+	*
+	* @return The user's Bio
+	*
+	*/
+
 	public String getBio(){
 		return bio;
 	}
 
-	/*public void addPost(){
-		posts.add();
-	}*/
+	/**
+	* Method that adds the user's posts in an araylist
+	*
+	* @param post  The user's post
+ 	*/
 
-	public void printPosts() {
-		int j = 0;
-		while (j < posts.size()) {
-			System.out.println("\nPost " + (j+1));
-			j = j + 1;
-		}
-		if(posts.size() == 0) {
-			System.out.println("No posts yet");
-		}
+	public void addPost(Post post) {
+		posts.add(post);
 	}
+
+	/**
+	* Method that updates the arraylist which contains the user's posts
+	*/
+
+	public void updatePostArraylist(Post updatedPost){
+		posts.removeIf(post -> updatedPost.getPostId() == post.getPostId());
+		posts.add(updatedPost);
+	}
+
+	/**
+	* Method that the user has the opportunity to change the characteristics of his profile
+	*/
 
 	public void editProfile(){
 		System.out.println("If you want to Edit your Username press 1.");
@@ -195,8 +297,7 @@ public class User {
 		switch (temp2) {
 			case 1:
 				System.out.println("Please insert your new Username.");
-				String answer1 = scanner1.nextLine();
-				setUsername(answer1);
+				setUsername(scanner1.nextLine());
 				try {
 					connection = DBcon.openConnection();
 					stmt = connection.prepareStatement("UPDATE User SET Username=? WHERE ID=?");
@@ -217,8 +318,7 @@ public class User {
 				break;
 			case 2:
 				System.out.println("Please insert your new Name.");
-				name = scanner2.nextLine();
-
+				setName(scanner2.nextLine());
 				try {
 					connection = DBcon.openConnection();
 					stmt = connection.prepareStatement("UPDATE User SET Name=? WHERE ID=?");
@@ -239,7 +339,7 @@ public class User {
 				break;
 			case 3:
 				System.out.println("Please insert your new bio");
-				bio = scanner3.nextLine();
+				setBio(scanner3.nextLine());
 				try {
 					connection = DBcon.openConnection();
 					stmt = connection.prepareStatement("UPDATE User SET Bio = ? WHERE ID=?");
@@ -283,22 +383,36 @@ public class User {
 		}
 	}
 
-	public void makeCookmates(int creatorID) {
-		Connection connection= null;
+	/**
+	* Method that sends the Id of a new cookmate that the user has made
+	* to the database
+	*
+	* @param cookmateID The Id of the user's new cookmate
+	*/
+
+	public void makeCookmates(int cookmateID) {
+		String cookmateName = Main.getUsernamefromID(cookmateID);
+		cookmates.add(cookmateName);
+		Connection connection= DBcon.openConnection();
 		PreparedStatement stmt= null;
 		try {
-			connection = DBcon.openConnection();
 			stmt = connection.prepareStatement("INSERT INTO Cookmates(UserID, CookmateID) VALUES(?,?)");
 			stmt.setInt(1, getUserId());
-			stmt.setInt(2, creatorID);
+			stmt.setInt(2, cookmateID);
 		    stmt.executeUpdate();
+			System.out.println("The post's creator " + cookmateName + " was added as your cookmate");
 		} catch (SQLException e) {
-			System.out.println("Something went wrong while trying to make this user your cookmate.");
+			System.out.println("Something went wrong while trying to make this user your cookmate."
+			       + e.getMessage());
 		} finally {
 			DBcon.closeStatement(stmt);
 			DBcon.closeConnection(connection);
 		}
 	}
+
+	/**
+	* Method that retrieves the max Id from the table of users from the database
+	*/
 
 	public void maxId() {
 		String slct = "SELECT MAX(ID) FROM User";
@@ -311,11 +425,51 @@ public class User {
 			userId = rs.getInt(1);
 		}
 		catch (SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		finally {
 			DBcon.closeStatement(stat);
 			DBcon.closeConnection(con);
 		}
 		userId++;
+	}
+
+	/**
+	* Method which displays the posts of a user
+	*/
+
+	public void printPosts() {
+		System.out.println("\nPOSTS\n");
+		if(posts.size() == 0) {
+			System.out.println("No posts yet\n");
+		} else {
+			for(Post post: posts){
+				post.getPost();
+				System.out.println();
+			}
+		}
+	}
+
+	/**
+	* Method that returns the list of cookmates that a user has made
+	*
+	* @ return The user's cookmates
+	*/
+
+	public String getCookmates() {
+		StringBuilder stringBuilder = new StringBuilder();
+		if (cookmates.size() == 0) {
+			stringBuilder.append("\nNo cookmates yet");
+		} else {
+			for (String cookmate : cookmates) {
+				stringBuilder.append("\n - ").append(cookmate);
+			}
+		}
+		return stringBuilder.toString();
+	}
+
+	public void getProfile() {
+		System.out.println("\nPROFILE\n" + "\nName: " + getName() + "\nUsername: " + getUsername()
+				+ "\nBio: " + getBio() + "\nCookmates:" + getCookmates() + "\n");
 	}
 }

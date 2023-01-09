@@ -3,9 +3,19 @@ package fOrk;
 import java.sql.*;
 
 public class Recomment extends Comment {
-
-    private int toComment; //CommentID that the recomment refers to
+    /**
+     * CommentID that the recomment refers to
+     */
+    private int toComment;
+    /**
+     * Unique recomment ID
+     */
     private int RecommentID;
+    /**
+     * Constructor that retrieves recomment characteristics
+     * from database by recomment ID and the ID of the comment
+     * to witch recomments refer
+     */
     public Recomment(int recId, int toComment) {
         super();
         this.toComment = toComment;
@@ -32,6 +42,9 @@ public class Recomment extends Comment {
         }
 
     }
+    /**
+     * Basic recomment constructor
+     */
     public Recomment(String content, int from, int toPost, int toComment ) {
         super(content, from, toPost);
         this.toComment = toComment;
@@ -52,5 +65,4 @@ public class Recomment extends Comment {
             DBcon.closeConnection(connection);
         }
     }
-
 }
