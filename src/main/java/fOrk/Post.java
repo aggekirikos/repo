@@ -9,33 +9,97 @@ import java.sql.Statement;
 import java.sql.SQLException;
 
 public class Post {
-	public int PostId;
-	public int PostStatus = 0;//When PostStatus is 0 the post is deleted. When PostStatus is 1 the post exists
-	public int RecipeTime;
-	public String Content,Title,RecipeCategory,DifficultyLevel;
-	public double RecipeCost;
-	double Reviews = 0;
+	/**
+	* Unique ID number for every post
+	*/
+	public int postId;
+	/**
+	* A number that shows if the post exists or not
+	*/
+	public int postStatus = 0;
+	/**
+	* The time that is required for the recipe of the post
+	*/
+	public int recipeTime;
+	/**
+	* The content of the post
+	*/
+	public String content;
+	/**
+	* The title of the post
+	*/
+	public String title;
+	/**
+	* The recipe category to which the post belongs
+	*/
+	public String recipeCategory;
+	/**
+	* The difficulty level to which the post belongs
+	*/
+	public String difficultyLevel;
+	/**
+	* The cost required for the recipe of the post
+	*/
+	public double recipeCost;
+	/**
+	* The comments that refer to this post
+	*/
 	ArrayList<Comment> comments = new ArrayList<Comment>();
+	/**
+	* The hashtags that refer to this post
+	*/
 	public String [] hashtags = new String [5];
-	int Creator ;
+	/**
+	* The Reviews that other users have made for this post
+	*/
+	double reviews = 0;
+	/**
+	* Τhe ID of the user who is the creator of this post
+	*/
+	int creator ;
+	/**
+	* The table with the stars entered by other users for this post
+	**/
 	int [] stars = new int[5];
+	/**
+	* Τhe total number of stars entered by other users for this post
+	*/
 	int sum = 0;
-	Scanner input = new Scanner(System.in);
 
+	Scanner input = new Scanner(System.in);
+	/**
+	* Constructor that adds values to the instance variables
+	*
+	* @param userId   The creator of the post
+	* @param title    The title of the post
+	* @param content  The content of the post
+	* @param cost     The cost required for the recipe of the post
+	* @param time     The time required for the recipe of the post
+	* @param diLevel  The difficulty level for the recipe of the post
+	* @param category The category in which the recipe of the post belongs
+	* @param has      Table that contains the hashtags of the post
+	*/
 	public Post(int userId, String title, String content, double cost, int time,
 				String diLevel,String category, String[] has) {
-		PostId = maxidfromDB();
-		Creator = userId;
-		PostStatus = 1;
-		Title = title;
-		Content = content;
-		RecipeCost= cost;
-		RecipeTime = time;
-		DifficultyLevel = diLevel;
-		RecipeCategory = category;
+		postId = maxidfromDB();
+		creator = userId;
+		postStatus = 1;
+		this.title = title;
+		this.content = content;
+		recipeCost= cost;
+		recipeTime = time;
+		difficultyLevel = diLevel;
+		recipeCategory = category;
 		hashtags = has;
 		sendPosttoDB();
 	}
+
+	/**
+	* Method that retrieves the max ID from database
+	* and increases it by 1
+	*
+	* @return the post's ID
+	*/
 
 	public int maxidfromDB() {
 		Connection connection = DBcon.openConnection();
@@ -43,18 +107,25 @@ public class Post {
 		try {
 			statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT max(PostID) FROM Post");
-			PostId = rs.getInt(1);
-			PostId++;
+			postId = rs.getInt(1);
+			postId++;
 		} catch (SQLException e) {}
 		finally {
 			DBcon.closeStatement(statement);
 			DBcon.closeConnection(connection);
 		}
-		return PostId;
+		return postId;
 	}
 
+	/**
+	* Constructor that retrieves the post's characteristics from database
+	* searching by post ID
+	*
+	* @param id The post's ID
+	*/
+
 	public Post(int id) {
-		this.PostId = id;
+		this.postId = id;
 		ArrayList<Integer> commId= new ArrayList<Integer>();
 		Connection connection = DBcon.openConnection();
 		PreparedStatement preparedStatement1 = null;
@@ -68,13 +139,12 @@ public class Post {
 			ResultSet rs = preparedStatement1.executeQuery();
 			ResultSet rs1 = preparedStatement3.executeQuery();
 			while (rs.next()) {
-				PostId = rs.getInt("PostID");
-				Title = rs.getString("Title");
-				Creator = rs.getInt("Creator");
-				Content = rs.getString("Content");
-				RecipeCost = rs.getDouble("RecipeCost");
-				RecipeCategory = rs.getString("RecipeCategory");
-				DifficultyLevel = rs.getString("DifficultyLevel");
+				postId = rs.getInt("PostID");
+				title = rs.getString("Title");
+				content = rs.getString("Content");
+				recipeCost = rs.getDouble("RecipeCost");
+				recipeCategory = rs.getString("RecipeCategory");
+				difficultyLevel = rs.getString("DifficultyLevel");
 				boolean flag = true;
 			}
 			while(rs1.next()) {
@@ -84,23 +154,23 @@ public class Post {
 				stars[3] = rs1.getInt("star4");
 				stars[4] = rs1.getInt("star5");
 			}
-			for (int i = 0; i < 5; i++) {
-				sum = sum + (i + 1) * stars[i];
+			for (int i = 0; i<5; i++) {
+				sum = sum + (i+1) * stars[i];
 			}
 			if (evaluators() != 0) {
-				Reviews = (double ) sum/evaluators();
+				reviews = (double ) sum/evaluators();
 			}
 
 			preparedStatement2 = connection.prepareStatement("SELECT * FROM Comment " +
 					" WHERE ToPost = ? ");
-			preparedStatement2.setInt(1, PostId);
+			preparedStatement2.setInt(1, postId);
 			ResultSet resultSet = preparedStatement2.executeQuery();
 
 			while (resultSet.next()) {
 				commId.add(resultSet.getInt("CommentID"));
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			System.out.println(e.getMessage() + "post");
 		}
 		finally {
 			DBcon.closeStatement(preparedStatement1);
@@ -111,14 +181,32 @@ public class Post {
 		for (int commentId: commId) {
 			Comment comment = new Comment(commentId);
 			if (comment.checkFirstLineComment()) {
-				createComment(comment);
+				comments.add(comment);
 			}
 		}
 	}
 
-	public void createComment(Comment comment) {
+	/**
+	* Method that calls the class comment and adds a comment to the post
+	*
+	* @param from   The ID of the user that makes the comment
+	* @param toPost The ID of the post in witch the comment refers
+	*/
+
+	public void createComment(int from, int toPost) {
+		String answer = input.next();
+		answer = Main.checkAnswer(answer);
+		if (answer == "Yes") {
+			System.out.print("Please type the comment : ");
+			String a = input.nextLine();
+			Comment comment = new Comment(a, from, toPost);
 			comments.add(comment);
+		}
 	}
+
+	/**
+	* Method that calculates the average number of stars that a publication has
+	*/
 
 	public void makeReview() {
 		System.out.println("How much do you like this post? Rate from 1 to 5 stars.");
@@ -126,14 +214,24 @@ public class Post {
 		do {
 			rate = input.nextInt();
 		} while (rate < 1 || rate > 5);
+
 		stars[rate - 1] = stars[rate - 1] + 1;
-		sum += rate;
+		for (int i = 0; i<5; i++) {
+			sum = sum + (i+1) * stars[i];
+		}
 		sendReviewstoDB(rate);
 		if (evaluators() != 0) {
-			Reviews = (double) sum / evaluators();
+			reviews = (double) sum / evaluators();
 		}
 
 	}
+
+	/**
+	* Method that retrieves the number of people that have evaluate this post
+	* from the database searching by PostID
+	*
+	* @return evaluatorsNumber The number of people that have evaluate the post
+	*/
 
 	public int evaluators(){
 		Connection connection = DBcon.openConnection();
@@ -142,7 +240,7 @@ public class Post {
 		int evaluatorsNumber = 0;
 		try {
 			preparedStatement = connection.prepareStatement(select);
-			preparedStatement.setInt(1, PostId);
+			preparedStatement.setInt(1, postId);
 			ResultSet rs = preparedStatement.executeQuery();
 			while(rs.next()){
 				evaluatorsNumber = rs.getInt(1);
@@ -156,68 +254,88 @@ public class Post {
 		return evaluatorsNumber;
 	}
 
+	/**
+	* Method that returns the PostId
+	*
+	* @return the post's ID
+	*/
+
 	public int getPostId() {
-		return PostId;
+		return postId;
 	}
+
+	/**
+	* Method that returns the Creator of the post
+	*
+	* @return the post's creator
+	*/
 
 	public int getCreator() {
-		return Creator;
+		return creator;
 	}
+
+	/**
+	* Method that returns the title of the Recipe in the post
+	*/
 
 	public String getTitle() {
-		return Title;
+		return title;
 	}
 
-	public void setTitle(String Title) {
-		this.Title = Title;
-	}
-
+	/**
+	* Method that returns the Content of the Recipe in the post
+	*
+	* @return the post's content
+	*/
 	public String getContent() {
-		return Content;
+		return content;
 	}
 
-	public void setContent(String Content) {
-		this.Content = Content;
-	}
+	/**
+	* Method that returns the Cost of the Recipe in the post
+	*
+	* @return the post's recipecost
+	*/
 
 	public double getRecipeCost() {
-		return RecipeCost;
+		return recipeCost;
 	}
 
-	public void setRecipeCost(double RecipeCost) {
-		this.RecipeCost = RecipeCost;
-	}
+	/**
+	* Method that returns the Time of the Recipe in the post
+	*
+	* @return the post's recipetime
+	*/
 
 	public int getRecipeTime() {
-		return RecipeTime;
+		return recipeTime;
 	}
 
-	public void setRecipeTime(int RecipeTime) {
-		this.RecipeTime = RecipeTime;
-	}
+	/**
+	* Method that returns the DifficultyLevel of the Recipe in the post
+	*
+	* @return the post's difficultylevel
+	*/
 
 	public String getDifficultyLevel(){
-		return DifficultyLevel;
+		return difficultyLevel;
 	}
 
-	public void setDifficultyLevel(String DifficultyLevel) {
-		this.DifficultyLevel = DifficultyLevel;
-	}
+	/**
+	* Method that returns the Category of the Recipe in the post
+	*
+	* @return the post's recipecategory
+	*/
 
 	public String getRecipeCategory() {
-		return RecipeCategory;
+		return recipeCategory;
 	}
 
-	public void setRecipeCategory(String RecipeCategory) {
-		this.RecipeCategory = RecipeCategory;
-	}
+	/**
+	* Method that sends the characteristics of the post to the database
+	*/
 
-	public double getReviews() {
-		return Reviews;
-	}
-
-	public void sendPosttoDB(/*int postid, int poststatus, int recipetime, String content, String title,
-	String recipecategory, String difficultylevel, double recipecost, int creator, String[] hashtags*/) {
+	public void sendPosttoDB() {
 		Connection connection = null;
 		PreparedStatement stmt1 = null;
 		PreparedStatement stmt2 = null;
@@ -228,14 +346,14 @@ public class Post {
 			stmt1 = connection.prepareStatement("INSERT INTO Post(PostID,PostStatus,RecipeTime,Content,Title,RecipeCategory,DifficultyLevel,RecipeCost,Creator) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			int i = 0;
 			stmt1.setInt(1, maxid);
-			stmt1.setInt(2, PostStatus);
-			stmt1.setInt(3, RecipeTime);
-			stmt1.setString(4, Content);
-			stmt1.setString(5, Title);
-			stmt1.setString(6, RecipeCategory);
-			stmt1.setString(7, DifficultyLevel);
-			stmt1.setDouble(8, RecipeCost);
-			stmt1.setInt(9, Creator);
+			stmt1.setInt(2, postStatus);
+			stmt1.setInt(3, recipeTime);
+			stmt1.setString(4, content);
+			stmt1.setString(5, title);
+			stmt1.setString(6, recipeCategory);
+			stmt1.setString(7, difficultyLevel);
+			stmt1.setDouble(8, recipeCost);
+			stmt1.setInt(9, creator);
 			stmt1.executeUpdate();
 			while(hashtags[i] != null) {
 				stmt2 = connection.prepareStatement("INSERT INTO Hashtags(Hashtag,PostID) VALUES(?, ?)");
@@ -257,6 +375,12 @@ public class Post {
 		}
 	}
 
+	/**
+	* Method that sends the Reviews of a post to the database
+	*
+	*@param rate The number of the star entered by the user who rated the post
+	*/
+
 	public void sendReviewstoDB( int rate) {
 		// rate (1-5)
 		Connection connection = null;
@@ -276,6 +400,12 @@ public class Post {
 		}
 	}
 
+	/**
+	* Method that checks if the comment has content or not
+	*
+	* @return true if the comment has content and false if the comment does not have content
+	*/
+
 	public boolean commentListSize() {
 		if (comments.size() != 0)
 			return true;
@@ -283,50 +413,18 @@ public class Post {
 			return false;
 	}
 
-	/*public void editPost() {
-		Scanner input =  new Scanner(System.in);
-		if (Creator == User.getID()) {
-			System.out.println("Change the Title of your post");
-			Title = input.next();
-			System.out.println("Change the content of your post");
-			Content = input.next();
-			System.out.println("Change the cost of the recipe in your post");
-			RecipeCost = input.nextDouble();
-			System.out.println("Change the time of the recipe in your post");
-			RecipeTime = input.nextInt();
-			System.out.println("Change the Category of the recipe in your post");
-			RecipeCategory = input.next();
-			System.out.println("Change the Difficulty Level of the recipe in your post");
-			DifficultyLevel = input.next();
-		}else{
-			System.out.println("You cannot edit this post");
-		}
-	}
-
-	public void deletePost() {
-		if (Creator == User.getID) {
-		PostStatus = 0;
-		Title = null;
-		Content = null;
-		RecipeCost = 0.0;
-		RecipeTime = 0;
-		RecipeCategory = null;
-		DifficultyLevel = null;
-		Reviews = 0;
-		comments[PostId] = null;
-		}else{
-			System.out.println("You cannot delete this post");
-		}
-	}*/
+	/**
+	* Method that displays the characteristics of the post on the user's screen
+	*/
 
 	public void getPost() {
 		System.out.println( "Title of the post: " + getTitle() + "\n" +
 				"Content of the post: " + getContent() + "\n" +
 				"The time required for this recipe is: " + getRecipeTime() + "\n" +
-				"The cost for this recipe is: " + getRecipeCost() + " €" + "\n" +
+				"The cost for this recipe is:" + getRecipeCost() + " €" + "\n" +
 				"The difficulty Level of this recipe is: " + getDifficultyLevel() + "\nT" +
 				"he category of this recipe is: " + getRecipeCategory() + "\n" +
-				"This post has " + String.format("%.2f", Reviews) + " stars" + "\n" +
+				"This post has " + reviews + " stars" + "\n" +
 				"This post's comments are: ");
 		if (comments.size() == 0) {
 			System.out.println("  This post has no comments yet");
