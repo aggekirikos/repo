@@ -188,20 +188,10 @@ public class Post {
 
 	/**
 	* Method that calls the class comment and adds a comment to the post
-	*
-	* @param from   The ID of the user that makes the comment
-	* @param toPost The ID of the post in witch the comment refers
 	*/
 
-	public void createComment(int from, int toPost) {
-		String answer = input.next();
-		answer = Main.checkAnswer(answer);
-		if (answer == "Yes") {
-			System.out.print("Please type the comment : ");
-			String a = input.nextLine();
-			Comment comment = new Comment(a, from, toPost);
+	public void createComment(Comment comment) {
 			comments.add(comment);
-		}
 	}
 
 	/**
