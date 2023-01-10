@@ -3,6 +3,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.SQLException;
+/**
+* This class connects the overall java program with the database
+* by using the required Connection-type object and Statement-type
+* objects to open and close the connection. It also creates the
+* required tables for the database.
+*/
 public class DBcon {
 	public static Connection openConnection() {
 		/* Initialize Connection type object */
