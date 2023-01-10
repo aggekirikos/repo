@@ -158,6 +158,7 @@ public class DBcon {
 			dbcon.close();
 		} catch (SQLException e) {
 			System.out.println("Could not delete the tables of the database: " + e.getMessage());
+			closeStatement(stmt);
 		}
 	}
 }
