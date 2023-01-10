@@ -42,10 +42,15 @@ public class Comment {
     /**
      * Constructor that retrieves the comment characteristics
      * from database, searching by comment ID
+     *
+     * @param id the id of the comment that we want to retrieve
+     * @retun Comment object with the same characteristics
+     * that the comment with the entered id has
      */
     public Comment(int id) {
         this.commentId = id;
-        String select = "SELECT Content, ToPost, Sender, Username FROM Comment, User WHERE CommentID=? AND Sender = ID";
+        String select = "SELECT Content, ToPost, Sender, Username FROM " +
+                "Comment, User WHERE CommentID=? AND Sender = ID";
         Connection connection = null;
         PreparedStatement pst = null;
         PreparedStatement pst2 = null;
@@ -76,6 +81,11 @@ public class Comment {
     }
     /**
      * Basic constructor that creates a comment using the arguments
+     *
+     * @param content A string that will be our comment
+     * @param from The ID of the sender of the comment
+     * @param to the ID of the post that the comment refers
+     * @return Comment object with the inserted characteristics
      */
     public Comment(String content , int from, int to) {
         Connection con = null;
@@ -114,12 +124,18 @@ public class Comment {
     }
     /**
      * Returns the content of every comment
+     *
+     *
      */
     public String getCommentContent(){
         return commentContent;
     }
     /**
      * Method we use to create a recomment on a comment
+     *
+     * @param userId the id of the sender
+     * @param postId the id of the post that the comment refers
+     * @param commentId the id of the comment that recomment refers
      */
     public void makeReComment(int userId, int postId, int commentId) {
         System.out.print("Type the recomment: ");
@@ -130,7 +146,7 @@ public class Comment {
         System.out.println("Recomment is added!");
     }
     /**
-     * Method that returns all the recomments of a comment
+     * Method that prints all the recomments of a comment
      */
     public void getRecomments() {
         if (!recomments.isEmpty()) {
