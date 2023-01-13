@@ -280,8 +280,9 @@ public class UserTest {
 			prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?");
 			prstm.setInt(1, post.getPostId());
 			prstm.executeUpdate();
-			prstm = connection.prepareStatement("DELETE FROM Cookmates WHERE UserID = ?");
+			prstm = connection.prepareStatement("DELETE FROM Cookmates WHERE UserID = ? OR UserID = ?");
 			prstm.setInt(1, user3.getUserId());
+            prstm.setInt(2, user1.getUserId());
 			prstm.executeUpdate();
 			prstm = connection.prepareStatement("DELETE FROM User WHERE ID = ? OR ID = ?");
 			prstm.setInt(1, user1.userId);
