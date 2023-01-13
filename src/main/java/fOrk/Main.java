@@ -19,7 +19,10 @@ import org.sqlite.core.DB;
  */
 public class Main {
 
-    /** The program's main method. */
+    /** The program's main method.
+    *
+    * @param args The command line arguments.
+    */
     public static void main(String[] args) {
         //Connection connection1 = DBcon.openConnection();
         //DBcon.deleteTables(connection1);

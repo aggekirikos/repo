@@ -431,7 +431,7 @@ public class User {
 
     /**
     * Method that returns the list of cookmates that a user has made.
-    * @ return The user cookmates's usernames
+    * @return The user cookmates's usernames
     */
     public String getCookmates() {
         StringBuilder stringBuilder = new StringBuilder();
