@@ -139,11 +139,13 @@ public class Comment {
      */
     public void makeReComment(int userId, int postId, int commentId) {
         System.out.print("Type the recomment: ");
-        String a = inp.nextLine();
+        Scanner input = new Scanner(System.in);
+        String a = input.nextLine();
         int recId = recomments.size() + 1;
         Recomment r = new Recomment( a, userId, postId, commentId);
         recomments.add(r);
         System.out.println("Recomment is added!");
+        input.close();
     }
     /**
      * Method that prints all the recomments of a comment
@@ -171,9 +173,9 @@ public class Comment {
      * and all the recomments of this comment
      */
     public void printCommentRec(int counter) {
-            System.out.print(" " + (counter + 1) + ": ");
-            printComment();
-            getRecomments();
+        System.out.print(" " + (counter + 1) + ": ");
+        printComment();
+        getRecomments();
     }
     public boolean checkFirstLineComment() {
         Connection connection = DBcon.openConnection();

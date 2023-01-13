@@ -1,5 +1,4 @@
 package fOrk;
-
 import java.sql.*;
 
 public class Recomment extends Comment {
