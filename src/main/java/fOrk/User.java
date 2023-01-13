@@ -110,7 +110,7 @@ public class User {
             while (rsPost.next()) {
                 int temp = rsPost.getInt("PostID");
                 Post post = new Post(temp);
-                addPost(post);
+                updatePosts(post);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -211,8 +211,7 @@ public class User {
     * Method that changes the full name of the user.
     *
     * @param tempName The user's new full Name
-    **/
-
+    */
     public void setName(String tempName) {
         name = tempName;
     }
@@ -232,7 +231,6 @@ public class User {
     * @param tempBio The new Bio of the user
     *
     */
-
     public void setBio(String tempBio) {
         bio = tempBio;
     }
@@ -243,28 +241,19 @@ public class User {
     * @return The user's Bio
     *
     */
-
     public String getBio() {
         return bio;
     }
 
     /**
-    * Method that adds the user's posts in an araylist.
+    * Method that updates the arraylist which contains the user's posts
+    * if a post is added or updated.
     *
-    * @param post  The user's post
+    * @param newPost  The user's new or updated post
     */
-
-    public void addPost(Post post) {
-        posts.add(post);
-    }
-
-    /**
-    * Method that updates the arraylist which contains the user's posts.
-    */
-
-    public void updatePostArraylist(Post updatedPost) {
-        posts.removeIf(post -> updatedPost.getPostId() == post.getPostId());
-        posts.add(updatedPost);
+    public void updatePosts(Post newPost) {
+        posts.removeIf(post -> newPost.getPostId() == post.getPostId());
+        posts.add(newPost);
     }
 
     /**
@@ -370,29 +359,37 @@ public class User {
     }
 
     /**
-    * Method that sends the Id of a new cookmate to the database.
+    * Method that adds a new cookmate to your cookmates.
+    * If he/she is not already in the cookmates' list, the cookmate
+    * is added to both the list of cookmates and the database.
     *
     * @param cookmateID The Id of the user's new cookmate
     */
     public void makeCookmates(int cookmateID) {
         String cookmateName = Main.getUsernamefromID(cookmateID);
-        cookmates.add(cookmateName);
-        Connection connection = DBcon.openConnection();
-        PreparedStatement stmt = null;
-        try {
-            stmt = connection.prepareStatement("INSERT INTO Cookmates(UserID, CookmateID)"
-            + " VALUES(?,?)");
-            stmt.setInt(1, getUserId());
-            stmt.setInt(2, cookmateID);
-            stmt.executeUpdate();
-            System.out.println("The post's creator " + cookmateName
-                + " was added as your cookmate");
-        } catch (SQLException e) {
-            System.out.println("Something went wrong while trying to make this user your cookmate."
-                + e.getMessage());
-        } finally {
-            DBcon.closeStatement(stmt);
-            DBcon.closeConnection(connection);
+        if (cookmates.contains(cookmateName)) {
+            System.out.println(cookmateName + " is already your cookmate");
+        } else if (cookmateID == getUserId() ){
+            System.out.println("You can't add yourself as your cookmate");
+        } else {
+            cookmates.add(cookmateName);
+            Connection connection = DBcon.openConnection();
+            PreparedStatement stmt = null;
+            try {
+                stmt = connection.prepareStatement("INSERT INTO Cookmates(UserID, CookmateID)"
+                        + " VALUES(?,?)");
+                stmt.setInt(1, getUserId());
+                stmt.setInt(2, cookmateID);
+                stmt.executeUpdate();
+                System.out.println("The post's creator " + cookmateName
+                        + " was added as your cookmate");
+            } catch (SQLException e) {
+                System.out.println("Something went wrong while trying to make this user your cookmate."
+                        + e.getMessage());
+            } finally {
+                DBcon.closeStatement(stmt);
+                DBcon.closeConnection(connection);
+            }
         }
     }
 
@@ -434,7 +431,7 @@ public class User {
 
     /**
     * Method that returns the list of cookmates that a user has made.
-    * @ return The user's cookmates
+    * @ return The user cookmates's usernames
     */
     public String getCookmates() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -448,6 +445,9 @@ public class User {
         return stringBuilder.toString();
     }
 
+    /**
+    * Method that prints the user's profile.
+    */
     public void getProfile() {
         System.out.println("\nPROFILE\n" + "\nName: " + getName() + "\nUsername: " + getUsername()
                            + "\nBio: " + getBio() + "\nCookmates:" + getCookmates() + "\n");

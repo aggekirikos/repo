@@ -202,10 +202,11 @@ public class Post {
 	*/
 
 	public void makeReview() {
+		Scanner scanner = new Scanner(System.in);
 		System.out.println("How much do you like this post? Rate from 1 to 5 stars.");
 		int rate;
 		do {
-			rate = input.nextInt();
+			rate = scanner.nextInt();
 		} while (rate < 1 || rate > 5);
 
 		stars[rate - 1] = stars[rate - 1] + 1;
@@ -235,7 +236,6 @@ public class Post {
 			preparedStatement = connection.prepareStatement(select);
 			preparedStatement.setInt(1, postId);
 			ResultSet rs = preparedStatement.executeQuery();
-			rs.close();
 			while(rs.next()){
 				evaluatorsNumber = rs.getInt(1);
 			}

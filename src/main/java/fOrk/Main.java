@@ -163,7 +163,7 @@ public class Main {
                     // Print the newly made post
                     post.getPost();
                     // Add post to the current user's posts
-                    user.addPost(post);
+                    user.updatePosts(post);
                     break;
                 case 4 :
                     // Print the current user's profile
@@ -248,7 +248,7 @@ public class Main {
                     // If the post's creator was the one reviewing, commenting or recommenting
                     // the post, his arraylist of posts gets updated.
                     if (post.getCreator() == user.getUserId()) {
-                        user.updatePostArraylist(post);
+                        user.updatePosts(post);
                     }
                     System.out.println("Do you want to make this user your cookmate? Yes/No");
                     answer = input.nextLine();
