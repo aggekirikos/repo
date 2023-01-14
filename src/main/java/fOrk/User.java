@@ -8,6 +8,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * This class contains methods that create a new user
+ * (their username, password, bio) and saves their characteristics
+ * to the database. There are also constructors that retrieve the
+ * characteristics from the database and methods that display the
+ * users posts.
+ */
+
 public class User {
 
     /**
