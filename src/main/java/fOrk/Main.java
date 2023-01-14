@@ -14,7 +14,7 @@ import org.sqlite.core.DB;
  * The social media program (fOrk) main class.
  *
  * @author Elina Kapetanaki, Despoina Tsetsila, Loukas Tsaprounis,
- *     Vasiliki Papasideri, Angelos Kirikos, Angeliki Tsaggaraki,
+ *     Vasiliki Papasideri, Angelos Kirikos, Angeliki Tsagkaraki,
  *     Vaggelis Siamantouras, Nicole Chlouveraki
  */
 public class Main {
@@ -326,7 +326,7 @@ public class Main {
      * Find and print the user's ChatBox
      * (usernames of the users he has messages with).
      *
-     * @param userid The ID of the user currently using the application
+     * @param userid The ID of the user currently using the application.
      */
     public static void getChatbox(int userid) {
         System.out.println("Your chatbox is :");
@@ -381,6 +381,15 @@ public class Main {
         }
     } // end of getChatbox
 
+    /**
+     * The user is asked whether he wants to
+     * start a new conversation and if the answer
+     * is "Yes" he is asked to type the username of the
+     * user he wants to have a conversation with. This
+     * procedure is contimued untill the user gives "No"
+     * as an aswer to the first question.
+     * @param userid the ID of the user opening the conversation.
+     */
     public static void openConversation(int userid) {
         System.out.println("Would you like to open a conversation? Yes/No");
         Scanner s = new Scanner(System.in);
@@ -405,6 +414,13 @@ public class Main {
         } while (!answer.equals("Yes") && !answer.equals("No"));
     } // end of openConversation
 
+    /**
+     * The user is asked whether he wants to text a new
+     * message and this procedure is continued untill
+     * the user gives "No" as an aswer to the first question.
+     * @param userid The ID of the user sending the message.
+     * @param receiversid The ID of the user receiving the message.
+     */
     public static void typeMessage(int userid, int receiversid) {
         String answer3;
         do {
@@ -424,6 +440,13 @@ public class Main {
         } while (!answer3.equals("No"));
     } // end of typeMessage
 
+    /**
+     * This method receives as parameters the senders and
+     * the receivers ID and displays the message that has been
+     * sent from the sender to the user.
+     * @param receiversID the ID of the user receiving the message.
+     * @param userid the ID of the user sending the message.
+     */
     public static void getMessagesby_userid(int receiversID, int userid) {
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -452,6 +475,14 @@ public class Main {
         }
     } // end of getMessagesby_userid
 
+    /**
+     * Based on the username that this method
+     * receives as a parameter, the method looks
+     * up the database and returns this specific
+     * users ID
+     * @param username The username of the user whose ID we want.
+     * @return rtrn The users ID.
+     */
     public static int getIDfromUsername(String username) {
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -476,6 +507,13 @@ public class Main {
         return rtrn;
     } // end of getIDfromUsername
 
+    /**
+     * Based on a Users ID that this method
+     * receives as a parameter the method looks
+     * up the database and returns the users username
+     * @param id The ID of the user whose ID we want.
+     * @return rtrn The users username.
+     */
     public static String getUsernamefromID(int id) {
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -497,6 +535,14 @@ public class Main {
         return rtrn;
     } // end of getUsernamefromID
 
+    /**
+     * This method asks the user to give the
+     * number of ingredients and steps as well as
+     * the ingredients and steps of the recipe he wants
+     * to upload and returns a formatted string that
+     * contains the recipe.
+     * @return content A formatted String that containes the whole recipe.
+     */
     public static String create() {
         Scanner input1 = new Scanner(System.in);
         System.out.println("Please enter the number of ingredients of your recipe.");
@@ -520,6 +566,13 @@ public class Main {
         return content.toString();
     } // end of create
 
+    /**
+     * This method checks the users answer.
+     * The only valid answers are "Yes" and
+     * "No".
+     * @param an The users input.
+     * @return an The users input which is definitely "Yes" or "No".
+     */
     public static String checkAnswer(String an) {
         Scanner n = new Scanner(System.in);
         while (!an.equals("Yes") && !an.equals("No")) {
