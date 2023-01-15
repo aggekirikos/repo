@@ -19,7 +19,7 @@ public class UserTest {
     private static final User user1 = new User("123456789",
             "Depy", "Despoina Tsetsila", "I love cooking");
     private static final String[] hashtag = {"pasta",
-                 null, null, null, null};
+        null, null, null, null};
     private static final Post post = new Post(user1.getUserId(),
             "Pasta", "test", 5, 10, "Simple", "Test", hashtag);
     private static final User user3 = new User("123456789",
@@ -146,7 +146,9 @@ public class UserTest {
             con.close();
             preparedStatement.close();
             resultSet.close();
-        } catch (SQLException e) { System.out.println(e.getMessage()); }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
         assertEquals(user1.getUsername(), "Angeliki");
         assertEquals(username, "Angeliki");
     }
@@ -162,7 +164,8 @@ public class UserTest {
         user1.editProfile();
         try {
             Connection con = DBcon.openConnection();
-            PreparedStatement preparedStatement = con.prepareStatement(" SELECT Name"
+            PreparedStatement preparedStatement = con.prepareStatement(
+                  " SELECT Name"
                     + " FROM [User]"
                     + " WHERE ID = ?");
             preparedStatement.setInt(1, user1.getUserId());
@@ -173,7 +176,9 @@ public class UserTest {
             con.close();
             preparedStatement.close();
             resultSet.close();
-        } catch(SQLException e) { System.out.println(e.getMessage()); }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
         assertEquals(user1.getName(), "AngelikiTsagkaraki");
         assertEquals(name, "AngelikiTsagkaraki");
     }
@@ -200,7 +205,7 @@ public class UserTest {
             con.close();
             preparedStatement.close();
             resultSet.close();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         assertEquals("I love cooking!!", user1.getBio());
@@ -225,86 +230,87 @@ public class UserTest {
             preparedStatement.setInt(1, user1.getUserId());
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-               password = resultSet.getString("Password");
+                password = resultSet.getString("Password");
             }
-			con.close();
+            con.close();
             preparedStatement.close();
             resultSet.close();
-        } catch(SQLException e) {
-			System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-		assertEquals("222222222", password);
-	}
+        assertEquals("222222222", password);
+    }
 
-	@Test
-	public void testMakeCookmateAnExistingCookmate() {
-		user1.makeCookmates(user3.userId);
-		String expected = user3.getUsername() + " is already your cookmate"
-				+ System.lineSeparator();
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		PrintStream printStream = new PrintStream(os);
-		System.setOut(printStream);
-		user1.makeCookmates(user3.userId);
-		String actual = null;
-		try {
-			actual = os.toString("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			System.out.println(e.getMessage());
-		}
-		assert (actual != null);
-		assertEquals(expected, actual);
-	}
+    @Test
+    public void testMakeCookmateAnExistingCookmate() {
+        user1.makeCookmates(user3.userId);
+        String expected = user3.getUsername() + " is already your cookmate"
+                + System.lineSeparator();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(os);
+        System.setOut(printStream);
+        user1.makeCookmates(user3.userId);
+        String actual = null;
+        try {
+            actual = os.toString("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            System.out.println(e.getMessage());
+        }
+        assert (actual != null);
+        assertEquals(expected, actual);
+    }
 
-	@Test
-	public void testGetProfile() {
-		user3.makeCookmates(user1.getUserId());
-		String expected = "\nPROFILE\n"
-				+ "\nName: " + user3.getName()
-				+ "\nUsername: " + user3.getUsername()
-				+ "\nBio: " + user3.getBio()
-				+ "\nCookmates:" + "\n - " + user1.getUsername() + "\n"
-				+ System.lineSeparator();
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		PrintStream printStream = new PrintStream(os);
-		System.setOut(printStream);
-		user3.getProfile();
-		String actual = null;
-		try {
-			actual = os.toString("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			System.out.println(e.getMessage());
-		}
-		assert (actual != null);
-		assertEquals(expected, actual);
-	}
+    @Test
+    public void testGetProfile() {
+        user3.makeCookmates(user1.getUserId());
+        String expected = "\nPROFILE\n"
+                + "\nName: " + user3.getName()
+                + "\nUsername: " + user3.getUsername()
+                + "\nBio: " + user3.getBio()
+                + "\nCookmates:" + "\n - " + user1.getUsername() + "\n"
+                + System.lineSeparator();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(os);
+        System.setOut(printStream);
+        user3.getProfile();
+        String actual = null;
+        try {
+            actual = os.toString("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            System.out.println(e.getMessage());
+        }
+        assert (actual != null);
+        assertEquals(expected, actual);
+    }
 
-	@AfterClass
-	public static void delete(){
-		Connection connection = DBcon.openConnection();
-		PreparedStatement prstm = null;
-		try {
-			prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?");
-			prstm.setInt(1, post.getPostId());
-			prstm.executeUpdate();
-			prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?");
-			prstm.setInt(1, post.getPostId());
-			prstm.executeUpdate();
-			prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?");
-			prstm.setInt(1, post.getPostId());
-			prstm.executeUpdate();
-			prstm = connection.prepareStatement("DELETE FROM Cookmates WHERE UserID = ? OR UserID = ?");
-			prstm.setInt(1, user3.getUserId());
+    @AfterClass
+    public static void delete() {
+        Connection connection = DBcon.openConnection();
+        PreparedStatement prstm = null;
+        try {
+            prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?");
+            prstm.setInt(1, post.getPostId());
+            prstm.executeUpdate();
+            prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?");
+            prstm.setInt(1, post.getPostId());
+            prstm.executeUpdate();
+            prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?");
+            prstm.setInt(1, post.getPostId());
+            prstm.executeUpdate();
+            prstm = connection.prepareStatement(
+                    "DELETE FROM Cookmates WHERE UserID = ? OR UserID = ?");
+            prstm.setInt(1, user3.getUserId());
             prstm.setInt(2, user1.getUserId());
-			prstm.executeUpdate();
-			prstm = connection.prepareStatement("DELETE FROM User WHERE ID = ? OR ID = ?");
-			prstm.setInt(1, user1.userId);
-			prstm.setInt(2, user3.userId);
-			prstm.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		} finally {
-		    DBcon.closeStatement(prstm);
-		    DBcon.closeConnection(connection);
-		}
-	}
+            prstm.executeUpdate();
+            prstm = connection.prepareStatement("DELETE FROM User WHERE ID = ? OR ID = ?");
+            prstm.setInt(1, user1.userId);
+            prstm.setInt(2, user3.userId);
+            prstm.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            DBcon.closeStatement(prstm);
+            DBcon.closeConnection(connection);
+        }
+    }
 }
