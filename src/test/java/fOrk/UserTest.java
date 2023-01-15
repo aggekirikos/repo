@@ -7,20 +7,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.sql.PreparedStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import org.junit.AfterClass;
 import org.junit.Test;
 
 public class UserTest {
 
-    private static final User user1 = new User("123456789", "Depy", "Despoina Tsetsila", "I love cooking");
-    private static final String[] hashtag = {"pasta", null, null, null, null};
-    private static final Post post = new Post(user1.getUserId(), "Pasta", "test", 5, 10, "Simple", "Test", hashtag);
-    private static final User user3 = new User("123456789", "Nicole", "Nicole Chlouveraki", "I love pasta");
+    private static final User user1 = new User("123456789",
+            "Depy", "Despoina Tsetsila", "I love cooking");
+    private static final String[] hashtag = {"pasta",
+                 null, null, null, null};
+    private static final Post post = new Post(user1.getUserId(),
+            "Pasta", "test", 5, 10, "Simple", "Test", hashtag);
+    private static final User user3 = new User("123456789",
+            "Nicole", "Nicole Chlouveraki", "I love pasta");
 
     @Test
     public void testRetrieveConstructor() {
@@ -44,7 +47,8 @@ public class UserTest {
     @Test
     public void testSetPasswordWithWrongParameter() {
         String userInput = "2222222222";
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         user1.setPassword("111");
         assertEquals("Password should be set to '2222222222'", "2222222222", user1.password);
@@ -55,7 +59,8 @@ public class UserTest {
     @Test
     public void testSetInvalidUsername() {
         String userInput = "Elina";
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         user1.setUsername("Nicole");
         assertEquals("Username should not be set to an already existing username, "
@@ -66,34 +71,39 @@ public class UserTest {
 
     @Test
     public void testGetUsername() {
-        assertEquals("Method should return the correct username", user1.username, user1.getUsername());
+        assertEquals("Method should return the correct username",
+                user1.username, user1.getUsername());
     }
 
     @Test
     public void testSetName() {
         user1.setName("Despina Tsetsila");
-        assertEquals("Name should be set to 'Despina Tsetsila'", "Despina Tsetsila", user1.getName());
+        assertEquals("Name should be set to 'Despina Tsetsila'",
+                "Despina Tsetsila", user1.getName());
         // Change name back to initial values so that other tests run correctly
         user1.setName("Despoina Tsetsila");
     }
 
     @Test
     public void testGetName() {
-        assertEquals("Method should return the correct username", user1.name, user1.getName());
+        assertEquals("Method should return the correct username",
+                user1.name, user1.getName());
     }
 
     @Test
     public void testSetBio() {
         user1.setBio("I love cooking!");
-        assertEquals("Name should be set to 'I love cooking!'", "I love cooking!", user1.getBio());
+        assertEquals("Name should be set to 'I love cooking!'",
+                "I love cooking!", user1.getBio());
         // Change bio back to initial values so that other tests run correctly
         user1.setBio("I love cooking");
     }
 
     @Test
     public void testGetBio() {
-		assertEquals("Method should return the correct bio", user1.bio, user1.getBio());
-	}
+        assertEquals("Method should return the correct bio",
+                user1.bio, user1.getBio());
+    }
 
     @Test
     public void testUpdateNewPost() {
@@ -106,7 +116,8 @@ public class UserTest {
         user1.updatePosts(post);
         Post postRec = new Post(post.getPostId());
         String userInput = "4";
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         postRec.makeReview();
         user1.updatePosts(postRec);
@@ -117,7 +128,8 @@ public class UserTest {
     public void testEditUsername() {
         String userInput = String.format("1%sAngeliki",
              System.lineSeparator());
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         String username = null;
         user1.editProfile();
@@ -134,9 +146,7 @@ public class UserTest {
             con.close();
             preparedStatement.close();
             resultSet.close();
-        } catch(SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        } catch (SQLException e) { System.out.println(e.getMessage()); }
         assertEquals(user1.getUsername(), "Angeliki");
         assertEquals(username, "Angeliki");
     }
@@ -145,7 +155,8 @@ public class UserTest {
     public void testEditName() {
         String userInput = String.format("2%sAngelikiTsagkaraki",
                 System.lineSeparator());
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         String name = null;
         user1.editProfile();
@@ -162,9 +173,7 @@ public class UserTest {
             con.close();
             preparedStatement.close();
             resultSet.close();
-        } catch(SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        } catch(SQLException e) { System.out.println(e.getMessage()); }
         assertEquals(user1.getName(), "AngelikiTsagkaraki");
         assertEquals(name, "AngelikiTsagkaraki");
     }
@@ -173,7 +182,8 @@ public class UserTest {
     public void testEditBio() {
         String userInput = String.format("3%sI love cooking!!",
                 System.lineSeparator());
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         String bio = null;
         user1.editProfile();
@@ -201,26 +211,28 @@ public class UserTest {
     public void testEditPassword() {
         String userInput = String.format("4%s222222222",
                 System.lineSeparator());
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         String password = null;
         user1.editProfile();
         try {
-			Connection con = DBcon.openConnection();
-			PreparedStatement preparedStatement = con.prepareStatement(" SELECT Password"
-					+ " FROM [User]"
-					+ " WHERE ID = ?");
-			preparedStatement.setInt(1, user1.getUserId());
-			ResultSet resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
-				password = resultSet.getString("Password");
-			}
+            Connection con = DBcon.openConnection();
+            PreparedStatement preparedStatement = con.prepareStatement(
+                  " SELECT Password"
+                            + " FROM [User]"
+                            + " WHERE ID = ?");
+            preparedStatement.setInt(1, user1.getUserId());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+               password = resultSet.getString("Password");
+            }
 			con.close();
-			preparedStatement.close();
-			resultSet.close();
-		} catch(SQLException e) {
+            preparedStatement.close();
+            resultSet.close();
+        } catch(SQLException e) {
 			System.out.println(e.getMessage());
-		}
+        }
 		assertEquals("222222222", password);
 	}
 
