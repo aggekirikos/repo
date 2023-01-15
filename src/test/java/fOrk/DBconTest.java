@@ -1,12 +1,15 @@
 package fOrk;
 
 import static org.junit.Assert.assertTrue;
-import java.sql.*;
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
 
- public class DBconTest {
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class DBconTest {
     Connection connection;
     Statement statement;
 
@@ -27,7 +30,7 @@ import org.junit.After;
         } catch (SQLException e) {
             System.out.println("Could not create Statement" + e.getMessage());
         }
-            DBcon.closeStatement(statement);
+        DBcon.closeStatement(statement);
         try {
             assertTrue(statement.isClosed());
         } catch (SQLException e) {
@@ -39,4 +42,4 @@ import org.junit.After;
     public void closeStatementWithNullShouldNotThrow() {
         DBcon.closeStatement(null);
     }
- }
+}
