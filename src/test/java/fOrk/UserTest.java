@@ -133,13 +133,15 @@ public class UserTest {
         System.setIn(is);
         String username = null;
         user1.editProfile();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         try {
             Connection con = DBcon.openConnection();
-            PreparedStatement preparedStatement = con.prepareStatement(" SELECT Username"
+            preparedStatement = con.prepareStatement(" SELECT Username"
                     + " FROM [User]"
                     + " WHERE ID = ?");
             preparedStatement.setInt(1, user1.getUserId());
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 username = resultSet.getString("Username");
             }
@@ -148,6 +150,8 @@ public class UserTest {
             resultSet.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(resultSet);
+            DBcon.closeStatement(preparedStatement);
         }
         assertEquals(user1.getUsername(), "Angeliki");
         assertEquals(username, "Angeliki");
@@ -162,14 +166,16 @@ public class UserTest {
         System.setIn(is);
         String name = null;
         user1.editProfile();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         try {
             Connection con = DBcon.openConnection();
-            PreparedStatement preparedStatement = con.prepareStatement(
+            preparedStatement = con.prepareStatement(
                   " SELECT Name"
                     + " FROM [User]"
                     + " WHERE ID = ?");
             preparedStatement.setInt(1, user1.getUserId());
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 name = resultSet.getString("Name");
             }
@@ -178,6 +184,8 @@ public class UserTest {
             resultSet.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(resultSet);
+            DBcon.closeStatement(preparedStatement);
         }
         assertEquals(user1.getName(), "AngelikiTsagkaraki");
         assertEquals(name, "AngelikiTsagkaraki");
@@ -192,13 +200,15 @@ public class UserTest {
         System.setIn(is);
         String bio = null;
         user1.editProfile();
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
         try {
             Connection con = DBcon.openConnection();
-            PreparedStatement preparedStatement = con.prepareStatement(" SELECT Bio"
+            preparedStatement = con.prepareStatement(" SELECT Bio"
                     + " FROM [User]"
                     + " WHERE ID = ?");
             preparedStatement.setInt(1, user1.getUserId());
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 bio = resultSet.getString("Bio");
             }
@@ -207,6 +217,8 @@ public class UserTest {
             resultSet.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(resultSet);
+            DBcon.closeStatement(preparedStatement);
         }
         assertEquals("I love cooking!!", user1.getBio());
         assertEquals("I love cooking!!", bio);
@@ -221,14 +233,16 @@ public class UserTest {
         System.setIn(is);
         String password = null;
         user1.editProfile();
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
         try {
             Connection con = DBcon.openConnection();
-            PreparedStatement preparedStatement = con.prepareStatement(
+            preparedStatement = con.prepareStatement(
                   " SELECT Password"
                             + " FROM [User]"
                             + " WHERE ID = ?");
             preparedStatement.setInt(1, user1.getUserId());
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 password = resultSet.getString("Password");
             }
@@ -237,6 +251,8 @@ public class UserTest {
             resultSet.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(resultSet);
+            DBcon.closeStatement(preparedStatement);
         }
         assertEquals("222222222", password);
     }
@@ -291,23 +307,29 @@ public class UserTest {
             prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?");
             prstm.setInt(1, post.getPostId());
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?");
             prstm.setInt(1, post.getPostId());
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?");
             prstm.setInt(1, post.getPostId());
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement(
                     "DELETE FROM Cookmates WHERE UserID = ? OR UserID = ?");
             prstm.setInt(1, user3.getUserId());
             prstm.setInt(2, user1.getUserId());
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM User WHERE ID = ? OR ID = ?");
             prstm.setInt(1, user1.userId);
             prstm.setInt(2, user3.userId);
             prstm.executeUpdate();
+            prstm.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);

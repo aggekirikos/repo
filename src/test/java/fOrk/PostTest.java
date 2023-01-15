@@ -49,14 +49,18 @@ public class PostTest {
             prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-        } catch (SQLException e) {
+            prstm.close();
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -77,14 +81,18 @@ public class PostTest {
             prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-        } catch (SQLException e) {
+            prstm.close();
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -113,28 +121,35 @@ public class PostTest {
                     + "PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM stars WHERE"
-                    + " PostID = ?;");
+            prstm.close();
+            prstm = connection.prepareStatement("DELETE FROM stars WHERE" +
+                    " PostID = ?;");
             prstm.setInt(1, post1.postId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE"
-                    + " PostID = ?;");
+            prstm.close();
+            prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE" +
+                    " PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE"
-                    + " PostID = ?;");
+            prstm.close();
+            prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE" +
+                    " PostID = ?;");
             prstm.setInt(1, post1.postId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Post WHERE"
-                    + " PostID = ?;");
+            prstm.close();
+            prstm = connection.prepareStatement("DELETE FROM Post WHERE" +
+                    " PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
-                    + " PostID = ?;");
+            prstm.close();
+            prstm = connection.prepareStatement("DELETE FROM Comment WHERE" +
+                    " PostID = ?;");
             prstm.setInt(1, post1.postId);
             prstm.executeUpdate();
-        } catch (SQLException e) {
+            prstm.close();
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -161,20 +176,25 @@ public class PostTest {
                     + " PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE"
-                    + " PostID = ?;");
+            prstm.close();
+            prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE" +
+                    " PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Post WHERE"
-                    + " PostID = ?;");
+            prstm.close();
+            prstm = connection.prepareStatement("DELETE FROM Post WHERE" +
+                    " PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
-                    + " ToPost = ?;");
+            prstm.close();
+            prstm = connection.prepareStatement("DELETE FROM Comment WHERE" +
+                    " ToPost = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-        } catch (SQLException e) {
+            prstm.close();
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -219,14 +239,18 @@ public class PostTest {
                 prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
                 prstm.setInt(1, post.postId);
                 prstm.executeUpdate();
+                prstm.close();
                 prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?;");
                 prstm.setInt(1, post.postId);
                 prstm.executeUpdate();
+                prstm.close();
                 prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?;");
                 prstm.setInt(1, post.postId);
                 prstm.executeUpdate();
+                prstm.close();
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
+                DBcon.closeStatement(prstm);
             } finally {
                 DBcon.closeStatement(prstm);
                 DBcon.closeConnection(connection);
@@ -265,14 +289,18 @@ public class PostTest {
             prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -292,14 +320,18 @@ public class PostTest {
             prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-        } catch (SQLException e) {
+            prstm.close();
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -339,17 +371,22 @@ public class PostTest {
             prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE ToPost = ?;");
             prstm.setInt(1, comment.commentId);
             prstm.executeUpdate();
-        } catch (SQLException e) {
+            prstm.close();
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -369,14 +406,18 @@ public class PostTest {
             prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
-        } catch (SQLException e) {
+            prstm.close();
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -398,17 +439,22 @@ public class PostTest {
             prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
+            prstm.close();
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE ToPost = ?;");
             prstm.setInt(1, comment.commentId);
             prstm.executeUpdate();
-        } catch (SQLException e) {
+            prstm.close();
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -426,8 +472,10 @@ public class PostTest {
             prstm.setInt(2, user2.getUserId());
             prstm.setInt(3, user3.getUserId());
             prstm.executeUpdate();
-        } catch (SQLException e) {
+            prstm.close();
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
