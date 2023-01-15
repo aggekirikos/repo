@@ -1,5 +1,6 @@
 package fOrk;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -13,9 +14,12 @@ import static org.junit.Assert.*;
 
 public class PostTest {
 
+    private static final User user = new User("333333333", "tsappy", "Loukas", "runner");
+    private static final User user2 = new User("444444444", "kontsek", "kostas", "swimmer");
+    private static final User user3 = new User("555555555", "vaspap", "Vasiliki", "tzouras");
+
     @Test
     public void testBasicPost() {
-        int userId = 1;
         String title = "Delicious Lasagna";
         String content = "This recipe for lasagna is sure to be a hit at your next dinner party. It's easy to make and tastes great!";
         double cost = 20.00;
@@ -23,8 +27,8 @@ public class PostTest {
         String diLevel = "Easy";
         String category = "Italian";
         String[] has = {"#lasagna", "#dinner", "#italian", null, null};
-        Post post = new Post(userId, title, content, cost, time, diLevel, category, has);
-        assertEquals(userId, post.creator);
+        Post post = new Post(user.getUserId(), title, content, cost, time, diLevel, category, has);
+        assertEquals(user.getUserId(), post.creator);
         assertEquals(1, post.postStatus);
         assertEquals(title, post.title);
         assertEquals(content, post.content);
@@ -46,7 +50,7 @@ public class PostTest {
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
         } catch(SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -58,7 +62,7 @@ public class PostTest {
     public void testMaxIdFromDB() {
         // call the maxidfromDB method and assert that it returns the expected value
         String[] ingr = {"fylla","rizi", "kimas", null, null};
-        Post post = new Post(2, "Ntolmadakia", "Tylixe to fyllo me ti gemisi"
+        Post post = new Post(user2.getUserId(), "Ntolmadakia", "Tylixe to fyllo me ti gemisi"
                 , 15, 120, "difficult", "Traditional", ingr);
         assertEquals(post.postId, post.maxidfromDB());
         Connection connection = DBcon.openConnection();
@@ -74,7 +78,7 @@ public class PostTest {
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
         } catch(SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -85,9 +89,8 @@ public class PostTest {
     @Test
     public void testRetrievePost() {
         String[] ingr = {"fylla","rizi", "kimas", null, null};
-        Post post = new Post(1, "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
+        Post post = new Post(user.getUserId(), "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
                 "difficult", "Traditional", ingr);
-        Connection con = null;
         Post post1 = new Post(post.postId);
         assertEquals(post.creator, post1.creator);
         assertEquals(post.content, post1.content);
@@ -124,7 +127,7 @@ public class PostTest {
             prstm.setInt(1, post1.postId);
             prstm.executeUpdate();
         } catch(SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -135,15 +138,15 @@ public class PostTest {
     public void testCreateComment() {
         Connection connection = DBcon.openConnection();
         String[] ingr = {"fylla","rizi", "kimas", null, null};
-        Post post = new Post(2, "Ntolmadakia", "Tylixe to fyllo me ti gemisi"
+        Post post = new Post(user2.getUserId(), "Ntolmadakia", "Tylixe to fyllo me ti gemisi"
                 , 15, 120, "difficult", "Traditional", ingr);
         // call createComment method with mock input and comment list
-        Comment comment = new Comment("Well done", 1, post.postId);
+        Comment comment = new Comment("Well done", user.getUserId(), post.postId);
         post.createComment(comment);
         // verify that the new Comment object was added to the comments list
         assertEquals(2, post.comments.size(), 1);
         assertEquals(post.comments.get(0).commentContent, "Well done");
-        assertEquals(1,post.comments.get(0).from);
+        assertEquals(user.getUserId(),post.comments.get(0).from);
         assertEquals(post.postId, post.comments.get(0).to);
         PreparedStatement prstm = null;
         try {
@@ -164,7 +167,7 @@ public class PostTest {
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
         } catch(SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -176,7 +179,7 @@ public class PostTest {
         String review = "3";
         Connection connection = DBcon.openConnection();
         String[] ingr = {"fylla","rizi", "kimas", null, null};
-        Post post = new Post(2, "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
+        Post post = new Post(user2.getUserId(), "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
                 "difficult", "Traditional", ingr);
         PreparedStatement prstm = null;
         try {
@@ -193,7 +196,7 @@ public class PostTest {
                 is.close();
                 printStreamSender.close();
             } catch (UnsupportedEncodingException e) {
-                e.getMessage();
+                System.out.println(e.getMessage());
             }
             assert (actual != null);
             assertEquals("How much do you like this post? Rate from 1" +
@@ -201,7 +204,7 @@ public class PostTest {
                     lineSeparator()+ "Your review has been inserted" +
                     System.lineSeparator(), actual);
         } catch (Exception e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } finally {
             try {
                 prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
@@ -214,7 +217,7 @@ public class PostTest {
                 prstm.setInt(1, post.postId);
                 prstm.executeUpdate();
             } catch (SQLException e) {
-                e.getMessage();
+                System.out.println(e.getMessage());
             } finally {
                 DBcon.closeStatement(prstm);
                 DBcon.closeConnection(connection);
@@ -227,7 +230,7 @@ public class PostTest {
         //Insert test data into database
         Connection connection = DBcon.openConnection();
         String[] ingr = {"fylla","rizi", "kimas", null, null};
-        Post post = new Post(2, "Ntolmadakia", "Tylixe to fyllo me ti gemisi"
+        Post post = new Post(user2.getUserId(), "Ntolmadakia", "Tylixe to fyllo me ti gemisi"
                 , 15, 120,
                 "difficult", "Traditional", ingr);
         PreparedStatement prstm = null;
@@ -260,7 +263,7 @@ public class PostTest {
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
         } catch (SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -270,7 +273,7 @@ public class PostTest {
     @Test
     public void testGetPostId() {
         String[] ingr = {"fylla","rizi", "kimas", null, null};
-        Post post = new Post(2, "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
+        Post post = new Post(user2.getUserId(), "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
                 "difficult", "Traditional", ingr);
         assertEquals(post.postId, post.getPostId());
         Connection connection = DBcon.openConnection();
@@ -286,7 +289,7 @@ public class PostTest {
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
         } catch(SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -297,12 +300,10 @@ public class PostTest {
     @Test
     public void testGetPost() {
         String[] ingr = {"fylla","rizi", "kimas", null, null};
-        Post post = new Post(2, "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
+        Post post = new Post(user2.getUserId(), "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
                 "difficult", "Traditional", ingr);
-        Comment comment = new Comment("Well done", 1, post.postId);
+        Comment comment = new Comment("Well done", user.getUserId(), post.postId);
         post.comments.add(comment);
-        Connection con = null;
-        Statement stm = null;
         //Create a ByteArrayOutputStream to capture the output of the method
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
@@ -336,7 +337,7 @@ public class PostTest {
             prstm.setInt(1, comment.commentId);
             prstm.executeUpdate();
         } catch(SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -345,9 +346,9 @@ public class PostTest {
     @Test
     public void testGetCreator() {
         String[] ingr = {"fylla","rizi", "kimas", null, null};
-        Post post = new Post(2, "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
+        Post post = new Post(user2.getUserId(), "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
                 "difficult", "Traditional", ingr);
-        assertEquals(2, post.getCreator());
+        assertEquals(user2.getUserId(), post.getCreator());
         Connection connection = DBcon.openConnection();
         PreparedStatement prstm = null;
         try {
@@ -361,7 +362,7 @@ public class PostTest {
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
         } catch(SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -371,12 +372,11 @@ public class PostTest {
     @Test
     public void testCommentListSize() {
         String[] ingr = {"fylla","rizi", "kimas", null, null};
-        Post post = new Post(2, "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
+        Post post = new Post(user2.getUserId(), "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
                 "difficult", "Traditional", ingr);
-        Comment comment = new Comment("Well done", 1, post.postId);
+        Comment comment = new Comment("Well done", user.getUserId(), post.postId);
         post.comments.add(comment);
-        Connection con = null;
-        assertEquals(true, post.commentListSize());
+        assertTrue(post.commentListSize());
         Connection connection = DBcon.openConnection();
         PreparedStatement prstm = null;
         try {
@@ -393,7 +393,25 @@ public class PostTest {
             prstm.setInt(1, comment.commentId);
             prstm.executeUpdate();
         } catch(SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
+        } finally {
+            DBcon.closeStatement(prstm);
+            DBcon.closeConnection(connection);
+        }
+    }
+
+    @AfterClass
+    public static void close() {
+        Connection connection = DBcon.openConnection();
+        PreparedStatement prstm = null;
+        try {
+            prstm = connection.prepareStatement("DELETE FROM User WHERE ID = ? OR ID = ? OR ID = ?;");
+            prstm.setInt(1, user.getUserId());
+            prstm.setInt(2, user2.getUserId());
+            prstm.setInt(3, user3.getUserId());
+            prstm.executeUpdate();
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);

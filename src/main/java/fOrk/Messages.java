@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 
 /** This class contains methods responsible for the creation
- * of messages and their insert to their database. 
+ * of messages and their insert to their database.
  */
 public class Messages {
 

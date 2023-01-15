@@ -25,6 +25,31 @@ public class MainTest {
     private static final Messages message = new Messages(user.getUserId(), receiver.getUserId(),"Hi");
 
     @Test
+    public void testLogIn() {
+        String userInput = String.format("TestUser%s123456789",
+                System.lineSeparator());
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        System.setIn(is);
+        int postIdFound = Main.logIn();
+        assertEquals(user.getUserId(), postIdFound);
+    }
+
+
+    @Test
+    public void testCreate() {
+        String userInput = String.format("1%sRice%s1%sBoil",
+          System.lineSeparator(),
+          System.lineSeparator(),
+          System.lineSeparator());
+        ByteArrayInputStream bi = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        System.setIn(bi);
+        String recipe = Main.create();
+        assertEquals( "\nIngredients:\n" + " - " + "Rice" + "\n" + "\nRecipe steps:\n" + " - " + "Boil"
+                + "\n", recipe);
+    }
+
+
+    @Test
     public void testSearchWithExistingHashtag() {
         // Set input as 1 since no other post with such hashtag will exist
         String userInput = "1";
@@ -52,7 +77,9 @@ public class MainTest {
         String actualUsers = null;
         try {
             actualUsers = osSender.toString("UTF-8");
-        } catch (UnsupportedEncodingException e) {}
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Something went wrong" + e.getMessage());
+        }
 
         assert (actualUsers != null);
         assertEquals(expSender, actualUsers);
@@ -70,7 +97,9 @@ public class MainTest {
         String actualReceivers = null;
         try {
             actualReceivers = osReceiver.toString("UTF-8");
-        } catch (UnsupportedEncodingException e) {}
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Something went wrong" + e.getMessage());
+        }
 
         assert (actualReceivers != null);
         assertEquals(expReceiver, actualReceivers);
@@ -88,12 +117,13 @@ public class MainTest {
         String actualUsers = null;
         try {
             actualUsers = osSender.toString("UTF-8");
-        } catch (UnsupportedEncodingException e) {}
+        } catch (UnsupportedEncodingException e) {
+            System.out.println(e.getMessage());
+        }
 
         assert (actualUsers != null);
         assertEquals(expSender, actualUsers);
     }
-
 
     @Test
     public void testGetIDFromUsername() {
@@ -105,6 +135,23 @@ public class MainTest {
         assertEquals(user.getUsername(), Main.getUsernamefromID(user.getUserId()));
     }
 
+    @Test
+    public void testAnswerIsYes() {
+        String userInput = "Yes";
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        System.setIn(is);
+        String answerIsYes = Main.checkAnswer("TestAnswer");
+        assertEquals("Yes", answerIsYes);
+    }
+
+    @Test
+    public void testAnswerIsNo() {
+        String userInput = "No";
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        System.setIn(is);
+        String answerIsYes = Main.checkAnswer("TestAnswer");
+        assertEquals("No", answerIsYes);
+    }
     @AfterClass
     public static void after(){
         Statement statement = null;
@@ -118,6 +165,7 @@ public class MainTest {
             statement.executeUpdate("DELETE FROM User WHERE ID = " + user.getUserId()
                     + " OR ID= " + receiver.getUserId());
         } catch (SQLException e) {
+            System.out.println("Something went wrong" + e.getMessage());
         } finally {
             DBcon.closeStatement(statement);
             DBcon.closeConnection(connection);
