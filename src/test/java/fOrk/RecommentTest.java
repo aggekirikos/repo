@@ -1,10 +1,12 @@
 package fOrk;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.sql.*;
 
 public class RecommentTest {
 
@@ -16,7 +18,7 @@ public class RecommentTest {
 
     @Test
     public void testRecommentConstructor() {
-        Comment comment =new Comment("Perfect", user.getUserId(), post.getPostId());
+        Comment comment = new Comment("Perfect", user.getUserId(), post.getPostId());
         int id = comment.commentId;
         Recomment recomment = new Recomment("yeah", user2.getUserId(), post.getPostId(), id);
         comment.recomments.add(recomment);
@@ -27,16 +29,16 @@ public class RecommentTest {
         Connection connection = DBcon.openConnection();
         PreparedStatement prstm = null;
         try {
-            prstm = connection.prepareStatement("DELETE FROM Recomment WHERE" +
-                    " RecommentID = ? ");
+            prstm = connection.prepareStatement("DELETE FROM Recomment WHERE"
+                    + " RecommentID = ? ");
             prstm.setInt(1,  recomment.commentId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Comment WHERE" +
-                    " CommentID = ? ");
+            prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
+                    + " CommentID = ? ");
             prstm.setInt(1,  recomment.commentId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Comment WHERE" +
-                    " CommentID = ? ");
+            prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
+                    + " CommentID = ? ");
             prstm.setInt(1,  comment.commentId);
             prstm.executeUpdate();
         } catch (SQLException e) {
@@ -49,8 +51,9 @@ public class RecommentTest {
 
     @Test
     public void testRecommentRetrieveConstructor() {
-        Comment comment =new Comment("Perfect", user.getUserId(), post.getPostId());
-        Recomment recomment = new Recomment("yeah", user2.getUserId(), post.getPostId(), comment.commentId);
+        Comment comment = new Comment("Perfect", user.getUserId(), post.getPostId());
+        Recomment recomment = new Recomment("yeah",
+                user2.getUserId(), post.getPostId(), comment.commentId);
         comment.recomments.add(recomment);
         Recomment recomment1 = new Recomment(recomment.commentId, comment.commentId);
         Assert.assertEquals(recomment.commentContent, recomment1.commentContent);
@@ -59,24 +62,24 @@ public class RecommentTest {
         Connection connection = DBcon.openConnection();
         PreparedStatement prstm = null;
         try {
-            prstm = connection.prepareStatement("DELETE FROM Recomment WHERE" +
-                    " RecommentID = ? ");
+            prstm = connection.prepareStatement("DELETE FROM Recomment WHERE"
+                    + " RecommentID = ? ");
             prstm.setInt(1,  recomment.commentId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Recomment WHERE" +
-                    " RecommentID = ? ");
+            prstm = connection.prepareStatement("DELETE FROM Recomment WHERE"
+                    + " RecommentID = ? ");
             prstm.setInt(1,  recomment1.commentId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Comment WHERE" +
-                    " CommentID = ? ");
+            prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
+                    + " CommentID = ? ");
             prstm.setInt(1,  recomment.commentId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Comment WHERE" +
-                    " CommentID = ? ");
+            prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
+                    + " CommentID = ? ");
             prstm.setInt(1,  recomment1.commentId);
             prstm.executeUpdate();
-            prstm = connection.prepareStatement("DELETE FROM Comment WHERE" +
-                    " CommentID = ? ");
+            prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
+                    + " CommentID = ? ");
             prstm.setInt(1,  comment.commentId);
             prstm.executeUpdate();
         } catch (SQLException e) {
@@ -99,7 +102,7 @@ public class RecommentTest {
             statement.executeUpdate("DELETE FROM Post WHERE PostID = " + post.getPostId());
             statement.executeUpdate("DELETE FROM User WHERE ID = " + user.getUserId()
                     + " OR ID = " + user2.getUserId());
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
             DBcon.closeStatement(statement);
