@@ -1,5 +1,7 @@
 package fOrk;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -8,11 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import org.junit.AfterClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 
 public class MainTest {
 
@@ -20,15 +20,18 @@ public class MainTest {
     private static final User user = new User("123456789", "TestUser", "Test", null);
     private static final User receiver = new User("111111111", "TestRec", "TestR", null);
     private static final String[] hashtags = {"TestHashtag", null, null, null, null};
-    private static final Post post = new Post(user.getUserId(), "TestPost", "test", 10, 25,
+    private static final Post post = new Post(user.getUserId(),
+            "TestPost", "test", 10, 25,
             "Simple", "Test", hashtags);
-    private static final Messages message = new Messages(user.getUserId(), receiver.getUserId(),"Hi");
+    private static final Messages message = new Messages(user.getUserId(),
+            receiver.getUserId(),"Hi");
 
     @Test
     public void testLogIn() {
         String userInput = String.format("TestUser%s123456789",
                 System.lineSeparator());
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         int postIdFound = Main.logIn();
         assertEquals(user.getUserId(), postIdFound);
@@ -38,13 +41,15 @@ public class MainTest {
     @Test
     public void testCreate() {
         String userInput = String.format("1%sRice%s1%sBoil",
-          System.lineSeparator(),
-          System.lineSeparator(),
-          System.lineSeparator());
-        ByteArrayInputStream bi = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+            System.lineSeparator(),
+            System.lineSeparator(),
+            System.lineSeparator());
+        ByteArrayInputStream bi = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(bi);
         String recipe = Main.create();
-        assertEquals( "\nIngredients:\n" + " - " + "Rice" + "\n" + "\nRecipe steps:\n" + " - " + "Boil"
+        assertEquals("\nIngredients:\n"
+                + " - " + "Rice" + "\n" + "\nRecipe steps:\n" + " - " + "Boil"
                 + "\n", recipe);
     }
 
@@ -53,16 +58,19 @@ public class MainTest {
     public void testSearchWithExistingHashtag() {
         // Set input as 1 since no other post with such hashtag will exist
         String userInput = "1";
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         int postIdFound = Main.search("TestHashtag");
-        assertEquals( "wrong - hashtag should be found", post.getPostId(), postIdFound);
+        assertEquals("wrong - hashtag should be found",
+                post.getPostId(), postIdFound);
     }
 
     @Test
     public void testSearchWithNonexistentHashtag() {
         int postIdFound = Main.search("Nonexistent");
-        assertEquals( "wrong - hashtag shouldn't be found",-1, postIdFound);
+        assertEquals("wrong - hashtag shouldn't be found",
+                -1, postIdFound);
     }
 
     @Test
@@ -138,7 +146,8 @@ public class MainTest {
     @Test
     public void testAnswerIsYes() {
         String userInput = "Yes";
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         String answerIsYes = Main.checkAnswer("TestAnswer");
         assertEquals("Yes", answerIsYes);
@@ -147,13 +156,15 @@ public class MainTest {
     @Test
     public void testAnswerIsNo() {
         String userInput = "No";
-        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream is = new ByteArrayInputStream(userInput.getBytes(
+                StandardCharsets.UTF_8));
         System.setIn(is);
         String answerIsYes = Main.checkAnswer("TestAnswer");
         assertEquals("No", answerIsYes);
     }
+
     @AfterClass
-    public static void after(){
+    public static void after() {
         Statement statement = null;
         Connection connection = DBcon.openConnection();
         try {
