@@ -9,6 +9,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * This class contains a retriever constructor
+ * for the comments on a specific post and displays them.
+ *
+ */
+
 public class Comment {
     Scanner inp = new Scanner(System.in);
     /**
@@ -163,13 +169,13 @@ public class Comment {
         }
     }
     /**
-     * Method that prints the comment and it's sender's name
+     * Method that prints the comments and the username of the sender
      */
     public void printComment() {
         System.out.println(  username + ": " + getCommentContent() );
     }
     /**
-     * Method that prints the comment with it's sender's name by using printComment,
+     * Method that prints the comment with the username of the sender by using printComment,
      * and all the recomments of this comment
      */
     public void printCommentRec(int counter) {
@@ -177,6 +183,14 @@ public class Comment {
         printComment();
         getRecomments();
     }
+
+    /**
+     * This method returns a boolean result
+     * based on if a comment is a first line
+     * comment and not a recomment.
+     * @return first_line the method returns true if the comment is first
+     * line and false if it is not.
+     */
     public boolean checkFirstLineComment() {
         Connection connection = DBcon.openConnection();
         Statement statement = null;
