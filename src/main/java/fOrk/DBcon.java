@@ -2,6 +2,7 @@ package fOrk;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -160,12 +161,28 @@ public class DBcon {
             System.out.println("Could not close the SQL statement: " + e.getMessage());
         }
     }
+    /**
+    * This method checks if the statement is still open and
+    * closes it.
+    * @param rs The ResultSet-type object called rs.
+    */
 
+    public static void closeResultSet(ResultSet rs) {
+        try {
+            /* if ResultSet is still open */
+            if (rs != null) {
+                rs.close(); // close the ResultSet
+            }
+        } catch (SQLException e) {
+            System.out.println("Could not close the SQL statement: " + e.getMessage());
+        }
+    }
     /**
     * This method deletes the tables that are created
     * in case it is needed.
     * @param dbcon The Connection-type object called dbcon.
     */
+
     public static void deleteTables(Connection dbcon) {
         /* Try block for making the DB connection and excecuting the given statement. */
         Statement stmt = null;
@@ -186,6 +203,7 @@ public class DBcon {
             dbcon.close();
         } catch (SQLException e) {
             System.out.println("Could not delete the tables of the database: " + e.getMessage());
+            closeStatement(stmt);
         }
     }
 }

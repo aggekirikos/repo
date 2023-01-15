@@ -52,15 +52,15 @@ public class User {
     * @param pass  The password of the user
     * @param uname The username of the user
     * @param nm    The full name of the user
-    * @param BIO   Some Information that the user can add for himself
+    * @param bio   Some Information that the user can add for himself
     */
 
-    public User(String pass, String uname, String nm, String BIO) {
+    public User(String pass, String uname, String nm, String bio) {
         maxId();
         setPassword(pass);
         setUsername(uname);
         name = nm;
-        bio = BIO;
+        this.bio = bio;
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -72,7 +72,7 @@ public class User {
             stmt.setString(2, password);
             stmt.setString(3, username);
             stmt.setString(4, name);
-            stmt.setString(5, bio);
+            stmt.setString(5, this.bio);
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Something went wrong while creating your Profile" + e.getMessage());
@@ -94,49 +94,58 @@ public class User {
         String select = "SELECT * FROM User WHERE ID=?";
         Connection connection = DBcon.openConnection();
         PreparedStatement psmtUser = null;
+        ResultSet rsUser = null;
         try {
             psmtUser = connection.prepareStatement(select);
             psmtUser.setInt(1, id);
-            ResultSet rsUser = psmtUser.executeQuery();
+            rsUser = psmtUser.executeQuery();
             while (rsUser.next()) {
                 this.password = rsUser.getString("Password");
                 this.username = rsUser.getString("Username");
                 this.name = rsUser.getString("Name");
                 this.bio = rsUser.getString("Bio");
             }
+            rsUser.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(rsUser);
         } finally {
             DBcon.closeStatement(psmtUser);
         }
         String selectPost = "SELECT PostID FROM Post WHERE Creator=?";
         PreparedStatement psmtPost = null;
+        ResultSet rsPost = null;
         try {
             psmtPost = connection.prepareStatement(selectPost);
             psmtPost.setInt(1, id);
-            ResultSet rsPost = psmtPost.executeQuery();
+            rsPost = psmtPost.executeQuery();
             while (rsPost.next()) {
                 int temp = rsPost.getInt("PostID");
                 Post post = new Post(temp);
                 updatePosts(post);
             }
+            rsPost.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(rsPost);
         } finally {
             DBcon.closeStatement(psmtPost);
         }
         String selectCookmates = "SELECT CookmateID FROM Cookmates WHERE UserID=?";
         PreparedStatement psmtCookmates = null;
+        ResultSet rsCookmates = null;
         try {
             psmtCookmates = connection.prepareStatement(selectCookmates);
             psmtCookmates.setInt(1, id);
-            ResultSet rsCookmates = psmtCookmates.executeQuery();
+            rsCookmates = psmtCookmates.executeQuery();
             while (rsCookmates.next()) {
                 int cookmateID = rsCookmates.getInt("CookmateID");
                 cookmates.add(Main.getUsernamefromID(cookmateID));
             }
+            rsCookmates.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(rsCookmates);
         } finally {
             DBcon.closeStatement(psmtCookmates);
         }
@@ -158,7 +167,7 @@ public class User {
     * @param tempPassword The password that the user has entered
     */
     public void setPassword(String tempPassword) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in, "utf-8");
         boolean flag = false;
         while (!flag) {
             if (tempPassword.length() > 8) {
@@ -178,7 +187,7 @@ public class User {
     * @param tempUsername The username that the user has entered
     */
     public void setUsername(String tempUsername) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in, "utf-8");
         Connection connection = null;
         PreparedStatement stmt = null;
         boolean flag;
@@ -268,7 +277,7 @@ public class User {
     * Method that the user has the opportunity to change the characteristics of his profile.
     */
     public void editProfile() {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in, "utf-8");
         System.out.println("If you want to Edit your Username press 1.");
         System.out.println("If you want to Edit your Name press 2.");
         System.out.println("If you want to Edit your Bio press 3.");
@@ -377,7 +386,7 @@ public class User {
         String cookmateName = Main.getUsernamefromID(cookmateID);
         if (cookmates.contains(cookmateName)) {
             System.out.println(cookmateName + " is already your cookmate");
-        } else if (cookmateID == getUserId() ){
+        } else if (cookmateID == getUserId()) {
             System.out.println("You can't add yourself as your cookmate");
         } else {
             cookmates.add(cookmateName);
@@ -392,7 +401,8 @@ public class User {
                 System.out.println("The post's creator " + cookmateName
                         + " was added as your cookmate");
             } catch (SQLException e) {
-                System.out.println("Something went wrong while trying to make this user your cookmate."
+                System.out.println("Something went wrong "
+                        + "while trying to make this user your cookmate."
                         + e.getMessage());
             } finally {
                 DBcon.closeStatement(stmt);
@@ -408,13 +418,16 @@ public class User {
         String slct = "SELECT MAX(ID) FROM User";
         Connection con = null;
         Statement stat = null;
+        ResultSet rs = null;
         try {
             con = DBcon.openConnection();
             stat = con.createStatement();
-            ResultSet rs = stat.executeQuery(slct);
+            rs = stat.executeQuery(slct);
             userId = rs.getInt(1);
+            rs.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(rs);
         } finally {
             DBcon.closeStatement(stat);
             DBcon.closeConnection(con);

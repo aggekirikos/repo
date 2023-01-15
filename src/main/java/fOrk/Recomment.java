@@ -1,5 +1,10 @@
 package fOrk;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * This class contains constructors that retrieve
@@ -7,11 +12,11 @@ import java.sql.*;
  */
 public class Recomment extends Comment {
     /**
-     * CommentID that the recomment refers to
+     * CommentID that the recomment refers to.
      */
     private int toComment;
     /**
-     * Unique recomment ID
+     * Unique recomment ID.
      */
     private int RecommentID;
     /**
@@ -21,27 +26,33 @@ public class Recomment extends Comment {
      * @param recId the ID of the recomment that we want to retrieve
      * @param toComment the ID of the comment that the recomment refers
      */
+
     public Recomment(int recId, int toComment) {
         super();
         this.toComment = toComment;
         Connection con = null;
         PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
         try {
             con = DBcon.openConnection();
-            preparedStatement = con.prepareStatement("SELECT Content, ToPost, Sender, Username FROM Comment, User WHERE CommentID=? AND Sender = ID");
+            preparedStatement = con.prepareStatement("SELECT Content, ToPost, Sender, Username "
+            + "FROM Comment, User WHERE CommentID=? AND Sender = ID");
             preparedStatement.setInt(1, recId);
-            ResultSet rs = preparedStatement.executeQuery();
+            rs = preparedStatement.executeQuery();
             this.toComment = toComment;
             RecommentID = recId;
             while (rs.next()) {
                 commentContent = rs.getString("Content");
                 from = rs.getInt("Sender");
                 to = rs.getInt("ToPost");
-                username= rs.getString("Username");
+                username = rs.getString("Username");
                 break;
             }
-        } catch (SQLException e) {System.out.println(e.getMessage());
-        }finally{
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            DBcon.closeResultSet(rs);
+        } finally {
             DBcon.closeStatement(preparedStatement);
             DBcon.closeConnection(con);
         }
@@ -54,9 +65,9 @@ public class Recomment extends Comment {
      * @param toPost the ID of the post that the comment refers to
      * @param toComment the ID of the comment that the recomment refers to
      *
-     * @return Recomment Object with the entered characteristics
      */
-    public Recomment(String content, int from, int toPost, int toComment ) {
+
+    public Recomment(String content, int from, int toPost, int toComment) {
         super(content, from, toPost);
         this.toComment = toComment;
         Connection connection = null;
@@ -65,7 +76,8 @@ public class Recomment extends Comment {
         RecommentID = commentId;
         try {
             connection = DBcon.openConnection();
-            pst = connection.prepareStatement("INSERT INTO Recomment(RecommentID, Receiver) VALUES (?,?)");
+            pst = connection.prepareStatement("INSERT INTO Recomment"
+            + "(RecommentID, Receiver) VALUES (?,?)");
             pst.setInt(1, RecommentID);
             pst.setInt(2, this.toComment);
             pst.executeUpdate();

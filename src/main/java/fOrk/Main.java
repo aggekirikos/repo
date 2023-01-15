@@ -28,7 +28,7 @@ public class Main {
         //DBcon.deleteTables(connection1);
         Connection connection = DBcon.openConnection();
         DBcon.createTable(connection);
-        Scanner input = new Scanner(System.in);
+        Scanner input = new Scanner(System.in, "utf-8");
         int i = 0;
         do {
             System.out.print("Welcome to fOrk! Type 1 to SING UP, 2 to LOG IN, "
@@ -71,7 +71,7 @@ public class Main {
         Connection connection = null;
         PreparedStatement pst = null;
         do {
-            Scanner input = new Scanner(System.in);
+            Scanner input = new Scanner(System.in, "utf-8");
             System.out.println("Please enter your username");
             String un = input.nextLine();
             System.out.println("Please enter your password");
@@ -110,7 +110,7 @@ public class Main {
      */
     public static void forkNavigation(User user) {
         int j = 0;
-        Scanner input = new Scanner(System.in);
+        Scanner input = new Scanner(System.in, "utf-8");
         do {
             System.out.println("Choose the act you want to do! \n 1: Search a recipe "
                     + "\n 2: Check your chatbox \n 3: Make a post \n 4: See or Edit Your Profile "
@@ -205,7 +205,7 @@ public class Main {
      * @param user The user currently using the application.
      */
     public static void searchPost(User user) {
-        Scanner input = new Scanner(System.in);
+        Scanner input = new Scanner(System.in, "utf-8");
         String rec;
         do {
             System.out.println("Give 1 hashtag correlated with the recipe you want"
@@ -277,6 +277,7 @@ public class Main {
                 + "AND Hashtags.Hashtag = ?");
         Connection connection = null;
         PreparedStatement srch = null;
+        ResultSet rs = null;
         int usrChoice = 0;
         int counter = 0;
         // The ids from posts containing given hashtag will be saved in postIdList
@@ -285,7 +286,7 @@ public class Main {
             connection = DBcon.openConnection();
             srch = connection.prepareStatement(select);
             srch.setString(1, hashtag);
-            ResultSet rs = srch.executeQuery();
+            rs = srch.executeQuery();
             while (rs.next()) {
                 counter++;
                 postIdList.add(rs.getInt("PostID"));
@@ -293,24 +294,26 @@ public class Main {
                 String username = rs.getString("Username");
                 System.out.println(counter + " " + title + " " + username);
             }
+            rs.close();
             if (counter == 0) {
                 System.out.println("Seems like there was no recipe with this hashtag,"
                         + " try another one");
             } else {
                 System.out.println("Please choose a recipe you like from the following list"
                         + " or type -1 to go Back!");
-                Scanner input = new Scanner(System.in);
+                Scanner input = new Scanner(System.in, "utf-8");
                 usrChoice = input.nextInt();
                 while (usrChoice != -1 && (usrChoice < 1 || usrChoice > counter)) {
                     System.out.println("Wrong input. Please choose a recipe you like "
                             + "from the following list or type -1 to go back!");
-                    input = new Scanner(System.in);
+                    input = new Scanner(System.in, "utf-8");
                     usrChoice = input.nextInt();
                 }
             }
         } catch (SQLException e) {
             System.out.println("Something went wrong while searching your hashtag. "
                     + e.getMessage());
+            DBcon.closeResultSet(rs);
         } finally {
             DBcon.closeStatement(srch);
             DBcon.closeConnection(connection);
@@ -392,7 +395,7 @@ public class Main {
      */
     public static void openConversation(int userid) {
         System.out.println("Would you like to open a conversation? Yes/No");
-        Scanner s = new Scanner(System.in);
+        Scanner s = new Scanner(System.in, "utf-8");
         String answer;
         do {
             int receiverid;
@@ -402,7 +405,7 @@ public class Main {
                 do {
                     System.out.println("Type the user you want to chat with: ");
                     String answer2;
-                    Scanner s2 = new Scanner(System.in);
+                    Scanner s2 = new Scanner(System.in, "utf-8");
                     answer2 = s2.next();
                     String receiver = answer2;
                     receiverid = -1;
@@ -425,13 +428,13 @@ public class Main {
         String answer3;
         do {
             System.out.println("Would you like to type a message?");
-            Scanner s3 = new Scanner(System.in);
+            Scanner s3 = new Scanner(System.in, "utf-8");
             do {
                 answer3 = s3.next();
                 answer3 = checkAnswer(answer3);
                 if (answer3.equals("Yes")) {
                     System.out.println("Please type your message : ");
-                    Scanner s4 = new Scanner(System.in);
+                    Scanner s4 = new Scanner(System.in, "utf-8");
                     String messageContent;
                     messageContent = s4.nextLine();
                     Messages message = new Messages(userid, receiversid, messageContent);
@@ -450,6 +453,7 @@ public class Main {
     public static void getMessagesByUserId(int receiversID, int userid) {
         Connection connection = null;
         PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
             connection = DBcon.openConnection();
             stmt = connection.prepareStatement("SELECT Content, MDateTime, Sender "
@@ -459,7 +463,7 @@ public class Main {
             stmt.setInt(2, userid);
             stmt.setInt(3, userid);
             stmt.setInt(4, receiversID);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             while (rs.next()) {
                 int sendersid = rs.getInt("Sender");
                 String sendersun = getUsernamefromID(sendersid);
@@ -467,8 +471,10 @@ public class Main {
                 String dt = rs.getString("MDateTime");
                 System.out.println(sendersun + " : " + messageContent + " sent at " + dt);
             }
+            rs.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(rs);
         } finally {
             DBcon.closeStatement(stmt);
             DBcon.closeConnection(connection);
@@ -479,24 +485,27 @@ public class Main {
      * Based on the username that this method
      * receives as a parameter, the method looks
      * up the database and returns this specific
-     * users ID
+     * users ID.
      * @param username The username of the user whose ID we want.
      * @return rtrn The users ID.
      */
     public static int getIDfromUsername(String username) {
         Connection connection = null;
         PreparedStatement stmt = null;
+        ResultSet rs = null;
         int rtrn = -1;
         try {
             connection = DBcon.openConnection();
             stmt = connection.prepareStatement("SELECT ID FROM User WHERE Username = ?");
             stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             while (rs.next()) {
                 rtrn = rs.getInt("ID");
             }
+            rs.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(rs);
         } finally {
             DBcon.closeStatement(stmt);
             DBcon.closeConnection(connection);
@@ -510,24 +519,27 @@ public class Main {
     /**
      * Based on a Users ID that this method
      * receives as a parameter the method looks
-     * up the database and returns the users username
+     * up the database and returns the users username.
      * @param id The ID of the user whose ID we want.
      * @return rtrn The users username.
      */
     public static String getUsernamefromID(int id) {
         Connection connection = null;
         PreparedStatement stmt = null;
+        ResultSet rs = null;
         String rtrn = null;
         try {
             connection = DBcon.openConnection();
             stmt = connection.prepareStatement("SELECT Username FROM User WHERE ID = ?");
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             while (rs.next()) {
                 rtrn = rs.getString("Username");
             }
+            rs.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(rs);
         } finally {
             DBcon.closeStatement(stmt);
             DBcon.closeConnection(connection);
@@ -544,7 +556,7 @@ public class Main {
      * @return content A formatted String that containes the whole recipe.
      */
     public static String create() {
-        Scanner input1 = new Scanner(System.in);
+        Scanner input1 = new Scanner(System.in, "utf-8");
         System.out.println("Please enter the number of ingredients of your recipe.");
         int ingredientsNumber = input1.nextInt();
         input1.nextLine();
@@ -574,7 +586,7 @@ public class Main {
      * @return an The users input which is definitely "Yes" or "No".
      */
     public static String checkAnswer(String an) {
-        Scanner n = new Scanner(System.in);
+        Scanner n = new Scanner(System.in, "utf-8");
         while (!an.equals("Yes") && !an.equals("No")) {
             System.out.println("Invalid answer. Please insert Yes or No");
             an = n.nextLine();
