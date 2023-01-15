@@ -42,9 +42,8 @@ spotbugs {
     showStackTraces = false
     // Maximize the analysis effort level
     effort = 'max'
-    /* Set the priority threshold for reporting bugs to low 
-    so that all bugs are reported */
-    reportLevel = 'low'
+    // Set the priority threshold for reporting bugs to medium 
+    reportLevel = 'medium'
 }
 
 // Configure SpotbugsMain to create html reports

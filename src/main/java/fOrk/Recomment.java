@@ -14,11 +14,11 @@ public class Recomment extends Comment {
     /**
      * CommentID that the recomment refers to.
      */
-    private int toComment;
+    protected int toComment;
     /**
      * Unique recomment ID.
      */
-    private int RecommentID;
+    protected int RecommentID;
     /**
      * Constructor that retrieves recomment characteristics
      * from database by recomment ID and the ID of the comment

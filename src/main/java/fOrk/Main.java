@@ -55,6 +55,8 @@ public class Main {
                 case -1:
                     i = -1;
                     break;
+                default:
+                    break;
             }
         } while (i != -1);
     } // end of main method
@@ -438,6 +440,8 @@ public class Main {
                     String messageContent;
                     messageContent = s4.nextLine();
                     Messages message = new Messages(userid, receiversid, messageContent);
+                    System.out.println("Your message has been successfully delived to "
+                            + getUsernamefromID(message.receiversId));
                 }
             } while (!answer3.equals("Yes") && !answer3.equals("No"));
         } while (!answer3.equals("No"));

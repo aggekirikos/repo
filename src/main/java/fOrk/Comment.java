@@ -15,7 +15,6 @@ import java.util.Scanner;
  */
 
 public class Comment {
-    Scanner inp = new Scanner(System.in, "utf-8");
     /**
      * Unique ID number for every comment and recomment.
      */
@@ -27,7 +26,7 @@ public class Comment {
     /**
      * Recomments that refer to this comment.
      */
-    ArrayList<Recomment> recomments = new ArrayList<Recomment>();
+    protected ArrayList<Recomment> recomments = new ArrayList<Recomment>();
     /**
      * The ID og the sender of to comment.
      */
@@ -143,7 +142,7 @@ public class Comment {
     /**
      * Returns the content of every comment.
      *
-     *
+     * @return commentContent The content of the comment
      */
 
     public String getCommentContent() {
@@ -161,7 +160,6 @@ public class Comment {
         System.out.print("Type the recomment: ");
         Scanner input = new Scanner(System.in, "utf-8");
         String a = input.nextLine();
-        int recId = recomments.size() + 1;
         Recomment r = new Recomment(a, userId, postId, commentId);
         recomments.add(r);
         System.out.println("Recomment is added!");
@@ -193,6 +191,7 @@ public class Comment {
     /**
      * Method that prints the comment with the username of the sender by using printComment,
      * and all the recomments of this comment.
+     * @param counter A counter for the recomments of the comment
      */
 
     public void printCommentRec(int counter) {

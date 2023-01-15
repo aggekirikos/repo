@@ -8,66 +8,71 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+* This class contains methods that create, retrieve and display the
+* characteristics of a post so that users can evaluate and review it.
+* Also, via this class the characteristics of the post are saved
+* in the database.
+*/
 
 public class Post {
     /**
    * Unique ID number for every post.
    */
-    public int postId;
+    protected int postId;
     /**
    * A number that shows if the post exists or not.
    */
-    public int postStatus = 0;
+    protected int postStatus = 0;
     /**
    * The time that is required for the recipe of the post.
    */
-    public int recipeTime;
+    protected int recipeTime;
     /**
    * The content of the post.
    */
-    public String content;
+    protected String content;
     /**
    * The title of the post.
    */
-    public String title;
+    protected String title;
     /**
    * The recipe category to which the post belongs.
    */
-    public String recipeCategory;
+    protected String recipeCategory;
     /**
    * The difficulty level to which the post belongs.
    */
-    public String difficultyLevel;
+    protected String difficultyLevel;
     /**
    * The cost required for the recipe of the post.
    */
-    public double recipeCost;
+    protected double recipeCost;
     /**
    * The comments that refer to this post.
    */
-    ArrayList<Comment> comments = new ArrayList<Comment>();
+    protected ArrayList<Comment> comments = new ArrayList<Comment>();
     /**
    * The hashtags that refer to this post.
    */
-    public  String[] hashtags = new String[5];
+    protected String[] hashtags = new String[5];
     /**
    * The Reviews that other users have made for this post.
    */
-    double reviews = 0;
+    protected double reviews = 0;
     /**
    * Τhe ID of the user who is the creator of this post.
    */
-    int creator;
+    protected int creator;
     /**
    * The table with the stars entered by other users for this post.
    **/
-    int[] stars = new int[5];
+    protected int[] stars = new int[5];
     /**
    * Τhe total number of stars entered by other users for this post.
    */
-    int sum = 0;
+    protected int sum = 0;
 
-    Scanner input = new Scanner(System.in, "utf-8");
     /**
    * Constructor that adds values to the instance variables.
    *
@@ -92,7 +97,9 @@ public class Post {
         recipeTime = time;
         difficultyLevel = diLevel;
         recipeCategory = category;
-        hashtags = has;
+        for (int i = 0; i < has.length; i++) {
+            hashtags[i] = has[i];
+        }
         sendPosttoDB();
     }
 
@@ -147,7 +154,7 @@ public class Post {
             preparedStatement3.setInt(1, id);
             rs = preparedStatement1.executeQuery();
             while (rs.next()) {
-                creator = Integer.valueOf(rs.getString(1));
+                creator = rs.getInt(1);
                 title = rs.getString(2);
                 content = rs.getString(3);
                 recipeCost = rs.getDouble(4);
@@ -202,6 +209,7 @@ public class Post {
 
     /**
     * Method that calls the class comment and adds a comment to the post.
+    * @param comment A comment of the post
    */
 
     public void createComment(Comment comment) {
@@ -255,7 +263,7 @@ public class Post {
             }
             rs.close();
         } catch (SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
             DBcon.closeResultSet(rs);
         } finally {
             DBcon.closeStatement(preparedStatement);
@@ -286,6 +294,8 @@ public class Post {
 
     /**
     * Method that returns the title of the Recipe in the post.
+    *
+    * @return the post's title
    */
 
     public String getTitle() {

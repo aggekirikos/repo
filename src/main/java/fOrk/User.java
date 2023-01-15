@@ -21,31 +21,31 @@ public class User {
     /**
     * Unique ID number for every user.
     */
-    int userId;
+    protected int userId;
     /**
     * The password that each user has.
     */
-    String password;
+    protected String password;
     /**
     * The username that each user has.
     */
-    String username;
+    protected String username;
     /**
     * The full name of each user.
     */
-    String name;
+    protected String name;
     /**
     * Some Information that the user can add for himself.
     */
-    String bio;
+    protected String bio;
     /**
     * The people with whom the user has become friends.
     */
-    ArrayList<String> cookmates = new ArrayList<>();
+    protected ArrayList<String> cookmates = new ArrayList<>();
     /**
     * The posts that the user has made.
     */
-    ArrayList<Post> posts = new ArrayList<>();
+    protected ArrayList<Post> posts = new ArrayList<>();
     /**
     * Constructor that adds values to the instance variables.
     *
