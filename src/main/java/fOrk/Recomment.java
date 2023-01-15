@@ -1,6 +1,10 @@
 package fOrk;
 import java.sql.*;
 
+/**
+ * This class contains constructors that retrieve
+ * the recomments of a comment from the database.
+ */
 public class Recomment extends Comment {
     /**
      * CommentID that the recomment refers to
@@ -13,12 +17,9 @@ public class Recomment extends Comment {
     /**
      * Constructor that retrieves recomment characteristics
      * from database by recomment ID and the ID of the comment
-     * to witch recomments refer
-     *
+     * to witch recomments refer.
      * @param recId the ID of the recomment that we want to retrieve
      * @param toComment the ID of the comment that the recomment refers
-     * @return Recomment object with the same characteristics of the one
-     * we enterd the parametrs
      */
     public Recomment(int recId, int toComment) {
         super();
@@ -47,12 +48,11 @@ public class Recomment extends Comment {
 
     }
     /**
-     * Basic recomment constructor
-     *
-     * @param content a strting that will be our recomment
+     * Basic recomment constructor.
+     * @param content a string that will be our recomment
      * @param from The ID of the sender of the recomment
-     * @param toPost the ID of the post that the comment refers
-     * @param toComment the ID of the comment that the recomment refers
+     * @param toPost the ID of the post that the comment refers to
+     * @param toComment the ID of the comment that the recomment refers to
      *
      * @return Recomment Object with the entered characteristics
      */
