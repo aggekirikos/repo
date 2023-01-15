@@ -180,19 +180,12 @@ public class PostTest {
                 "difficult", "Traditional", ingr);
         PreparedStatement prstm = null;
         try {
-            System.out.println("one");
             ByteArrayInputStream is = new ByteArrayInputStream(review.getBytes(StandardCharsets.UTF_8));
-            System.out.println("2");
             System.setIn(is);
-            System.out.println("3");
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            System.out.println("4");
             PrintStream printStreamSender = new PrintStream(os);
-            System.out.println("5");
             System.setOut(printStreamSender);
-            System.out.println("6");
             post.makeReview();
-            System.out.println("7");
             String actual = null;
             try {
                 actual = os.toString("UTF-8");
@@ -203,7 +196,10 @@ public class PostTest {
                 e.getMessage();
             }
             assert (actual != null);
-            assertEquals("Your review has been inserted", actual);
+            assertEquals("How much do you like this post? Rate from 1" +
+                    " to 5 stars." +System.lineSeparator()+ "3" +System.
+                    lineSeparator()+ "Your review has been inserted" +
+                    System.lineSeparator(), actual);
         } catch (Exception e) {
             e.getMessage();
         } finally {
@@ -337,7 +333,64 @@ public class PostTest {
             prstm.setInt(1, post.postId);
             prstm.executeUpdate();
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE ToPost = ?;");
+            prstm.setInt(1, comment.commentId);
+            prstm.executeUpdate();
+        } catch(SQLException e) {
+            e.getMessage();
+        } finally {
+            DBcon.closeStatement(prstm);
+            DBcon.closeConnection(connection);
+        }
+    }
+    @Test
+    public void testGetCreator() {
+        String[] ingr = {"fylla","rizi", "kimas", null, null};
+        Post post = new Post(2, "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
+                "difficult", "Traditional", ingr);
+        assertEquals(2, post.getCreator());
+        Connection connection = DBcon.openConnection();
+        PreparedStatement prstm = null;
+        try {
+            prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
             prstm.setInt(1, post.postId);
+            prstm.executeUpdate();
+            prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?;");
+            prstm.setInt(1, post.postId);
+            prstm.executeUpdate();
+            prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?;");
+            prstm.setInt(1, post.postId);
+            prstm.executeUpdate();
+        } catch(SQLException e) {
+            e.getMessage();
+        } finally {
+            DBcon.closeStatement(prstm);
+            DBcon.closeConnection(connection);
+        }
+    }
+
+    @Test
+    public void testCommentListSize() {
+        String[] ingr = {"fylla","rizi", "kimas", null, null};
+        Post post = new Post(2, "Ntolmadakia", "Tylixe to fyllo me ti gemisi", 15, 120,
+                "difficult", "Traditional", ingr);
+        Comment comment = new Comment("Well done", 1, post.postId);
+        post.comments.add(comment);
+        Connection con = null;
+        assertEquals(true, post.commentListSize());
+        Connection connection = DBcon.openConnection();
+        PreparedStatement prstm = null;
+        try {
+            prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?;");
+            prstm.setInt(1, post.postId);
+            prstm.executeUpdate();
+            prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?;");
+            prstm.setInt(1, post.postId);
+            prstm.executeUpdate();
+            prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?;");
+            prstm.setInt(1, post.postId);
+            prstm.executeUpdate();
+            prstm = connection.prepareStatement("DELETE FROM Comment WHERE ToPost = ?;");
+            prstm.setInt(1, comment.commentId);
             prstm.executeUpdate();
         } catch(SQLException e) {
             e.getMessage();
