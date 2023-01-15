@@ -77,6 +77,25 @@ public class MainTest {
     }
 
     @Test
+    public void testGetMessagesByUserId() {
+        String expSender = user.getUsername() + " : " + message.content
+                + " sent at " + message.dateTime
+                + System.lineSeparator();
+        ByteArrayOutputStream osSender = new ByteArrayOutputStream();
+        PrintStream printStreamSender = new PrintStream(osSender);
+        System.setOut(printStreamSender);
+        Main.getMessagesByUserId(receiver.getUserId(), user.getUserId());
+        String actualUsers = null;
+        try {
+            actualUsers = osSender.toString("UTF-8");
+        } catch (UnsupportedEncodingException e) {}
+
+        assert (actualUsers != null);
+        assertEquals(expSender, actualUsers);
+    }
+
+
+    @Test
     public void testGetIDFromUsername() {
         assertEquals(user.getUserId(), Main.getIDfromUsername(user.getUsername()));
     }

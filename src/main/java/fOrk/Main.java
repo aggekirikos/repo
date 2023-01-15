@@ -408,7 +408,7 @@ public class Main {
                     receiverid = -1;
                     receiverid = getIDfromUsername(receiver);
                 } while (receiverid == -1);
-                getMessagesby_userid(receiverid, userid);
+                getMessagesByUserId(receiverid, userid);
                 typeMessage(userid, receiverid);
             }
         } while (!answer.equals("Yes") && !answer.equals("No"));
@@ -447,7 +447,7 @@ public class Main {
      * @param receiversID the ID of the user receiving the message.
      * @param userid the ID of the user sending the message.
      */
-    public static void getMessagesby_userid(int receiversID, int userid) {
+    public static void getMessagesByUserId(int receiversID, int userid) {
         Connection connection = null;
         PreparedStatement stmt = null;
         try {
