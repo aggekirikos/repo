@@ -371,7 +371,6 @@ public class PostTest {
                 + " 1: tsappy: Well done";
         //Verify that the correct output was printed
         try {
-            System.setOut(new PrintStream(outContent, true, "UTF-8"));
             String actualOutput = outContent.toString("UTF-8");
             assertEquals("The output is not as expected ",
                     (expected + System.lineSeparator()),actualOutput);
