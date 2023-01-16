@@ -349,7 +349,11 @@ public class PostTest {
         post.comments.add(comment);
         //Create a ByteArrayOutputStream to capture the output of the method
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        try {
+            System.setOut(new PrintStream(outContent, true, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 
         //Call the getPost method
         post.getPost();

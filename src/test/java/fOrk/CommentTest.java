@@ -101,8 +101,12 @@ public class CommentTest {
                 + System.lineSeparator() + "   " + recomment2.username + ": "
                 + recomment2.commentContent + System.lineSeparator();
         ByteArrayOutputStream osSender = new ByteArrayOutputStream();
-        PrintStream printStreamSender = new PrintStream(osSender);
-        System.setOut(printStreamSender);
+        try {
+            //PrintStream printStreamSender = new PrintStream(osSender);
+            System.setOut(new PrintStream(osSender, true, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
         comment.getRecomments();
         String actual = null;
         try {
