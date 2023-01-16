@@ -366,7 +366,7 @@ public class PostTest {
                 + "The cost for this recipe is: 15.0 euros\n"
                 + "The difficulty Level of this recipe is: difficult\n"
                 + "The category of this recipe is: Traditional\n"
-                + "This post has 0,00 stars\n"
+                + "This post has 0.0 stars\n"
                 + "This post's comments are: " + System.lineSeparator()
                 + " 1: tsappy: Well done";
         //Verify that the correct output was printed

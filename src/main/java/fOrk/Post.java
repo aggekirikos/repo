@@ -454,7 +454,7 @@ public class Post {
             + "The cost for this recipe is: " + getRecipeCost() + " euros" + "\n"
             + "The difficulty Level of this recipe is: " + getDifficultyLevel() + "\n"
             + "The category of this recipe is: " + getRecipeCategory() + "\n"
-            + "This post has " + String.format("%.2f", reviews) + " stars" + "\n"
+            + "This post has " + reviews + " stars" + "\n"
             + "This post's comments are: ");
         if (comments.size() == 0) {
             System.out.println("  This post has no comments yet");
