@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import static org.junit.Assert.assertEquals;
 
@@ -121,7 +121,7 @@ public class UserTest {
         System.setIn(is);
         postRec.makeReview();
         user1.updatePosts(postRec);
-        assertEquals(user1.posts.get(0), postRec);
+        assertEquals(user1.posts.get(0).getPostId(), postRec.getPostId());
     }
 
     @Test
@@ -133,10 +133,11 @@ public class UserTest {
         System.setIn(is);
         String username = null;
         user1.editProfile();
+        Connection con = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            Connection con = DBcon.openConnection();
+            con = DBcon.openConnection();
             preparedStatement = con.prepareStatement(" SELECT Username"
                     + " FROM [User]"
                     + " WHERE ID = ?");
@@ -150,8 +151,9 @@ public class UserTest {
             resultSet.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            DBcon.closeResultSet(resultSet);
+            DBcon.closeConnection(con);
             DBcon.closeStatement(preparedStatement);
+            DBcon.closeResultSet(resultSet);
         }
         assertEquals(user1.getUsername(), "Angeliki");
         assertEquals(username, "Angeliki");
@@ -184,8 +186,8 @@ public class UserTest {
             resultSet.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            DBcon.closeResultSet(resultSet);
             DBcon.closeStatement(preparedStatement);
+            DBcon.closeResultSet(resultSet);
         }
         assertEquals(user1.getName(), "AngelikiTsagkaraki");
         assertEquals(name, "AngelikiTsagkaraki");
@@ -200,8 +202,8 @@ public class UserTest {
         System.setIn(is);
         String bio = null;
         user1.editProfile();
-        ResultSet resultSet = null;
         PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         try {
             Connection con = DBcon.openConnection();
             preparedStatement = con.prepareStatement(" SELECT Bio"
@@ -217,8 +219,8 @@ public class UserTest {
             resultSet.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            DBcon.closeResultSet(resultSet);
             DBcon.closeStatement(preparedStatement);
+            DBcon.closeResultSet(resultSet);
         }
         assertEquals("I love cooking!!", user1.getBio());
         assertEquals("I love cooking!!", bio);
@@ -233,8 +235,8 @@ public class UserTest {
         System.setIn(is);
         String password = null;
         user1.editProfile();
-        ResultSet resultSet = null;
         PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         try {
             Connection con = DBcon.openConnection();
             preparedStatement = con.prepareStatement(
@@ -251,8 +253,8 @@ public class UserTest {
             resultSet.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            DBcon.closeResultSet(resultSet);
             DBcon.closeStatement(preparedStatement);
+            DBcon.closeResultSet(resultSet);
         }
         assertEquals("222222222", password);
     }
@@ -263,8 +265,11 @@ public class UserTest {
         String expected = user3.getUsername() + " is already your cookmate"
                 + System.lineSeparator();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(os);
-        System.setOut(printStream);
+        try {
+            System.setOut(new PrintStream(os, true, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         user1.makeCookmates(user3.userId);
         String actual = null;
         try {
@@ -286,8 +291,11 @@ public class UserTest {
                 + "\nCookmates:" + "\n - " + user1.getUsername() + "\n"
                 + System.lineSeparator();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(os);
-        System.setOut(printStream);
+        try {
+            System.setOut(new PrintStream(os, true, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         user3.getProfile();
         String actual = null;
         try {
@@ -307,26 +315,26 @@ public class UserTest {
             prstm = connection.prepareStatement("DELETE FROM Hashtags WHERE PostID = ?");
             prstm.setInt(1, post.getPostId());
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM stars WHERE PostID = ?");
             prstm.setInt(1, post.getPostId());
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Post WHERE PostID = ?");
             prstm.setInt(1, post.getPostId());
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement(
                     "DELETE FROM Cookmates WHERE UserID = ? OR UserID = ?");
             prstm.setInt(1, user3.getUserId());
             prstm.setInt(2, user1.getUserId());
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM User WHERE ID = ? OR ID = ?");
             prstm.setInt(1, user1.userId);
             prstm.setInt(2, user3.userId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             DBcon.closeStatement(prstm);

@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,16 +31,17 @@ public class Main {
         Scanner input = new Scanner(System.in, "utf-8");
         int i = 0;
         do {
-            System.out.print("Welcome to fOrk! Type 1 to SING UP, 2 to LOG IN, "
+            System.out.println("Welcome to fOrk! Type 1 to SING UP, 2 to LOG IN, "
                     + "or -1 to LEAVE fOrk : ");
             int preference = input.nextInt();
+            input.nextLine();
             switch (preference) {
                 case 1:
                     System.out.println("Please create Username");
                     String tempUsername = input.nextLine();
                     System.out.println("Please create Password");
                     String tempPassword = input.nextLine();
-                    System.out.println("Please create Name");
+                    System.out.println("Please create Name(First Name)");
                     String tempName = input.nextLine();
                     System.out.println("Please create small Bio");
                     String tempBio = input.nextLine();
@@ -231,18 +232,17 @@ public class Main {
                     answer = input.nextLine();
                     if (answer.equals("Yes")) {
                         System.out.println("Please type the comment: ");
-                        input.nextLine();
                         String com = input.nextLine();
                         Comment comment = new Comment(com, user.getUserId(), postId);
                         post.createComment(comment);
                     }
                     if (post.commentListSize()) {
-                        System.out.println("Would you like to respond to a comment? Yes/No");
+                        System.out.println("Would you like to reply to a comment? Yes/No");
                         answer = input.nextLine();
                         answer = checkAnswer(answer);
                         if (answer.equals("Yes")) {
                             System.out.println("Please enter the number of the comment"
-                                    + " you want to answer to");
+                                    + " you want to reply to");
                             int ans = input.nextInt();
                             input.nextLine();
                             Comment comment = post.comments.get(ans - 1);//new Comment(ans);
@@ -256,11 +256,12 @@ public class Main {
                         user.updatePosts(post);
                     }
                     System.out.println("Do you want to make this user your cookmate? Yes/No");
-                    answer = input.nextLine();
+                    answer = input.next();
                     answer = checkAnswer(answer);
                     if (answer.equals("Yes")) {
                         user.makeCookmates(post.getCreator());
                     }
+                    input.nextLine();
                 }
             }
         } while (!rec.equals("Back"));

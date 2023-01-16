@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +18,7 @@ public class Recomment extends Comment {
     /**
      * Unique recomment ID.
      */
-    protected int RecommentID;
+    protected int recommentID;
     /**
      * Constructor that retrieves recomment characteristics
      * from database by recomment ID and the ID of the comment
@@ -40,7 +40,7 @@ public class Recomment extends Comment {
             preparedStatement.setInt(1, recId);
             rs = preparedStatement.executeQuery();
             this.toComment = toComment;
-            RecommentID = recId;
+            recommentID = recId;
             while (rs.next()) {
                 commentContent = rs.getString("Content");
                 from = rs.getInt("Sender");
@@ -73,12 +73,12 @@ public class Recomment extends Comment {
         Connection connection = null;
         PreparedStatement pst = null;
         Statement statement = null;
-        RecommentID = commentId;
+        recommentID = commentId;
         try {
             connection = DBcon.openConnection();
             pst = connection.prepareStatement("INSERT INTO Recomment"
             + "(RecommentID, Receiver) VALUES (?,?)");
-            pst.setInt(1, RecommentID);
+            pst.setInt(1, recommentID);
             pst.setInt(2, this.toComment);
             pst.executeUpdate();
         } catch (SQLException e) {

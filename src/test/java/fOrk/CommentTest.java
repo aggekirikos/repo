@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,7 +37,6 @@ public class CommentTest {
             prstm.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -62,17 +61,17 @@ public class CommentTest {
                    + " CommentID = ? ");
             prstm.setInt(1, comment.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Recomment WHERE"
                    + " RecommentID = ? ");
             prstm.setInt(1, comment.recomments.get(0).commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
                     + " CommentID = ? ");
             prstm.setInt(1,  comment.recomments.get(0).commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             is.close();
         } catch (SQLException | IOException e) {
             System.out.println(e.getMessage());
@@ -102,11 +101,10 @@ public class CommentTest {
                 + recomment2.commentContent + System.lineSeparator();
         ByteArrayOutputStream osSender = new ByteArrayOutputStream();
         try {
-            //PrintStream printStreamSender = new PrintStream(osSender);
             System.setOut(new PrintStream(osSender, true, "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         comment.getRecomments();
         String actual = null;
         try {
@@ -128,27 +126,27 @@ public class CommentTest {
                     + " CommentID = ? ");
             prstm.setInt(1,  comment.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Recomment WHERE"
                     + " RecommentID = ? ");
             prstm.setInt(1, comment.recomments.get(1).commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
                     + " CommentID = ? ");
             prstm.setInt(1,  comment.recomments.get(1).commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Recomment WHERE"
                     + " RecommentID = ? ");
             prstm.setInt(1, comment.recomments.get(0).commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
                     + " CommentID = ? ");
             prstm.setInt(1,  comment.recomments.get(0).commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -174,10 +172,8 @@ public class CommentTest {
             prstm.setInt(1, comment.commentId);
             prstm.setInt(2, comment1.commentId);
             prstm.executeUpdate();
-            prstm.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -202,8 +198,11 @@ public class CommentTest {
                 + System.lineSeparator() + "   " + recomment2.username
                 + ": " + recomment2.commentContent + System.lineSeparator();
         ByteArrayOutputStream osSender = new ByteArrayOutputStream();
-        PrintStream printStreamSender = new PrintStream(osSender);
-        System.setOut(printStreamSender);
+        try {
+            System.setOut(new PrintStream(osSender, true, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         comment.printCommentRec(1);
         String actual = null;
         try {
@@ -222,13 +221,13 @@ public class CommentTest {
             prstm.setInt(2, recomment1.commentId);
             prstm.setInt(3, recomment2.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Recomment WHERE"
                     + " RecommentID = ? OR RecommentID = ?");
             prstm.setInt(1, recomment1.commentId);
             prstm.setInt(2, recomment2.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             DBcon.closeStatement(prstm);
@@ -243,8 +242,11 @@ public class CommentTest {
         Comment comment = new Comment("perfect", user2.getUserId(), post.getPostId());
         String expected = comment.username + ": perfect";
         ByteArrayOutputStream osSender = new ByteArrayOutputStream();
-        PrintStream printStreamSender = new PrintStream(osSender);
-        System.setOut(printStreamSender);
+        try {
+            System.setOut(new PrintStream(osSender, true, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         comment.printComment();
         String actual = null;
         try {
@@ -261,10 +263,8 @@ public class CommentTest {
                     + " CommentID = ?");
             prstm.setInt(1, comment.commentId);
             prstm.executeUpdate();
-            prstm.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            DBcon.closeStatement(prstm);
         } finally {
             DBcon.closeStatement(prstm);
             DBcon.closeConnection(connection);
@@ -278,20 +278,14 @@ public class CommentTest {
         try {
             statement = connection.createStatement();
             statement.executeUpdate("DELETE FROM Messages WHERE Sender = " + user.getUserId());
-            statement.close();
             statement.executeUpdate("DELETE FROM stars WHERE PostID = " + post.getPostId());
-            statement.close();
             statement.executeUpdate("DELETE FROM Hashtags WHERE PostID = " + post.getPostId());
-            statement.close();
             statement.executeUpdate("DELETE FROM Post WHERE PostID = " + post.getPostId());
-            statement.close();
             statement.executeUpdate("DELETE FROM User WHERE ID = " + user.getUserId()
                     + " OR ID = " + user2.getUserId()
                     + " OR ID = " + user3.getUserId());
-            statement.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            DBcon.closeStatement(statement);
         } finally {
             DBcon.closeStatement(statement);
             DBcon.closeConnection(connection);

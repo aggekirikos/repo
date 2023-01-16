@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -279,7 +279,7 @@ public class User {
     public void editProfile() {
         Scanner scanner = new Scanner(System.in, "utf-8");
         System.out.println("If you want to Edit your Username press 1.");
-        System.out.println("If you want to Edit your Name press 2.");
+        System.out.println("If you want to Edit your First Name press 2.");
         System.out.println("If you want to Edit your Bio press 3.");
         System.out.println("If you want to Edit your Password press 4.");
         int temp2 = scanner.nextInt();
@@ -308,7 +308,7 @@ public class User {
                 }
                 break;
             case 2:
-                System.out.println("Please insert your new Name: ");
+                System.out.println("Please insert your new (First)Name: ");
                 setName(scanner.next());
                 try {
                     connection = DBcon.openConnection();

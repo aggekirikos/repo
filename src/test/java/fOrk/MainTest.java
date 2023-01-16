@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import static org.junit.Assert.assertEquals;
 
@@ -79,8 +79,11 @@ public class MainTest {
         String expSender = "Your chatbox is :" + System.lineSeparator() + receiver.getUsername()
                 + System.lineSeparator();
         ByteArrayOutputStream osSender = new ByteArrayOutputStream();
-        PrintStream printStreamSender = new PrintStream(osSender);
-        System.setOut(printStreamSender);
+        try {
+            System.setOut(new PrintStream(osSender, true, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         Main.getChatbox(user.getUserId());
         String actualUsers = null;
         try {
@@ -99,8 +102,11 @@ public class MainTest {
         String expReceiver = "Your chatbox is :" + System.lineSeparator() + user.getUsername()
                 + System.lineSeparator();
         ByteArrayOutputStream osReceiver = new ByteArrayOutputStream();
-        PrintStream printStreamReceiver = new PrintStream(osReceiver);
-        System.setOut(printStreamReceiver);
+        try {
+            System.setOut(new PrintStream(osReceiver, true, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         Main.getChatbox(receiver.getUserId());
         String actualReceivers = null;
         try {
@@ -119,8 +125,11 @@ public class MainTest {
                 + " sent at " + message.dateTime
                 + System.lineSeparator();
         ByteArrayOutputStream osSender = new ByteArrayOutputStream();
-        PrintStream printStreamSender = new PrintStream(osSender);
-        System.setOut(printStreamSender);
+        try {
+            System.setOut(new PrintStream(osSender, true, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         Main.getMessagesByUserId(receiver.getUserId(), user.getUserId());
         String actualUsers = null;
         try {

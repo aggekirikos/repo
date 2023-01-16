@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import static org.junit.Assert.assertTrue;
 

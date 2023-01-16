@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -113,13 +113,17 @@ public class Post {
     public int maxidfromDB() {
         Connection connection = DBcon.openConnection();
         Statement statement = null;
+        ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT max(PostID) FROM Post");
+            rs = statement.executeQuery("SELECT max(PostID) FROM Post");
+            while (rs.next()) {
+                postId = rs.getInt(1);
+            }
             rs.close();
-            postId = rs.getInt(1);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            DBcon.closeResultSet(rs);
         } finally {
             DBcon.closeStatement(statement);
             DBcon.closeConnection(connection);
@@ -135,7 +139,7 @@ public class Post {
   */
 
     public Post(int id) {
-        this.postId = maxidfromDB() + 1;
+        this.postId = id;
         ArrayList<Integer> commId = new ArrayList<Integer>();
         Connection connection = DBcon.openConnection();
         PreparedStatement preparedStatement1 = null;
@@ -226,7 +230,6 @@ public class Post {
         int rate;
         do {
             rate = input.nextInt();
-            System.out.println(rate);
         } while (rate < 1 || rate > 5);
 
         stars[rate - 1] = stars[rate - 1] + 1;
@@ -448,10 +451,10 @@ public class Post {
         System.out.println("Title of the post: " + getTitle() + "\n"
             + "Content of the post: " + getContent() + "\n"
             + "The time required for this recipe is: " + getRecipeTime() + " minutes \n"
-            + "The cost for this recipe is:" + getRecipeCost() + " euros" + "\n"
+            + "The cost for this recipe is: " + getRecipeCost() + " euros" + "\n"
             + "The difficulty Level of this recipe is: " + getDifficultyLevel() + "\n"
             + "The category of this recipe is: " + getRecipeCategory() + "\n"
-            + "This post has " + reviews + " stars" + "\n"
+            + "This post has " + String.format("%.2f", reviews) + " stars" + "\n"
             + "This post's comments are: ");
         if (comments.size() == 0) {
             System.out.println("  This post has no comments yet");

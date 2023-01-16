@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

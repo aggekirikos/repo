@@ -4,17 +4,17 @@ plugins {
     id 'checkstyle'
 }
 
-group = 'com.dmst.fOrk'
+group = 'com.dmst.fork'
 version = '1.0'
 
 application {
-    mainClass = 'fOrk.Main'
+    mainClass = 'fork.Main'
 }
 
 //Set Main class for the jar file
 jar {
     manifest {
-        attributes 'Main-Class': 'fOrk.Main'
+        attributes 'Main-Class': 'fork.Main'
     }
     //Add dependencies to the jar file
     from {

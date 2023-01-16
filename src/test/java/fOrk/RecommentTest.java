@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,20 +31,19 @@ public class RecommentTest {
         try {
             prstm = connection.prepareStatement("DELETE FROM Recomment WHERE"
                     + " RecommentID = ? ");
-            prstm.close();
             prstm.setInt(1,  recomment.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
                     + " CommentID = ? ");
             prstm.setInt(1,  recomment.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
                     + " CommentID = ? ");
             prstm.setInt(1,  comment.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             DBcon.closeStatement(prstm);
@@ -71,27 +70,27 @@ public class RecommentTest {
                     + " RecommentID = ? ");
             prstm.setInt(1,  recomment.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Recomment WHERE"
                     + " RecommentID = ? ");
             prstm.setInt(1,  recomment1.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
                     + " CommentID = ? ");
             prstm.setInt(1,  recomment.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
                     + " CommentID = ? ");
             prstm.setInt(1,  recomment1.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
             prstm = connection.prepareStatement("DELETE FROM Comment WHERE"
                     + " CommentID = ? ");
             prstm.setInt(1,  comment.commentId);
             prstm.executeUpdate();
-            prstm.close();
+            DBcon.closeStatement(prstm);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             DBcon.closeStatement(prstm);
@@ -108,19 +107,13 @@ public class RecommentTest {
         try {
             statement = connection.createStatement();
             statement.executeUpdate("DELETE FROM Messages WHERE Sender = " + user.getUserId());
-            statement.close();
             statement.executeUpdate("DELETE FROM stars WHERE PostID = " + post.getPostId());
-            statement.close();
             statement.executeUpdate("DELETE FROM Hashtags WHERE PostID = " + post.getPostId());
-            statement.close();
             statement.executeUpdate("DELETE FROM Post WHERE PostID = " + post.getPostId());
-            statement.close();
             statement.executeUpdate("DELETE FROM User WHERE ID = " + user.getUserId()
                     + " OR ID = " + user2.getUserId());
-            statement.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            DBcon.closeStatement(statement);
         } finally {
             DBcon.closeStatement(statement);
             DBcon.closeConnection(connection);

@@ -1,4 +1,4 @@
-package fOrk;
+package fork;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -157,13 +157,12 @@ public class Comment {
      */
 
     public void makeReComment(int userId, int postId, int commentId) {
-        System.out.print("Type the recomment: ");
+        System.out.println("Type the recomment: ");
         Scanner input = new Scanner(System.in, "utf-8");
         String a = input.nextLine();
         Recomment r = new Recomment(a, userId, postId, commentId);
         recomments.add(r);
         System.out.println("Recomment is added!");
-        input.close();
     }
     /**
      * Method that prints all the recomments of a comment.
