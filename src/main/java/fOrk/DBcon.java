@@ -177,33 +177,4 @@ public class DBcon {
             System.out.println("Could not close the SQL statement: " + e.getMessage());
         }
     }
-    /**
-    * This method deletes the tables that are created
-    * in case it is needed.
-    * @param dbcon The Connection-type object called dbcon.
-    */
-
-    public static void deleteTables(Connection dbcon) {
-        /* Try block for making the DB connection and excecuting the given statement. */
-        Statement stmt = null;
-        try {
-            /* Creates the statement */
-            stmt = dbcon.createStatement();
-            /* Executes the given statement that drops the tables */
-            stmt.executeUpdate("DROP TABLE Cookmates;");
-            stmt.executeUpdate("DROP TABLE Recomment;");
-            stmt.executeUpdate("DROP TABLE Messages;");
-            stmt.executeUpdate("DROP TABLE Comment;");
-            stmt.executeUpdate("DROP TABLE stars;");
-            stmt.executeUpdate("DROP TABLE Hashtags;");
-            stmt.executeUpdate("DROP TABLE Post;");
-            stmt.executeUpdate("DROP TABLE [User];");
-            //System.out.println("SUCCESFULLY DELETED TABLES");
-            stmt.close();
-            dbcon.close();
-        } catch (SQLException e) {
-            System.out.println("Could not delete the tables of the database: " + e.getMessage());
-            closeStatement(stmt);
-        }
-    }
 }
