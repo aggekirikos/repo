@@ -31,7 +31,7 @@ public class Main {
         Scanner input = new Scanner(System.in, "utf-8");
         int i = 0;
         do {
-            System.out.println("Welcome to fOrk! Type 1 to SING UP, 2 to LOG IN, "
+            System.out.println("Welcome to fOrk! Type 1 to SIGN UP, 2 to LOG IN, "
                     + "or -1 to LEAVE fOrk : ");
             int preference = input.nextInt();
             input.nextLine();
