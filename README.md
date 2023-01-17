@@ -1,6 +1,8 @@
 [![Java CI](https://github.com/aggekirikos/repo/actions/workflows/gradle.yml/badge.svg)](https://github.com/aggekirikos/repo/actions/workflows/gradle.yml)
 
 # fork
+![fork logo](https://github.com/aggekirikos/repo/blob/main/images/fork.PNG)
+
 
 # Table of contents
 
@@ -21,6 +23,7 @@
 In the framework of the course Programming II of the Department of Management Science and Technology, we developed an application named fork. Fork is a social media application that allows users to upload, share, review and comment recipes. Also, it gives users the opportunity to choose between other actions related to their account and their messages with other users. Practically, our program attempts to expose users in new cooking ideas by interacting with others and creating social relationships with them.
 
 # UML Diagram
+![uml diagram](https://github.com/aggekirikos/repo/blob/main/images/UML.jpg)
 
 
 # Tools
