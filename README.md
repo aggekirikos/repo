@@ -1,6 +1,6 @@
 [![Java CI](https://github.com/aggekirikos/repo/actions/workflows/gradle.yml/badge.svg)](https://github.com/aggekirikos/repo/actions/workflows/gradle.yml)
 
-# fork
+# fOrk
 ![fork logo](https://github.com/aggekirikos/repo/blob/main/images/fork.PNG)
 
 
@@ -78,4 +78,4 @@ gradlew javadoc
 | Tsagkaraki Aggeliki | [Angeliki03](https://github.com/Angeliki03) | t8210150@aueb.gr |
 | Tsaprounis Loukas | [LoukasTsaprounisAueb](https://github.com/LoukasTsaprounisAueb) | t8210151@aueb.gr |
 | Tsetsila Despoina | [DespoinaTsetsila](https://github.com/DespoinaTsetsila) | t8210154@aueb.gr |
-| Chlouveraki Nikol | [nikochlouveraki](https://github.com/nikochlouveraki) | @t8210165aueb.gr ||
+| Chlouveraki Nikol | [nikochlouveraki](https://github.com/nikochlouveraki) | t8210165@aueb.gr ||
