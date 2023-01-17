@@ -45,7 +45,7 @@ In the framework of the course Programming II of the Department of Management Sc
 * Use the commands down below to run the program from cmd:
 ```
 gradlew build
-java -jar build/libs/fork/1.0.jar
+java -jar build/libs/fork-1.0.jar
 ```
 
 # How to get the program's documentation
