@@ -14,6 +14,7 @@
 - [Run the program](#run-the-program)
 - [How to get the program's documentation](#how-to-get-the-program's-documentation)
 - [Menu Description](#menu-description)
+- [Content of repository](#content-of-repository)
 - [Authors](#authors)
 
 # General Information
@@ -67,9 +68,25 @@ gradlew javadoc
 
     5. *Log out*. The user is logged out and returned to the main menu.
 
-    6. *Leave Fork*. The user closes the application..
+    6. *Leave Fork*. The user closes the application.
 
-    # Authors
+# Content of repository
+* 
+    1. *github/workflows*. Contains .yml file for github actions.
+    2. *config/checkstyle*. Contains xml file for the configuration of the checkstyle rules.
+    3. *gradle/wrapper , gradlew.bat and gradlew*. Contain files responsible for loading gradle.
+    4. *images*. Contains png files used in readme.
+    5. *src*. Contains :
+        * main/java/fork contains .java files for the application.
+        * test/java/fork contains .java test files of the application.
+    6. *gitattributes and gitignore* are files used in git.
+    7. *LICENCE*. Contains apache licence 2.0
+    8. *README.md*. Contains the description of the application.
+    9. *build.gradle*. Contains the build configuration.
+    10. *fOrk.db*. Contains the database of the application.
+    11. *settings.gradle*. Contains the project name.
+    
+        # Authors
 | Full Name | Github Account | Mail |
 | --- | --- | --- |
 | Kirikos Aggelos (Team Coordinator) | [aggekirikos](https://github.com/aggekirikos) | t8210057@aueb.gr |
