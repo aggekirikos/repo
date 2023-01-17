@@ -136,6 +136,7 @@ public class Main {
                     String title = input.next();
                     String content = create();
                     System.out.println("Please insert the cost of your total recipe.");
+                    input.nextLine();
                     double cost = input.nextDouble();
                     System.out.println("Please insert the time required to make your recipe.");
                     int time = input.nextInt();
@@ -145,7 +146,7 @@ public class Main {
                     String diffLevel = input.next();
                     while (!(diffLevel.equals("Simple") || diffLevel.equals("Medium")
                             || diffLevel.equals("Difficult"))) {
-                        System.out.println("Please describe the difficulty level with Easy, "
+                        System.out.println("Please describe the difficulty level with Simple, "
                                 + "Medium or Difficult");
                         diffLevel = input.next();
                     }
