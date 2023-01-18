@@ -24,8 +24,7 @@ public class Main {
     * @param args The command line arguments.
     */
     public static void main(String[] args) {
-        //Connection connection1 = DBcon.openConnection();
-        //DBcon.deleteTables(connection1);
+
         Connection connection = DBcon.openConnection();
         DBcon.createTable(connection);
         Scanner input = new Scanner(System.in, "utf-8");
